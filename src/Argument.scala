@@ -1,7 +1,7 @@
 object Argument {
   val supportedArgs : List[Argument] = List[Argument](
-    new ParamArgument("a"),
-    new ParamArgument("L"),
+    new ParamArgument("a"), //-a does expect a list of random variables
+    new ParamArgument("L"), //-L does expect a level
     new Flag("weird")
   )
 
@@ -13,7 +13,7 @@ object Argument {
       }
     }
     else {
-      new Input(arg)
+      new Input(arg) // should match as URL https://mathiasbynens.be/demo/url-regex
     }
   }
 }
@@ -26,14 +26,14 @@ abstract class Argument(val name : String){
 }
 
 case class Flag(override val name : String) extends Argument(name){
-  override def toString() = s"-$name"
+  override def toString = s"-$name"
 }
 
 case class Input(override val name : String) extends Argument(name){}
 
 case class ParamArgument(override val name : String) extends Argument(name){
   var parameter : String = ""
-  override def toString() = s"-$name $parameter"
+  override def toString = s"-$name $parameter"
 }
 
 case class InvalidArgument(override val name : String) extends Argument(name){}
