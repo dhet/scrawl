@@ -1,9 +1,10 @@
 object Scrawl {
   def main(args : Array[String]) = {
     var websites : List[String] = List[String]()
-    var activeArguments : Set[Argument] = Set[Argument]()
+    var activeArguments : Set[Argument] = Set[Argument]() //kann es nicht auf die Reihenfolge ankommen? Ist das schneller als eine Liste?
     if(args.length < 1){
       exit("Enter at least one website to crawl.")
+      //can we display -help here?
     } else {
       var paramExpected = false
       for (arg <- args) {
@@ -14,7 +15,7 @@ object Scrawl {
           case Input(_) =>
             if(paramExpected){
               println(s"$arg param")
-              paramExpected = false
+              paramExpected = false //sollen wir das problem mit List expected oder -L (level: int) hiermit lösen, odermithilfe einer Param hierachie?
             } else{
               websites :+= arg
             }
