@@ -1,30 +1,25 @@
 object Scrawl {
   def main(args : Array[String]) = {
-    var websites : List[String] = List[String]()
-    var activeArguments : Set[Argument] = Set[Argument]()
+    var websites : List[String] = Nil
+    var activeArguments : List[Argument] = Nil
     if(args.length < 1){
-      exit("Enter at least one website to crawl.")
+      exit(s"Enter at least one website to crawl.\n")
     } else {
-      var paramExpected = false
-      for (arg <- args) {
-        val argument : Argument = Argument(arg)
+      for (arg <- args; argument = Argument(arg)) {
         argument match {
-          case Flag(_) => activeArguments += argument
-          case InvalidArgument(_) => exit(s"Unsupported Command $arg")
-          case Input(_) =>
-            if(paramExpected){
-              println(s"$arg param")
-              paramExpected = false
-            } else{
+          case Flag(_) => activeArguments :+= argument
+          case ParamArgument(_) => activeArguments :+= argument
+          case InvalidArgument(_) => Argument.printHelp; exit(s"Unsupported Command $arg.")
+          case Value(_) =>
+            if(activeArguments.nonEmpty && activeArguments.last.isInstanceOf[ParamArgument]){
+              activeArguments.last.asInstanceOf[ParamArgument].parameters :+= argument
+            }else{
               websites :+= arg
             }
-          case ParamArgument(_) =>
-            activeArguments += argument
-            paramExpected = true
         }
       }
-
-      println(s"Crawl the sites $websites with the arguments $activeArguments")
+      println(s"Crawl the sites [${websites.mkString(", ")}] with the arguments [${activeArguments.mkString(", ")}]")
+      activeArguments.foreach(arg => arg.action)
     }
   }
 
