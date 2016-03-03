@@ -1,6 +1,6 @@
 package Webgraph
 
-import Graph.Label
+import AbstractGraph.Label
 
 /**
   * Created by nicohein on 01/03/16.
@@ -13,17 +13,21 @@ class LinkLabel extends Label{
     * InLink / OffLing - Link to other domain or same domain
     */
 
-  def toXML() : String = {
+  override def toXML() : String = {
     var xml : String = ""
+    xml += s"<linklabel>"
     for((key, value) <- this){
-      xml += s"<LinkLabel>"
-      xml += s"  <key>${key.toString}</key>"
-      xml += s"  <value>${value.toString}</value>"
-      xml += s"</LinkLabel>"
+      xml += s"<key>${key.toString}</key>"
+      xml += s"<value>${value.toString}</value>"
     }
+    xml += s"</linklabel>"
     xml
   }
 
 
+}
+
+object LinkLabel {
+  def apply() : LinkLabel = new LinkLabel()
 }
 

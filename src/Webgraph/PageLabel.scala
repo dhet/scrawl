@@ -1,6 +1,6 @@
 package Webgraph
 
-import Graph.Label
+import AbstractGraph.Label
 
 
 /**
@@ -13,14 +13,18 @@ class PageLabel extends Label{
     *
     */
 
-  def toXML() : String = {
+  override def toXML() : String = {
     var xml : String = ""
+    xml += s"<pagelabel>"
     for((key, value) <- this){
-      xml += s"<PageLabel>"
-      xml += s"  <key>${key.toString}</key>"
-      xml += s"  <value>${value.toString}</value>"
-      xml += s"</PageLabel>"
+      xml += s"<key>${key.toString}</key>"
+      xml += s"<value>${value.toString}</value>"
     }
+    xml += s"</pagelabel>"
     xml
   }
+}
+
+object PageLabel{
+  def apply() : PageLabel = new PageLabel()
 }

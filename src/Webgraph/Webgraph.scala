@@ -1,6 +1,6 @@
 package Webgraph
 
-import Graph.Graph
+import AbstractGraph.AbstractGraph
 
 import scala.collection.mutable
 
@@ -8,17 +8,22 @@ import scala.collection.mutable
 /**
   * Created by nicohein on 29/02/16.
   */
-class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
+class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
 
-
-  def addWebpage(webpage : Webpage) : Webgraph = {
-    addNode(webpage)
-    this
+  def addWeblink(weblink : Weblink) = {
+    addEdge(weblink)
   }
 
+  def count() : Int = {
+    var count : Int  = 0
+    for(node <- nodes){
+      count += 1
+    }
+    count
+  }
   def countUncrawled() : Int = {
     var count : Int  = 0
-    for(node <- breadthFirstTraversal(root)){
+    for(node <- nodes){
       if(!node.crawled)
         count += 1
     }
@@ -31,7 +36,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
       if(!node.crawled)
         return node
     }
-    throw new Exception //better implement with...*/
+    throw new Exception //better implement with..Furtures*/
   }
 
   def generateSitemap() : List[String] = {
@@ -50,12 +55,11 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
   }
 
 
-  override def addNode(node: Webpage): Graph[Webpage, Weblink] = {
+  override def addNode(node: Webpage) = {
     nodes = nodes + node
-    this
   }
 
-  override def addEdge(edge: Weblink): Graph[Webpage, Weblink] = {
+  override def addEdge(edge: Weblink) = {
     edges = edges + edge
     //add edges to nodes
     edge.startNode.addEdge(edge)
@@ -63,58 +67,63 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     //add nodes of edge if not already existing
     addNode(edge.startNode)
     addNode(edge.endNode)
-    this
   }
 
   override def depthFirstTraversal(node: Webpage): List[Webpage] = {
+    setUnvisited()
+    node :: depthFirstTraversalHelper(node)
+  }
+  private def depthFirstTraversalHelper(node: Webpage): List[Webpage] = {
     var pagelist : List[Webpage] = Nil
     node.visited = true
-
     for(child : Webpage <- node.edges.map((e) => e.endNode)){
-      if(!child.visited)
+      if(!child.visited){
         pagelist = child :: pagelist
-        pagelist = pagelist ::: depthFirstTraversal(child)
+        pagelist = pagelist ::: depthFirstTraversalHelper(child)
+      }
     }
     pagelist
   }
 
   override def breadthFirstTraversal(node: Webpage): List[Webpage] = {
+    setUnvisited()
     var pagelist : List[Webpage] = Nil
     val queue : mutable.Queue[Webpage] = mutable.Queue[Webpage]()
     queue.enqueue(node)
     node.visited = true
 
-
     while(queue.nonEmpty){
-      val temp = queue.dequeue()
-      pagelist = temp :: pagelist
-      for(child : Webpage <- temp.edges.map((e) => e.endNode)){
+      val tempnode = queue.dequeue()
+      pagelist = tempnode :: pagelist
+      for(child : Webpage <- tempnode.edges.map((e) => e.endNode)){
         if(!child.visited){
           queue.enqueue(child)
           child.visited = true
         }
       }
     }
-    pagelist
+    pagelist.reverse
 
   }
 
-  override def removeNode(node: Webpage): Graph[Webpage, Weblink] = {
+  override def removeNode(node: Webpage) = {
     //remove all edges of node, then remove node
     for(edge : Weblink <- node.edges){
       removeEdge(edge)
     }
     nodes = nodes - node
-    this
   }
 
-  override def removeEdge(edge: Weblink): Graph[Webpage, Weblink] = {
+  override def removeEdge(edge: Weblink) = {
     //it is not necessary to remove the edges from all nodes
     edge.startNode.removeEdge(edge)
     edge.endNode.removeEdge(edge)
+    if(edge.startNode.edges.isEmpty)
+      removeNode(edge.startNode)
+    if(edge.endNode.edges.isEmpty)
+      removeNode(edge.endNode)
     //now remove edge from graph
     edges = edges - edge
-    this
   }
 
   private def setUnvisited(): Unit = {
@@ -123,6 +132,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     }
   }
 }
+
 
 object Webgraph {
   def apply(root: Webpage) = new Webgraph(root)
