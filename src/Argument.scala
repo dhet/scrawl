@@ -18,6 +18,8 @@ object Argument {
   }
 }
 
+
+
 abstract class Argument(val name : String){
   override def equals(obj : Any) = obj match {
     case Argument => obj.asInstanceOf[Argument].name == name// || obj.asInstanceOf[Argument].short == short
