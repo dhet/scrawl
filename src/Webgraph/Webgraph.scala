@@ -1,5 +1,7 @@
 package Webgraph
 
+import java.net.URI
+
 import AbstractGraph.AbstractGraph
 
 import scala.collection.mutable
@@ -30,19 +32,50 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
     count
   }
 
+
   def nextUncrawledNode() : Webpage = {
-    //wrong
+    nextPageContraintBreadthFirst((node) => !node.crawled)
+  }
+  def nextPageContraintBreadthFirst(f :(Webpage) => Boolean) : Webpage = {
     for(node <- breadthFirstTraversal(root)){
-      if(!node.crawled)
+      if(f(node))
         return node
     }
-    throw new Exception //better implement with..Furtures*/
+    new Webpage("") //implement this wit future
   }
+  def nextPageContraintDepththFirst(f :(Webpage) => Boolean) : Webpage = {
+    for(node <- depthFirstTraversal(root)){
+      if(f(node))
+        return node
+    }
+    new Webpage("") //implement this wit future
+  }
+
 
   def generateSitemap() : List[String] = {
     setUnvisited()
-    depthFirstTraversal(root).map((node: Webpage) => node.url)
+    analyzeLinktypes()
+    depthFirstTraversal(root).map((node: Webpage) => node.url.toString)
   }
+
+
+
+  def analyzeLinktypes() = {
+    analyzeWeblinks("linktype", (weblink: Weblink) => if(new URI(weblink.startNode.url).getHost == new URI(weblink.endNode.url).getHost) "inlink" else "outlink")
+  }
+
+
+  def analyzeWeblinks(labelkey : String, f:(Weblink) => Any) ={
+    for(edge <- edges){
+      edge.updateLabelEntry(labelkey, f(edge))
+    }
+  }
+  def analyzeWebpages(labelkey : String, f:(Webpage) => Any) = {
+    for(node <- nodes){
+     node.updateLabelEntry(labelkey, f(node))
+    }
+  }
+
 
   def toXML() : String = {
     var xml : String = ""
@@ -53,7 +86,6 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
     xml += s"</Webgraph>"
     xml
   }
-
 
   override def addNode(node: Webpage) = {
     nodes = nodes + node
@@ -103,7 +135,25 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
       }
     }
     pagelist.reverse
+  }
+  def contraintBreadthFirstTraversal(node: Webpage, f: (Weblink) => Boolean, g: (Webpage) => Boolean): List[Webpage] = {
+    setUnvisited()
+    var pagelist : List[Webpage] = Nil
+    val queue : mutable.Queue[Webpage] = mutable.Queue[Webpage]()
+    queue.enqueue(node)
+    node.visited = true
 
+    while(queue.nonEmpty){
+      val tempnode = queue.dequeue()
+      pagelist = tempnode :: pagelist
+      for(child : Webpage <- tempnode.edges.filter(f).map((e) => e.endNode)){
+        if(!child.visited && g(child)){
+          queue.enqueue(child)
+          child.visited = true
+        }
+      }
+    }
+    pagelist.reverse
   }
 
   override def removeNode(node: Webpage) = {

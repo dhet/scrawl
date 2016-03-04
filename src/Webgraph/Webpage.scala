@@ -13,7 +13,6 @@ class Webpage ( val url : String,
                 sublevel : Int = 0,
                 sublabel : PageLabel = PageLabel()) extends AbstractNode[Weblink](subedges, subvisited, sublevel, sublabel) {
 
-
   def toXML() : String = {
     var xml : String = ""
     xml += s"<webpage>"

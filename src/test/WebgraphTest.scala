@@ -102,14 +102,14 @@ class WebgraphTest extends FlatSpec with Matchers{
 
   "A Webgraph" should "be coneected" in {
     //nodes (Webpages) of graph
-    var root = Webpage("root")
-    var rootsub1 = Webpage("root/sub1")
-    var rootsub2 = Webpage("root/sub2")
-    var rootsub1sub1 = Webpage("root/sub1/sub1")
-    var rootsub2sub1 = Webpage("root/sub2/sub1")
+    var root = Webpage("http://root.com")
+    var rootsub1 = Webpage("http://root.com/sub1")
+    var rootsub2 = Webpage("http://root.com/sub2")
+    var rootsub1sub1 = Webpage("http://root.com/sub1/sub1")
+    var rootsub2sub1 = Webpage("http://root.com/sub2/sub1")
 
-    var offpage1 = Webpage("offpage1")
-    var offpage2 = Webpage("offpage2")
+    var offpage1 = Webpage("http://offpage1.com")
+    var offpage2 = Webpage("http://offpage2.com")
 
     //edges (Weblinks) of graph
     var edge1 = Weblink(root, rootsub1)
@@ -139,26 +139,33 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.count() should be (7)
     webgraph.countUncrawled() should be (7)
 
-    webgraph.nextUncrawledNode().url should be ("root")
+    webgraph.nextUncrawledNode().url should be ("http://root.com")
     root.crawled = true
-    webgraph.nextUncrawledNode().url should be ("root/sub2")
+    webgraph.nextUncrawledNode().url should be ("http://root.com/sub2")
     rootsub2.crawled = true
-    webgraph.nextUncrawledNode().url should be ("root/sub1")
+    webgraph.nextUncrawledNode().url should be ("http://root.com/sub1")
     rootsub1.crawled = true
-    webgraph.nextUncrawledNode().url should be ("offpage2")
+    webgraph.nextUncrawledNode().url should be ("http://offpage2.com")
     offpage2.crawled = true
-    webgraph.nextUncrawledNode().url should be ("root/sub2/sub1")
+    webgraph.nextUncrawledNode().url should be ("http://root.com/sub2/sub1")
     rootsub2sub1.crawled = true
-    webgraph.nextUncrawledNode().url should be ("root/sub1/sub1")
+    webgraph.nextUncrawledNode().url should be ("http://root.com/sub1/sub1")
     rootsub1sub1.crawled = true
-    webgraph.nextUncrawledNode().url should be ("offpage1")
+    webgraph.nextUncrawledNode().url should be ("http://offpage1.com")
     offpage1.crawled = true
 
     webgraph.countUncrawled() should be (0)
     webgraph.count() should be (7)
 
     root.edges.map((e) => e.endNode.url) should be (List(rootsub2.url, rootsub1.url))
-    webgraph.generateSitemap() should be (List("root", "root/sub1", "root/sub2", "root/sub2/sub1", "offpage2", "root/sub1/sub1", "offpage1"))
+    webgraph.generateSitemap() should be (List("http://root.com", "http://root.com/sub1", "http://root.com/sub2", "http://root.com/sub2/sub1", "http://offpage2.com", "http://root.com/sub1/sub1", "http://offpage1.com"))
+
+    edge1.getLabelEntry("linktype") should be ("inlink")
+    edge2.getLabelEntry("linktype") should be ("inlink")
+    edge6.getLabelEntry("linktype") should be ("outlink")
+
+    //webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype") == "inlink") true else false, (webpage: Webpage) => true ).map((webpage: Webpage) => webpage.url) should be (1)
+
   }
 
 }
