@@ -58,8 +58,6 @@ object Argument {
 }
 
 
-
-
 abstract class Argument(val name : String){
   if(!isValid) throw new IllegalArgumentException
 

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="org.scalatest:scalatest_2.10:2.2.1" type="repository">
+    <properties maven-id="org.scalatest:scalatest_2.10:2.2.1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/scalatest/scalatest_2.10/2.2.1/scalatest_2.10-2.2.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-compiler/2.10.4/scala-compiler-2.10.4.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-library/2.10.4/scala-library-2.10.4.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/scala-lang/scala-reflect/2.10.4/scala-reflect-2.10.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
