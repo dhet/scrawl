@@ -7,7 +7,7 @@ import AbstractGraph.AbstractNode
   */
 class Webpage ( val url : String,
                 var content : String = "",
-                subedges :  List[Weblink] = Nil,
+                subedges :  Set[Weblink] = Set[Weblink](),
                 var crawled : Boolean = false,
                 sublabel : PageLabel = PageLabel()) extends AbstractNode[Weblink](subedges, sublabel) { //verry dirty implementation access problems here
 
@@ -54,8 +54,8 @@ class Webpage ( val url : String,
 
 object Webpage {
   def apply(url : String) : Webpage = new Webpage(url) //for root
-  def apply(url : String, content : String, edges : List[Weblink]): Webpage = new Webpage(url, content, edges)//while crawling
-  def apply(url : String, content : String, edges : List[Weblink], crawled : Boolean, label : PageLabel) : Webpage = new Webpage(url, content, edges, crawled, label)//full constructor
+  def apply(url : String, content : String, edges : Set[Weblink]): Webpage = new Webpage(url, content, edges)//while crawling
+  def apply(url : String, content : String, edges : Set[Weblink], crawled : Boolean, label : PageLabel) : Webpage = new Webpage(url, content, edges, crawled, label)//full constructor
 
 }
 

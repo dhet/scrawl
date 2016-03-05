@@ -92,7 +92,6 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
     * @return generates sitemap of the crawled page
     */
   def generateSitemap() : List[String] = {
-    setUnvisited()
     analyzeLinktypes()
     depthFirstTraversal(root).map((node: Webpage) => node.url.toString)
   }

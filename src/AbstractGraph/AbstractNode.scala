@@ -4,7 +4,7 @@ package AbstractGraph
   * Created by nicohein on 29/02/16.
   */
 abstract class AbstractNode[E](
-                                var edges : List[E] = Nil, //TODO should be a set
+                                var edges : Set[E] = Set[E](), //TODO should be a set
                                 label : Label = new Label) {
 
   var visited : Boolean = false
@@ -13,7 +13,7 @@ abstract class AbstractNode[E](
     * @param edge edge to be adde to node
     */
   def addEdge(edge: E) = {
-    edges = edge :: edges
+    edges += edge
   }
 
   /**
@@ -21,13 +21,14 @@ abstract class AbstractNode[E](
     * @param edge edge to be removed from node
     */
   def removeEdge(edge: E) = {
-    var i : Int = 1
+    edges.-=(edge)
+    /*var i : Int = 1
     for(e <- edges){
       if(edge.equals(e)){
         edges = edges.drop(i)
       }
       i += 1
-    }
+    }*/
   }
 
   /**

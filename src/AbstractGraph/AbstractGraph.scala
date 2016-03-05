@@ -109,8 +109,7 @@ abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     node.visited = true
     for(child <- node.edges.map((e) => e.endNode)){
       if(!child.visited){
-        pagelist = child :: pagelist
-        pagelist = pagelist ::: depthFirstTraversalHelper(child)
+        pagelist = pagelist ::: child :: depthFirstTraversalHelper(child)
       }
     }
     pagelist
