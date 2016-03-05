@@ -3,17 +3,17 @@ package AbstractGraph
 /**
   * Created by nicohein on 29/02/16.
   */
-abstract class AbstractNode[E](
-                                var edges : List[E] = Nil, //TODO should be a set
-                                label : Label = new Label) {
+abstract class AbstractNode[E](val label : Label = Label()) {
 
+  var edges : Set[E] = Set[E]() //set as field since this is only internal structure like double linked list
   var visited : Boolean = false
+
   /**
     *
     * @param edge edge to be adde to node
     */
   def addEdge(edge: E) = {
-    edges = edge :: edges
+    edges = edges.+(edge)
   }
 
   /**
@@ -21,13 +21,7 @@ abstract class AbstractNode[E](
     * @param edge edge to be removed from node
     */
   def removeEdge(edge: E) = {
-    var i : Int = 1
-    for(e <- edges){
-      if(edge.equals(e)){
-        edges = edges.drop(i)
-      }
-      i += 1
-    }
+    edges = edges.-(edge)
   }
 
   /**

@@ -13,33 +13,33 @@ import scala.collection.mutable
 class WebgraphTest extends FlatSpec with Matchers{
 
   "A Label" should "be a mutable ListMap" in {
-    val labellistmap : mutable.ListMap[String, Any] = Label()
+    val labellistmap : mutable.ListMap[String, Any] = Label
     val linklabellistmap : mutable.ListMap[String, Any] = LinkLabel()
     val pagelabellistmap : mutable.ListMap[String, Any] = PageLabel()
 
-    labellistmap should be (Label())
+    labellistmap should be (Label)
     linklabellistmap should be (LinkLabel())
     pagelabellistmap should be (PageLabel())
   }
 
   "A Label" should "provide xml" in {
-    val labellistmap : Label = Label()
-    val linklabellistmap : Label = LinkLabel()
-    val pagelabellistmap : Label = PageLabel()
 
-    labellistmap.+=(("Key", "Value"))
+    val linklabellistmap : LinkLabel = LinkLabel()
+    val pagelabellistmap : PageLabel = PageLabel()
+
+
     linklabellistmap.+=(("Key", "Value"))
     pagelabellistmap.+=(("Key2", "Value"))
     Thread sleep 10
     pagelabellistmap.+=(("Key1", "Value"))
 
-    labellistmap.toXML() should be ("<label><key>Key</key><value>Value</value></label>")
+
     linklabellistmap.toXML() should be ("<linklabel><key>Key</key><value>Value</value></linklabel>")
     pagelabellistmap.toXML() should be ("<pagelabel><key>Key1</key><value>Value</value><key>Key2</key><value>Value</value></pagelabel>")
   }
 
   "A Label" should "provide a List of Values" in {
-    val labellistmap : Label = Label()
+    val labellistmap : Label = Label
 
     labellistmap.+=(("Key2", "Value2"))
     Thread sleep 10
@@ -141,28 +141,29 @@ class WebgraphTest extends FlatSpec with Matchers{
 
     webgraph.nextUncrawledNode().url should be ("http://root.com")
     root.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://root.com/sub2")
-    rootsub2.crawled = true
     webgraph.nextUncrawledNode().url should be ("http://root.com/sub1")
     rootsub1.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://offpage2.com")
-    offpage2.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://root.com/sub2/sub1")
-    rootsub2sub1.crawled = true
+    webgraph.nextUncrawledNode().url should be ("http://root.com/sub2")
+    rootsub2.crawled = true
     webgraph.nextUncrawledNode().url should be ("http://root.com/sub1/sub1")
     rootsub1sub1.crawled = true
+    webgraph.nextUncrawledNode().url should be ("http://root.com/sub2/sub1")
+    rootsub2sub1.crawled = true
+    webgraph.nextUncrawledNode().url should be ("http://offpage2.com")
+    offpage2.crawled = true
     webgraph.nextUncrawledNode().url should be ("http://offpage1.com")
     offpage1.crawled = true
+
 
     webgraph.countUncrawledNodes() should be (0)
     webgraph.countNodes() should be (7)
 
-    root.edges.map((e) => e.endNode.url) should be (List(rootsub2.url, rootsub1.url))
+    root.edges.map((e) => e.endNode.url) should be (Set(rootsub1.url, rootsub2.url))
     webgraph.generateSitemap() should be (List("http://root.com", "http://root.com/sub1", "http://root.com/sub2", "http://root.com/sub2/sub1", "http://offpage2.com", "http://root.com/sub1/sub1", "http://offpage1.com"))
 
-    edge1.getLabelEntry("linktype") should be ("inlink")
-    edge2.getLabelEntry("linktype") should be ("inlink")
-    edge6.getLabelEntry("linktype") should be ("outlink")
+    edge1.getLabelEntry("linktype").asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub1)")
+    edge2.getLabelEntry("linktype").asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub2)")
+    edge6.getLabelEntry("linktype").asInstanceOf[Outlink].toString should be ("Outlink(http://offpage1.com)")
 
     //webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype") == "inlink") true else false, (webpage: Webpage) => true ).map((webpage: Webpage) => webpage.url) should be (1)
 

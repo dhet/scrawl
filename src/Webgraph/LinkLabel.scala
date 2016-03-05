@@ -6,18 +6,12 @@ import AbstractGraph.Label
   * Created by nicohein on 01/03/16.
   */
 class LinkLabel extends Label{
-  /**
-    * The value list contails results of analysis including
-    * Hyperlink hierachie
-    * Betweeness
-    * InLink / OffLing - Link to other domain or same domain
-    */
 
   /**
     *
     * @return string containing xml description of the label
     */
-  override def toXML() : String = {
+  def toXML() : String = {
     var xml : String = ""
     if(this.nonEmpty) {
       xml += s"<linklabel>"
@@ -29,6 +23,7 @@ class LinkLabel extends Label{
     }
     xml
   }
+
 }
 
 object LinkLabel {

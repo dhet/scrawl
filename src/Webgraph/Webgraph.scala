@@ -2,13 +2,13 @@ package Webgraph
 
 import java.net.URI
 
-import AbstractGraph.AbstractGraph
+import AbstractGraph.Graph
 
 
 /**
   * Created by nicohein on 29/02/16.
   */
-class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
+class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
 
   /**
     *
@@ -63,8 +63,13 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
     * analyzes the linktypes (page internal, offpage, mail etc)
     */
   def analyzeLinktypes() = {
-    analyzeEdges("linktype", (weblink: Weblink) => if(new URI(weblink.startNode.url).getHost == new URI(weblink.endNode.url).getHost) "inlink" else "outlink")
+    analyzeEdges("linktype", (weblink: Weblink) =>
+      if(new URI(weblink.startNode.url).getHost == new URI(weblink.endNode.url).getHost)
+        new Inlink(new URI(weblink.endNode.url))
+      else
+        new Outlink(new URI(weblink.endNode.url)))
   }
+
   /**
     *
     * @param labelkey The key referencing the results in labels
@@ -92,7 +97,6 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
     * @return generates sitemap of the crawled page
     */
   def generateSitemap() : List[String] = {
-    setUnvisited()
     analyzeLinktypes()
     depthFirstTraversal(root).map((node: Webpage) => node.url.toString)
   }

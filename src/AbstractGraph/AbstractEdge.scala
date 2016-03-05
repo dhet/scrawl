@@ -5,9 +5,9 @@ package AbstractGraph
   * Created by nicohein on 29/02/16.
   */
 abstract class AbstractEdge[N](
-                     val startNode : N,
-                     val endNode : N,
-                     label : Label = new Label) {
+                                val startNode : N,
+                                val endNode : N,
+                                val label : Label = Label()) {
 
 
   /**
