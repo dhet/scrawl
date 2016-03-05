@@ -13,18 +13,22 @@ class LinkLabel extends Label{
     * InLink / OffLing - Link to other domain or same domain
     */
 
+  /**
+    *
+    * @return string containing xml description of the label
+    */
   override def toXML() : String = {
     var xml : String = ""
-    xml += s"<linklabel>"
-    for((key, value) <- this){
-      xml += s"<key>${key.toString}</key>"
-      xml += s"<value>${value.toString}</value>"
+    if(this.nonEmpty) {
+      xml += s"<linklabel>"
+      for ((key, value) <- this) {
+        xml += s"<key>${key.toString}</key>"
+        xml += s"<value>${value.toString}</value>"
+      }
+      xml += s"</linklabel>"
     }
-    xml += s"</linklabel>"
     xml
   }
-
-
 }
 
 object LinkLabel {
