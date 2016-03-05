@@ -1,10 +1,10 @@
-package main
+package crawling
 
 import java.net.URL
 
 import akka.actor.{Props, Actor, ActorSystem}
 import com.typesafe.config.ConfigFactory
-import main.Messages.{CrawlSubPage, CrawlPage}
+import crawling.Messages.{CrawlSubPage, CrawlPage}
 
 import scala.collection.immutable.HashSet
 
