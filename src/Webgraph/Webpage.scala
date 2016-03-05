@@ -9,10 +9,12 @@ class Webpage ( val url : String,
                 var content : String = "",
                 subedges :  List[Weblink] = Nil,
                 var crawled : Boolean = false,
-                subvisited : Boolean = false,
-                sublevel : Int = 0,
-                sublabel : PageLabel = PageLabel()) extends AbstractNode[Weblink](subedges, subvisited, sublevel, sublabel) {
+                sublabel : PageLabel = PageLabel()) extends AbstractNode[Weblink](subedges, sublabel) { //verry dirty implementation access problems here
 
+  /**
+    *
+    * @return tring containing xml description of the Webpage
+    */
   def toXML() : String = {
     var xml : String = ""
     xml += s"<webpage>"
@@ -25,11 +27,15 @@ class Webpage ( val url : String,
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
     xml += s"<visited>$visited</visited>"
-    xml += s"<level>$level</level>"
-    xml += label.toXML()
+    xml += sublabel.toXML()
     xml += s"</webpage>"
     xml
   }
+
+  /**
+    *
+    * @return tring containing shorten xml description of the label
+    */
   def toSmallXML() : String = {
     var xml: String = ""
     xml += s"<webpage>"
@@ -40,8 +46,7 @@ class Webpage ( val url : String,
     }
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
-    xml += s"<level>$level</level>"
-    xml += label.toXML()
+    xml += sublabel.toXML()
     xml += s"</webpage>"
     xml
   }
@@ -50,7 +55,7 @@ class Webpage ( val url : String,
 object Webpage {
   def apply(url : String) : Webpage = new Webpage(url) //for root
   def apply(url : String, content : String, edges : List[Weblink]): Webpage = new Webpage(url, content, edges)//while crawling
-  def apply(url : String, content : String, edges : List[Weblink], crawled : Boolean, visited : Boolean, level : Int, label : PageLabel) : Webpage = new Webpage(url, content, edges, crawled, visited, level, label)//full constructor
+  def apply(url : String, content : String, edges : List[Weblink], crawled : Boolean, label : PageLabel) : Webpage = new Webpage(url, content, edges, crawled, label)//full constructor
 
 }
 

@@ -4,26 +4,25 @@ import java.net.URI
 
 import AbstractGraph.AbstractGraph
 
-import scala.collection.mutable
-
 
 /**
   * Created by nicohein on 29/02/16.
   */
 class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
 
+  /**
+    *
+    * @param weblink weblink that should be added to the graph
+    */
   def addWeblink(weblink : Weblink) = {
     addEdge(weblink)
   }
 
-  def count() : Int = {
-    var count : Int  = 0
-    for(node <- nodes){
-      count += 1
-    }
-    count
-  }
-  def countUncrawled() : Int = {
+  /**
+    *
+    * @return number of nodes not crawled yet
+    */
+  def countUncrawledNodes() : Int = {
     var count : Int  = 0
     for(node <- nodes){
       if(!node.crawled)
@@ -32,17 +31,24 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
     count
   }
 
-
+  /**
+    *
+    * @return returns the next uncraled webpage found during a breadth first search
+    */
   def nextUncrawledNode() : Webpage = {
-    nextPageContraintBreadthFirst((node) => !node.crawled)
+    nextPageConstraintBreadthFirst((node : Webpage) => !node.crawled)
   }
-  def nextPageContraintBreadthFirst(f :(Webpage) => Boolean) : Webpage = {
+
+  //TODO inefficient (implement next neighbor search in graph)
+  def nextPageConstraintBreadthFirst(f :(Webpage) => Boolean) : Webpage = {
     for(node <- breadthFirstTraversal(root)){
       if(f(node))
         return node
     }
-    new Webpage("") //implement this wit future
+    new Webpage("") //implement this width case clases or Future
   }
+
+  //TODO inefficient
   def nextPageContraintDepththFirst(f :(Webpage) => Boolean) : Webpage = {
     for(node <- depthFirstTraversal(root)){
       if(f(node))
@@ -52,31 +58,50 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
   }
 
 
+  //TODO rewrite
+  /**
+    * analyzes the linktypes (page internal, offpage, mail etc)
+    */
+  def analyzeLinktypes() = {
+    analyzeEdges("linktype", (weblink: Weblink) => if(new URI(weblink.startNode.url).getHost == new URI(weblink.endNode.url).getHost) "inlink" else "outlink")
+  }
+  /**
+    *
+    * @param labelkey The key referencing the results in labels
+    * @param f f : (E) => Any function on edge analyzing it
+    */
+  @deprecated("Use analyzeEdges instead")
+  def analyzeWeblinks(labelkey: String, f: (Weblink) => Any): Webgraph = {
+    analyzeEdges(labelkey, f)
+    this
+  }
+
+  /**
+    *
+    * @param labelkey  The key referencing the results in labels
+    * @param f f : (N) => Any function on node analyzing it
+    */
+  @deprecated("Use analyzeNodes instead")
+  def analyzeWebpages(labelkey: String, f: (Webpage) => Any): Webgraph = {
+    analyzeNodes(labelkey, f)
+    this
+  }
+
+  /**
+    *
+    * @return generates sitemap of the crawled page
+    */
   def generateSitemap() : List[String] = {
     setUnvisited()
     analyzeLinktypes()
     depthFirstTraversal(root).map((node: Webpage) => node.url.toString)
   }
 
-
-
-  def analyzeLinktypes() = {
-    analyzeWeblinks("linktype", (weblink: Weblink) => if(new URI(weblink.startNode.url).getHost == new URI(weblink.endNode.url).getHost) "inlink" else "outlink")
-  }
-
-
-  def analyzeWeblinks(labelkey : String, f:(Weblink) => Any) ={
-    for(edge <- edges){
-      edge.updateLabelEntry(labelkey, f(edge))
-    }
-  }
-  def analyzeWebpages(labelkey : String, f:(Webpage) => Any) = {
-    for(node <- nodes){
-     node.updateLabelEntry(labelkey, f(node))
-    }
-  }
-
-
+  //TODO should this method return the xml version of the graph or the crawled page? See generate Sitemap
+  /**
+    *
+    * @return string containing xml description of the webgraph
+    */
   def toXML() : String = {
     var xml : String = ""
     xml += s"<Webgraph>"
@@ -87,100 +112,6 @@ class Webgraph(root : Webpage) extends AbstractGraph[Webpage, Weblink] {
     xml
   }
 
-  override def addNode(node: Webpage) = {
-    nodes = nodes + node
-  }
-
-  override def addEdge(edge: Weblink) = {
-    edges = edges + edge
-    //add edges to nodes
-    edge.startNode.addEdge(edge)
-    edge.endNode.addEdge(edge)
-    //add nodes of edge if not already existing
-    addNode(edge.startNode)
-    addNode(edge.endNode)
-  }
-
-  override def depthFirstTraversal(node: Webpage): List[Webpage] = {
-    setUnvisited()
-    node :: depthFirstTraversalHelper(node)
-  }
-  private def depthFirstTraversalHelper(node: Webpage): List[Webpage] = {
-    var pagelist : List[Webpage] = Nil
-    node.visited = true
-    for(child : Webpage <- node.edges.map((e) => e.endNode)){
-      if(!child.visited){
-        pagelist = child :: pagelist
-        pagelist = pagelist ::: depthFirstTraversalHelper(child)
-      }
-    }
-    pagelist
-  }
-
-  override def breadthFirstTraversal(node: Webpage): List[Webpage] = {
-    setUnvisited()
-    var pagelist : List[Webpage] = Nil
-    val queue : mutable.Queue[Webpage] = mutable.Queue[Webpage]()
-    queue.enqueue(node)
-    node.visited = true
-
-    while(queue.nonEmpty){
-      val tempnode = queue.dequeue()
-      pagelist = tempnode :: pagelist
-      for(child : Webpage <- tempnode.edges.map((e) => e.endNode)){
-        if(!child.visited){
-          queue.enqueue(child)
-          child.visited = true
-        }
-      }
-    }
-    pagelist.reverse
-  }
-  def contraintBreadthFirstTraversal(node: Webpage, f: (Weblink) => Boolean, g: (Webpage) => Boolean): List[Webpage] = {
-    setUnvisited()
-    var pagelist : List[Webpage] = Nil
-    val queue : mutable.Queue[Webpage] = mutable.Queue[Webpage]()
-    queue.enqueue(node)
-    node.visited = true
-
-    while(queue.nonEmpty){
-      val tempnode = queue.dequeue()
-      pagelist = tempnode :: pagelist
-      for(child : Webpage <- tempnode.edges.filter(f).map((e) => e.endNode)){
-        if(!child.visited && g(child)){
-          queue.enqueue(child)
-          child.visited = true
-        }
-      }
-    }
-    pagelist.reverse
-  }
-
-  override def removeNode(node: Webpage) = {
-    //remove all edges of node, then remove node
-    for(edge : Weblink <- node.edges){
-      removeEdge(edge)
-    }
-    nodes = nodes - node
-  }
-
-  override def removeEdge(edge: Weblink) = {
-    //it is not necessary to remove the edges from all nodes
-    edge.startNode.removeEdge(edge)
-    edge.endNode.removeEdge(edge)
-    if(edge.startNode.edges.isEmpty)
-      removeNode(edge.startNode)
-    if(edge.endNode.edges.isEmpty)
-      removeNode(edge.endNode)
-    //now remove edge from graph
-    edges = edges - edge
-  }
-
-  private def setUnvisited(): Unit = {
-    for(node <- nodes){
-      node.visited = false
-    }
-  }
 }
 
 

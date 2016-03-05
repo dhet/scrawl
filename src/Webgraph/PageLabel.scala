@@ -5,22 +5,25 @@ import AbstractGraph.Label
 
 /**
   * Created by nicohein on 01/03/16.
+  * The value list contains results of analysis including
+  * Flesh-Kincaid Index
   */
 class PageLabel extends Label{
-  /**
-    * The value list contains results of analysis including
-    * Flesh-Kincaid Index
-    *
-    */
 
+  /**
+    *
+    * @return string containing xml description of the label
+    */
   override def toXML() : String = {
     var xml : String = ""
-    xml += s"<pagelabel>"
-    for((key, value) <- this){
-      xml += s"<key>${key.toString}</key>"
-      xml += s"<value>${value.toString}</value>"
+    if(this.nonEmpty) {
+      xml += s"<pagelabel>"
+      for ((key, value) <- this) {
+        xml += s"<key>${key.toString}</key>"
+        xml += s"<value>${value.toString}</value>"
+      }
+      xml += s"</pagelabel>"
     }
-    xml += s"</pagelabel>"
     xml
   }
 }

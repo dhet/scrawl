@@ -58,10 +58,10 @@ class WebgraphTest extends FlatSpec with Matchers{
     webpage.updateLabelEntry("key", "updated")
     webpage.getLabelEntry("key") should be ("updated")
 
-    webpage.toXML() should be ("<webpage><url>url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited><level>0</level><pagelabel><key>key</key><value>updated</value></pagelabel></webpage>")
+    webpage.toXML() should be ("<webpage><url>url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited><pagelabel><key>key</key><value>updated</value></pagelabel></webpage>")
 
     webpage.removeLabelEntry("key")
-    webpage.toXML() should be ("<webpage><url>url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited><level>0</level><pagelabel></pagelabel></webpage>")
+    webpage.toXML() should be ("<webpage><url>url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited></webpage>")
 
   }
   "A Weblink" should "provide labeling options" in {
@@ -78,7 +78,7 @@ class WebgraphTest extends FlatSpec with Matchers{
     weblink.toXML() should be ("<weblink><startnode>url1</startnode><endnode>url2</ednode><linklabel><key>key</key><value>updated</value></linklabel></weblink>")
 
     weblink.removeLabelEntry("key")
-    weblink.toXML() should be ("<weblink><startnode>url1</startnode><endnode>url2</ednode><linklabel></linklabel></weblink>")
+    weblink.toXML() should be ("<weblink><startnode>url1</startnode><endnode>url2</ednode></weblink>")
 
   }
 
@@ -86,21 +86,21 @@ class WebgraphTest extends FlatSpec with Matchers{
     var webpage1 = Webpage("url1")
     var webpage2 = Webpage("url2")
     var weblink = Weblink(webpage1, webpage2)
-    weblink.toXML() should be ("<weblink><startnode>url1</startnode><endnode>url2</ednode><linklabel></linklabel></weblink>")
+    weblink.toXML() should be ("<weblink><startnode>url1</startnode><endnode>url2</ednode></weblink>")
 
     webpage1.addEdge(weblink)
     webpage2.addEdge(weblink)
-    webpage1.toXML() should be ("<webpage><url>url1</url><content></content><edges><weblink><startnode>url1</startnode><endnode>url2</ednode><linklabel></linklabel></weblink></edges><crawled>false</crawled><visited>false</visited><level>0</level><pagelabel></pagelabel></webpage>")
-    webpage2.toXML() should be ("<webpage><url>url2</url><content></content><edges><weblink><startnode>url1</startnode><endnode>url2</ednode><linklabel></linklabel></weblink></edges><crawled>false</crawled><visited>false</visited><level>0</level><pagelabel></pagelabel></webpage>")
+    webpage1.toXML() should be ("<webpage><url>url1</url><content></content><edges><weblink><startnode>url1</startnode><endnode>url2</ednode></weblink></edges><crawled>false</crawled><visited>false</visited></webpage>")
+    webpage2.toXML() should be ("<webpage><url>url2</url><content></content><edges><weblink><startnode>url1</startnode><endnode>url2</ednode></weblink></edges><crawled>false</crawled><visited>false</visited></webpage>")
 
     webpage1.removeEdge(weblink)
-    webpage1.toXML() should be ("<webpage><url>url1</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited><level>0</level><pagelabel></pagelabel></webpage>")
+    webpage1.toXML() should be ("<webpage><url>url1</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited></webpage>")
 
   }
 
 
 
-  "A Webgraph" should "be coneected" in {
+  "A Webgraph" should "be conected" in {
     //nodes (Webpages) of graph
     var root = Webpage("http://root.com")
     var rootsub1 = Webpage("http://root.com/sub1")
@@ -136,8 +136,8 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.addWeblink(edge8)
     webgraph.addWeblink(edge9)
 
-    webgraph.count() should be (7)
-    webgraph.countUncrawled() should be (7)
+    webgraph.countNodes() should be (7)
+    webgraph.countUncrawledNodes() should be (7)
 
     webgraph.nextUncrawledNode().url should be ("http://root.com")
     root.crawled = true
@@ -154,8 +154,8 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.nextUncrawledNode().url should be ("http://offpage1.com")
     offpage1.crawled = true
 
-    webgraph.countUncrawled() should be (0)
-    webgraph.count() should be (7)
+    webgraph.countUncrawledNodes() should be (0)
+    webgraph.countNodes() should be (7)
 
     root.edges.map((e) => e.endNode.url) should be (List(rootsub2.url, rootsub1.url))
     webgraph.generateSitemap() should be (List("http://root.com", "http://root.com/sub1", "http://root.com/sub2", "http://root.com/sub2/sub1", "http://offpage2.com", "http://root.com/sub1/sub1", "http://offpage1.com"))
