@@ -6,8 +6,8 @@ import scala.collection.mutable
   * Created by nicohein on 29/02/16.
   */
 trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
-  protected var nodes: Set[N] = Set[N]()
-  protected var edges: Set[E] = Set[E]()
+  var nodes: Set[N] = Set[N]()//TODO do it with val
+  var edges: Set[E] = Set[E]()//TODO do it with val
 
   /**
     *
@@ -99,7 +99,7 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     * @param node depth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
-  protected def depthFirstTraversal(node : N ) : List[N] = {
+  def depthFirstTraversal(node : N ) : List[N] = {
     setUnvisited()
     node :: depthFirstTraversalHelper(node)
   }
@@ -107,7 +107,7 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
   private def depthFirstTraversalHelper(node: N): List[N] = {
     var pagelist : List[N] = Nil
     node.visited = true
-    for(child <- node.edges.map((e) => e.endNode)){
+    for(child <- node.edges.toList.map((e) => e.endNode)){
       if(!child.visited){
         pagelist = pagelist ::: child :: depthFirstTraversalHelper(child)
       }
@@ -120,24 +120,8 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     * @param node breadth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
-  protected def breadthFirstTraversal(node : N ) : List[N] = {
-    setUnvisited()
-    var pagelist : List[N] = Nil
-    val queue : mutable.Queue[N] = mutable.Queue[N]()
-    queue.enqueue(node)
-    node.visited = true
-
-    while(queue.nonEmpty){
-      val tempnode = queue.dequeue()
-      pagelist = tempnode :: pagelist
-      for(child <- tempnode.edges.map((e) => e.endNode)){
-        if(!child.visited){
-          queue.enqueue(child)
-          child.visited = true
-        }
-      }
-    }
-    pagelist.reverse
+  def breadthFirstTraversal(node : N ) : List[N] = {
+    contraintBreadthFirstTraversal(node, (Edge) => true, (Node) =>true)
   }
 
   /**
@@ -157,7 +141,7 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     while(queue.nonEmpty){
       val tempnode = queue.dequeue()
       pagelist = tempnode :: pagelist
-      for(child <- tempnode.edges.filter(f).map((e) => e.endNode)){
+      for(child <- tempnode.edges.toList.filter(f).map((e) => e.endNode)){
         if(!child.visited && g(child)){
           queue.enqueue(child)
           child.visited = true
@@ -193,6 +177,7 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     *
     * @param labelkey  The key referencing the results in labels
     * @param f f : (N) => Any function on node analyzing it
+    * @return this
     */
   def analyzeNodes(labelkey : String, f:(N) => Any) : Graph[N, E] = {
     for(node <- nodes){
@@ -200,4 +185,36 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     }
     this
   }
+
+  /**
+    *
+    * @param node node where dijkstra starts
+    * @return this
+    */
+  def dijkstra(node : N) : Graph[N, E] = {
+    constraintDijkstra(node, (e) => true, (n) => true)
+  }
+  def constraintDijkstra(node : N, f: (E) => Boolean, g: (N) => Boolean ): Graph[N, E] = {
+    val MaxInt = 32767
+    var tempnodes = nodes.toList.filter(g)
+    //for each node set distance to infinity
+    analyzeNodes("dijkstra", (n : N) => MaxInt)
+
+    node.updateLabelEntry("dijkstra", 0)
+    var tempnode : N = node
+
+    while(tempnodes.nonEmpty){
+      //select node with smallest distance from source
+      tempnodes = tempnodes.sortWith((node1, node2) => node1.getLabelEntry("dijkstra").asInstanceOf[Int] < node2.getLabelEntry("dijkstra").asInstanceOf[Int])
+      tempnode = tempnodes.head
+      tempnodes = tempnodes.tail
+      for(n <- tempnode.edges.toList.filter(f).map((e) => e.endNode)){
+        if( n.getLabelEntry("dijkstra").asInstanceOf[Int] > tempnode.getLabelEntry("dijkstra").asInstanceOf[Int]+1 ){
+          n.updateLabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").asInstanceOf[Int]+1)
+        }
+      }
+    }
+    this
+  }
+
 }

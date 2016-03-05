@@ -45,7 +45,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
       if(f(node))
         return node
     }
-    new Webpage("") //implement this width case clases or Future
+    new Webpage("") //TODO implement this width case clases or Future/option
   }
 
   //TODO inefficient
@@ -54,11 +54,11 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
       if(f(node))
         return node
     }
-    new Webpage("") //implement this wit future
+    new Webpage("") //TODO implement this wit future/option
   }
 
+  //TODO analyze Node-level (shortest path through graph)
 
-  //TODO rewrite
   /**
     * analyzes the linktypes (page internal, offpage, mail etc)
     */
