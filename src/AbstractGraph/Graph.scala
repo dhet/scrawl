@@ -5,7 +5,7 @@ import scala.collection.mutable
 /**
   * Created by nicohein on 29/02/16.
   */
-abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
+trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
   protected var nodes: Set[N] = Set[N]()
   protected var edges: Set[E] = Set[E]()
 
@@ -38,7 +38,7 @@ abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     *
     * @param node node to be added to the graph
     */
-  protected def addNode(node : N) : AbstractGraph[N, E] = {
+  protected def addNode(node : N) : Graph[N, E] = {
     nodes = nodes + node
     for(edge <- node.edges){  //not really beatuiful
       if(!edges.contains(edge))
@@ -51,7 +51,7 @@ abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     *
     * @param edge edge to be added to the graph
     */
-  protected def addEdge(edge : E) : AbstractGraph[N, E] = {
+  protected def addEdge(edge : E) : Graph[N, E] = {
     edges = edges + edge
     //add edges to nodes
     edge.startNode.addEdge(edge)
@@ -68,7 +68,7 @@ abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     *
     * @param node node to be removed frpm graph
     */
-  protected def removeNode(node : N) : AbstractGraph[N, E] = {
+  protected def removeNode(node : N) : Graph[N, E] = {
     //remove all edges of node, then remove node
     for(edge <- node.edges){
       removeEdge(edge)
@@ -81,7 +81,7 @@ abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     *
     * @param edge edge to be removed from graph
     */
-  protected def removeEdge(edge : E) : AbstractGraph[N, E] = {
+  protected def removeEdge(edge : E) : Graph[N, E] = {
     //it is not necessary to remove the edges from all nodes
     edge.startNode.removeEdge(edge)
     edge.endNode.removeEdge(edge)
@@ -170,7 +170,7 @@ abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
   /**
     * is called before an breadth or depth first traversal
     */
-  protected def setUnvisited() : AbstractGraph[N, E] = {
+  protected def setUnvisited() : Graph[N, E] = {
     for(node <- nodes){
       node.visited = false
     }
@@ -182,7 +182,7 @@ abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     * @param labelkey The key referencing the results in labels
     * @param f f : (E) => Any function on edge analyzing it
     */
-  def analyzeEdges(labelkey : String, f:(E) => Any) : AbstractGraph[N, E] ={
+  def analyzeEdges(labelkey : String, f:(E) => Any) : Graph[N, E] ={
     for(edge <- edges){
       edge.updateLabelEntry(labelkey, f(edge))
     }
@@ -194,7 +194,7 @@ abstract class AbstractGraph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     * @param labelkey  The key referencing the results in labels
     * @param f f : (N) => Any function on node analyzing it
     */
-  def analyzeNodes(labelkey : String, f:(N) => Any) : AbstractGraph[N, E] = {
+  def analyzeNodes(labelkey : String, f:(N) => Any) : Graph[N, E] = {
     for(node <- nodes){
       node.updateLabelEntry(labelkey, f(node))
     }

@@ -7,9 +7,9 @@ import AbstractGraph.AbstractNode
   */
 class Webpage ( val url : String,
                 var content : String = "",
-                subedges :  Set[Weblink] = Set[Weblink](),
                 var crawled : Boolean = false,
-                sublabel : PageLabel = PageLabel()) extends AbstractNode[Weblink](subedges, sublabel) { //verry dirty implementation access problems here
+                override val label : PageLabel = PageLabel()) extends AbstractNode[Weblink]() {
+
 
   /**
     *
@@ -27,7 +27,7 @@ class Webpage ( val url : String,
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
     xml += s"<visited>$visited</visited>"
-    xml += sublabel.toXML()
+    xml += label.toXML
     xml += s"</webpage>"
     xml
   }
@@ -37,25 +37,42 @@ class Webpage ( val url : String,
     * @return tring containing shorten xml description of the label
     */
   def toSmallXML() : String = {
-    var xml: String = ""
+    var xml = ""
     xml += s"<webpage>"
     xml += s"<url>$url</url>"
     xml += s"<edges>"
     for (edge <- edges) {
-      xml += edge.toXML()
+      xml += edge.toXML
     }
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
-    xml += sublabel.toXML()
+    xml += label.toXML()
     xml += s"</webpage>"
     xml
   }
 }
 
 object Webpage {
+
   def apply(url : String) : Webpage = new Webpage(url) //for root
-  def apply(url : String, content : String, edges : Set[Weblink]): Webpage = new Webpage(url, content, edges)//while crawling
-  def apply(url : String, content : String, edges : Set[Weblink], crawled : Boolean, label : PageLabel) : Webpage = new Webpage(url, content, edges, crawled, label)//full constructor
+
+  def apply(url : String, content : String ) : Webpage = new Webpage(url, content)//while crawling
+
+  def apply(url : String, content : String , edges : List[Weblink]) : Webpage = {
+    var webpage = new Webpage(url, content)
+    for(e<-edges){
+      webpage.addEdge(e)
+    }
+    webpage
+  }
+
+  def apply(url : String, content : String, edges : List[Weblink], crawled : Boolean, label : PageLabel) : Webpage = {
+    var webpage = new Webpage(url, content, crawled, label)
+    for(e<-edges){
+      webpage.addEdge(e)
+    }
+    webpage
+  }
 
 }
 

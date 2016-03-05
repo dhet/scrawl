@@ -14,7 +14,7 @@ class PageLabel extends Label{
     *
     * @return string containing xml description of the label
     */
-  override def toXML() : String = {
+  def toXML() : String = {
     var xml : String = ""
     if(this.nonEmpty) {
       xml += s"<pagelabel>"

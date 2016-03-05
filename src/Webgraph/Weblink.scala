@@ -5,9 +5,9 @@ import AbstractGraph.AbstractEdge
 /**
   * Created by nicohein on 29/02/16.
   */
-class Weblink ( substartNode : Webpage,
-                subendNode : Webpage,
-                sublabel : LinkLabel = LinkLabel()) extends AbstractEdge[Webpage](substartNode, subendNode, sublabel){
+class Weblink ( override val startNode : Webpage,
+                override val endNode : Webpage,
+                override val label : LinkLabel = LinkLabel()) extends AbstractEdge[Webpage](startNode, endNode, label){
 
   /**
     *
@@ -18,7 +18,7 @@ class Weblink ( substartNode : Webpage,
     xml += s"<weblink>"
     xml += s"<startnode>${startNode.url}</startnode>"
     xml += s"<endnode>${endNode.url}</ednode>"
-    xml += sublabel.toXML()
+    xml += label.toXML()
     xml += s"</weblink>"
     xml
   }
