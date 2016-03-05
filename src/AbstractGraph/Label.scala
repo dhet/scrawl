@@ -2,29 +2,28 @@ package AbstractGraph
 
 import scala.collection.mutable
 
+
 /**
   * Created by nicohein on 02/03/16.
   */
-class Label extends mutable.ListMap[String, Any] {
+class Label extends mutable.ListMap[String, Any]
 
-  /**
-    *
-    * @return string containing xml description of the label
-    */
-  def toXML() : String = {
-    var xml : String = ""
-      if(this.nonEmpty){
-      xml += s"<label>"
-      for((key, value) <- this){
-        xml += s"<key>${key.toString}</key>"
-        xml += s"<value>${value.toString}</value>"
-      }
-      xml += s"</label>"
-    }
-    xml
+object Label extends Label{
+  def apply()  = new Label()
+
+  implicit def Label2ListMap(label : Label) : mutable.ListMap[String, Any] = {
+    var listmap : mutable.ListMap[String, Any] = new mutable.ListMap[String, Any]
+    for(elem <- label){
+      listmap += elem
   }
-}
+  listmap
+ }
 
-object Label {
-  def apply() = new Label
+ implicit def ListMap2Label(listmap : mutable.ListMap[String, Any]) : Label = {
+   var label : Label = new Label
+   for(elem <- listmap){
+     label += elem
+   }
+   listmap
+ }
 }
