@@ -7,14 +7,20 @@ import scala.collection.mutable
   */
 class Label extends mutable.ListMap[String, Any] {
 
+  /**
+    *
+    * @return string containing xml description of the label
+    */
   def toXML() : String = {
     var xml : String = ""
-    xml += s"<label>"
-    for((key, value) <- this){
-      xml += s"<key>${key.toString}</key>"
-      xml += s"<value>${value.toString}</value>"
+      if(this.nonEmpty){
+      xml += s"<label>"
+      for((key, value) <- this){
+        xml += s"<key>${key.toString}</key>"
+        xml += s"<value>${value.toString}</value>"
+      }
+      xml += s"</label>"
     }
-    xml += s"</label>"
     xml
   }
 }

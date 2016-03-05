@@ -9,12 +9,16 @@ class Weblink ( substartNode : Webpage,
                 subendNode : Webpage,
                 sublabel : LinkLabel = LinkLabel()) extends AbstractEdge[Webpage](substartNode, subendNode, sublabel){
 
+  /**
+    *
+    * @return tring containing xml description of the Weblink
+    */
   def toXML(): String = {
     var xml : String = ""
     xml += s"<weblink>"
     xml += s"<startnode>${startNode.url}</startnode>"
     xml += s"<endnode>${endNode.url}</ednode>"
-    xml += label.toXML()
+    xml += sublabel.toXML()
     xml += s"</weblink>"
     xml
   }
