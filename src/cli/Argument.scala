@@ -9,7 +9,7 @@ object Argument {
       synonyms = List[String] ("l", "d", "depth")
       helpText = "Determines how many levels to crawl. Expects one argument of type Integer."
       override def action = {
-        CrawlPrefs.maxDepth = parameters(0).toString.toInt
+        CrawlPrefs.maxDepth = parameter.toString.toInt
       }
     }
 
@@ -22,6 +22,14 @@ object Argument {
         println(s"-${arg.name} (${arg.synonyms.map(a => s"-$a").mkString(", ")})")
         println(s"\t${arg.helpText}")
       }
+    }
+  }
+
+  supportedArgs += new ParamArgument("threads") {
+    synonyms = List[String]("t")
+    helpText = "Specifies ow many threads to use for crawling. Expects one argument of type Integer."
+    override def action = {
+      CrawlPrefs.threads = parameter.toString.toInt
     }
   }
 
@@ -50,7 +58,6 @@ object Argument {
       new Value(arg)
     }
   }
-
 }
 
 
@@ -73,14 +80,15 @@ case class Flag(override val name : String) extends Argument(name){
 }
 
 case class Value(override val name : String) extends Argument(name){
-  override val toString = s"[$name]"
+  override val toString = name
 }
 
 case class ParamArgument(override val name : String) extends Argument(name){
-  var parameters : List[Argument] = Nil
-  override def toString = s"-$name ${parameters.mkString(" ")}"
+  var parameter : Argument = InvalidArgument("MISSING_ARGUMENT")
+  override def toString = s"-$name $parameter"
 }
 
 case class InvalidArgument(override val name : String) extends Argument(name){
   override def action = throw new UnsupportedOperationException(s"The Argument $name is not supported.")
+  override def toString = name
 }

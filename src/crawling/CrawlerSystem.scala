@@ -4,7 +4,7 @@ import java.net.URL
 
 import akka.actor.{Props, Actor, ActorSystem}
 import com.typesafe.config.ConfigFactory
-import crawling.Messages.{CrawlSubPage, CrawlPage}
+import crawling.Messages.{CrawlSubPage, StartCrawling}
 
 import scala.collection.immutable.HashSet
 
@@ -16,7 +16,7 @@ object CrawlerSystem extends App{
     val linkPattern = """href=["'](.+?)["'].*?>(.*?)<""".r.unanchored
 
     def receive = {
-      case CrawlPage(url, crawlPrefs) => crawlPage(url, crawlPrefs)
+      case StartCrawling(url, crawlPrefs) => crawlPage(url, crawlPrefs)
       case CrawlSubPage(url, crawlPrefs, currentDepth, visited) => crawlSubPage(url, crawlPrefs, currentDepth, visited)
       case "hi" => println("sup?")
     }

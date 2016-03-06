@@ -5,18 +5,19 @@ import java.net.URL
 import akka.actor.{Props, Actor, ActorRef, ActorSystem}
 import com.typesafe.config.ConfigFactory
 import crawling.CrawlerSystem.CrawlerMaster
-import crawling.Messages.{CrawlResult, CrawlPage}
+import crawling.Messages.{CrawlResult, StartCrawling}
 
 object MainSystem extends App{
-  val mainSystem = ActorSystem("crawling", ConfigFactory.load.getConfig("mainsystem"))
-  val crawlerMaster = mainSystem.actorOf(Props[CrawlerMaster])
-  val mainActor = mainSystem.actorOf(Props(classOf[MainActor], crawlerMaster))
-
-  mainActor ! CrawlPage(new URL("http://golem.de"),  CrawlPrefs)
+  def crawlPage(url : URL) = {
+    val mainSystem = ActorSystem("crawling", ConfigFactory.load.getConfig("mainsystem"))
+    val crawlerMaster = mainSystem.actorOf(Props[CrawlerMaster])
+    val mainActor = mainSystem.actorOf(Props(classOf[MainActor], crawlerMaster))
+    mainActor ! StartCrawling(url,  CrawlPrefs)
+  }
 
   class MainActor(crawlerMaster: ActorRef) extends Actor{
     def receive = {
-      case CrawlPage(url, prefs) => crawlerMaster ! CrawlPage(url, prefs)
+      case StartCrawling(url, prefs) => crawlerMaster ! StartCrawling(url, prefs)
       case CrawlResult(result) => println(result.toXML())
     }
   }

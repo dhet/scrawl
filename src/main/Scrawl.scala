@@ -1,6 +1,9 @@
 package main
 
+import java.net.{MalformedURLException, URL}
+
 import cli._
+import crawling.MainSystem
 
 object Scrawl {
   def main(args : Array[String]) = {
@@ -14,22 +17,50 @@ object Scrawl {
         argument match {
           case Flag(_) => activeArguments :+= argument
           case ParamArgument(_) => activeArguments :+= argument
-          case InvalidArgument(_) => Argument.printHelp; exit(s"Unsupported Command $arg.")
-          case Value(_) => //isn't this unsafe?
+          case InvalidArgument(_) => exit(s"Unsupported Command $arg.")
+          case Value(_) =>
             if(activeArguments.nonEmpty && activeArguments.last.isInstanceOf[ParamArgument]){
-              activeArguments.last.asInstanceOf[ParamArgument].parameters :+= argument
-            }else{
+              activeArguments.last.asInstanceOf[ParamArgument].parameter = argument
+            } else{
               websites :+= arg
             }
         }
       }
-      println(s"Crawl the sites [${websites.mkString(", ")}] with the arguments [${activeArguments.mkString(", ")}]")
-      activeArguments.foreach(arg => arg.action)
+      applyArguments(activeArguments)
+      println(s"Crawling the sites [${websites.mkString(", ")}] with the arguments [${activeArguments.mkString(", ")}]")
+      websites.foreach(website => {
+        try{
+          MainSystem.crawlPage(new URL(prepareUrl(website)))
+        } catch {
+          case MalformedURLException => exit(s"Invalid URL: $website")
+        }
+      })
+    }
+  }
+
+  def prepareUrl(website : String) : String ={
+    if(!website.startsWith("http")){
+      "http://" + website
+    } else{
+      website
+    }
+  }
+
+  def applyArguments(args : List[Argument]) = {
+    for(arg <- args){
+      try{
+        arg.action
+      } catch {
+        case e : Exception => exit(s"""Wrong usage of argument "$arg".""")
+      }
     }
   }
 
   def exit(message : String) = {
     println(message)
+    println()
+    Argument.printHelp
+    println()
     println("Exiting...")
     sys.exit(1)
   }
