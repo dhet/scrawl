@@ -1,4 +1,4 @@
-package main
+package crawling
 
 import analyze.{WordCount, AnalyzeAlgorithm}
 

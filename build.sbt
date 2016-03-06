@@ -2,7 +2,7 @@ name := "scrawl"
 
 scalaVersion := "2.11.7"
 
-mainClass in (Compile, run) := Some("main.CrawlerSystem")
+mainClass in (Compile, run) := Some("main.Scrawl")
 
 scalaSource in Compile := baseDirectory.value / "src"
 resourceDirectory in Compile := baseDirectory.value / "resources"

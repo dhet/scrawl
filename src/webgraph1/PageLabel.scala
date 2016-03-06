@@ -1,4 +1,4 @@
-package webgraph
+package webgraph1
 
 import abstractGraph.Label
 

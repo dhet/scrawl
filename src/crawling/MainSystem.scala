@@ -1,14 +1,14 @@
-package main
+package crawling
 
 import java.net.URL
 
 import akka.actor.{Props, Actor, ActorRef, ActorSystem}
 import com.typesafe.config.ConfigFactory
-import main.CrawlerSystem.CrawlerMaster
-import main.Messages.{CrawlResult, CrawlPage}
+import crawling.CrawlerSystem.CrawlerMaster
+import crawling.Messages.{CrawlResult, CrawlPage}
 
 object MainSystem extends App{
-  val mainSystem = ActorSystem("main", ConfigFactory.load.getConfig("mainsystem"))
+  val mainSystem = ActorSystem("crawling", ConfigFactory.load.getConfig("mainsystem"))
   val crawlerMaster = mainSystem.actorOf(Props[CrawlerMaster])
   val mainActor = mainSystem.actorOf(Props(classOf[MainActor], crawlerMaster))
 

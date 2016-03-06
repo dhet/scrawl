@@ -3,7 +3,7 @@ package test
 import java.net.URL
 
 import abstractGraph.{LabelEntry, Label}
-import webgraph._
+import webgraph1._
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.mutable

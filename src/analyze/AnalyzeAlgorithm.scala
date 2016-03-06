@@ -1,7 +1,7 @@
 package analyze
 
 import abstractGraph.LabelEntry
-import webgraph.Webpage
+import webgraph1.Webpage
 
 /**
   * Created by nicohein on 06/03/16.
