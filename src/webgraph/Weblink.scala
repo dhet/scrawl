@@ -1,4 +1,4 @@
-package webgraph1
+package webgraph
 
 import abstractGraph.AbstractEdge
 

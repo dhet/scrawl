@@ -2,7 +2,7 @@ package crawling
 
 import java.net.URL
 
-import webgraph1.Webgraph
+import webgraph.Webgraph
 
 object Messages {
   case class CrawlPage(url : URL, prefs : CrawlPrefs.type )

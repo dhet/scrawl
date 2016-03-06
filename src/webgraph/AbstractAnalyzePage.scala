@@ -1,8 +1,8 @@
-package webgraph1
+package webgraph
 
 /**
   * Created by nicohein on 06/03/16.
   */
-class WordCount {
+class AbstractAnalyzePage {
 
 }
