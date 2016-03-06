@@ -1,4 +1,5 @@
 target/
 out/
-**/.idea/workspace.xml
-**/.idea/tasks.xml
+**/*.iml
+.idea/
+project/
