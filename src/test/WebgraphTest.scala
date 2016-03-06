@@ -2,11 +2,10 @@ package test
 
 import java.net.URL
 
-import abstractGraph.{LabelEntry, Label}
-import webgraph._
+import abstractgraph.LabelEntry
+import analyze.{Outlink, Inlink}
 import org.scalatest.{FlatSpec, Matchers}
-
-import scala.collection.mutable
+import webgraph._
 
 /**
   * Created by nicohein on 02/03/16.
@@ -14,42 +13,8 @@ import scala.collection.mutable
   */
 class WebgraphTest extends FlatSpec with Matchers{
 
-  "A Label" should "be a mutable ListMap" in {
-    val labellistmap : mutable.ListMap[String, Any] = Label
-    val linklabellistmap : mutable.ListMap[String, Any] = LinkLabel()
-    val pagelabellistmap : mutable.ListMap[String, Any] = PageLabel()
-
-    labellistmap should be (Label)
-    linklabellistmap should be (LinkLabel())
-    pagelabellistmap should be (PageLabel())
-  }
-
-  "A Label" should "provide xml" in {
-
-    val linklabellistmap : LinkLabel = LinkLabel()
-    val pagelabellistmap : PageLabel = PageLabel()
 
 
-    linklabellistmap.+=(("Key", "Value"))
-    pagelabellistmap.+=(("Key2", "Value"))
-    Thread sleep 10
-    pagelabellistmap.+=(("Key1", "Value"))
-
-
-    linklabellistmap.toXML() should be ("<linklabel><key>Key</key><value>Value</value></linklabel>")
-    pagelabellistmap.toXML() should be ("<pagelabel><key>Key1</key><value>Value</value><key>Key2</key><value>Value</value></pagelabel>")
-  }
-
-  "A Label" should "provide a List of Values" in {
-    val labellistmap : Label = Label
-
-    labellistmap.+=(("Key2", "Value2"))
-    Thread sleep 10
-    labellistmap.+=(("Key1", "Value1"))
-
-    labellistmap.toString() should be ("Map(Key1 -> Value1, Key2 -> Value2)")
-
-  }
 
   "A Webpage" should "provide labeling options" in {
     val webpage = Webpage(new URL("http://url"))
@@ -84,21 +49,7 @@ class WebgraphTest extends FlatSpec with Matchers{
 
   }
 
-  "A Webpage" should "handle edges" in {
-    var webpage1 = Webpage(new URL("http://url1"))
-    var webpage2 = Webpage(new URL("http://url2"))
-    var weblink = Weblink(webpage1, webpage2)
-    weblink.toXML() should be ("<weblink><startnode>http://url1</startnode><endnode>http://url2</ednode></weblink>")
 
-    webpage1.addEdge(weblink)
-    webpage2.addEdge(weblink)
-    webpage1.toXML() should be ("<webpage><url>http://url1</url><content></content><edges><weblink><startnode>http://url1</startnode><endnode>http://url2</ednode></weblink></edges><crawled>false</crawled><visited>false</visited></webpage>")
-    webpage2.toXML() should be ("<webpage><url>http://url2</url><content></content><edges><weblink><startnode>http://url1</startnode><endnode>http://url2</ednode></weblink></edges><crawled>false</crawled><visited>false</visited></webpage>")
-
-    webpage1.removeEdge(weblink)
-    webpage1.toXML() should be ("<webpage><url>http://url1</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited></webpage>")
-
-  }
 
 
 

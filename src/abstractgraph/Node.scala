@@ -1,19 +1,18 @@
-package abstractGraph
+package abstractgraph
 
 /**
-  * Created by nicohein on 29/02/16.
+  * Created by nicohein on 06/03/16.
   */
-abstract class AbstractNode[E](
-                                override val label : Label = Label()) extends LabeledObject {
+trait Node[E <: Edge[_ , _], L <: Label] extends Labeled[L]{
 
   var edges : Set[E] = Set[E]() //set as field since this is only internal structure like double linked list
-  var visited : Boolean = false
+  private[abstractgraph] var visited : Boolean = false
 
   /**
     *
     * @param edge edge to be adde to node
     */
-  def addEdge(edge: E) = {
+  private[abstractgraph] def addEdge(edge: E) = {
     edges = edges.+(edge)
   }
 
@@ -21,7 +20,7 @@ abstract class AbstractNode[E](
     *
     * @param edge edge to be removed from node
     */
-  def removeEdge(edge: E) = {
+  private[abstractgraph] def removeEdge(edge: E) = {
     edges = edges.-(edge)
   }
 }

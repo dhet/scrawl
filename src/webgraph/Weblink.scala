@@ -1,13 +1,13 @@
 package webgraph
 
-import abstractGraph.AbstractEdge
+import abstractgraph.Edge
 
 /**
   * Created by nicohein on 29/02/16.
   */
 class Weblink ( override val startNode : Webpage,
                 override val endNode : Webpage,
-                override val label : LinkLabel = LinkLabel()) extends AbstractEdge[Webpage](startNode, endNode, label){
+                override val label : LinkLabel = LinkLabel()) extends Edge[Webpage, LinkLabel]{
 
   /**
     *

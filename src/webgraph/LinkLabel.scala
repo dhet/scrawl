@@ -1,6 +1,7 @@
 package webgraph
 
-import abstractGraph.Label
+
+import abstractgraph.Label
 
 /**
   * Created by nicohein on 01/03/16.
@@ -13,11 +14,11 @@ class LinkLabel extends Label{
     */
   def toXML() : String = {
     var xml : String = ""
-    if(this.nonEmpty) {
+    if(label.nonEmpty) {
       xml += s"<linklabel>"
-      for ((key, value) <- this) {
-        xml += s"<key>${key.toString}</key>"
-        xml += s"<value>${value.toString}</value>"
+      for (labelentry <- label) {
+        xml += s"<key>${labelentry.key.toString}</key>"
+        xml += s"<value>${labelentry.value.toString}</value>"
       }
       xml += s"</linklabel>"
     }

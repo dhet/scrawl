@@ -1,6 +1,6 @@
 package analyze
 
-import abstractGraph.LabelEntry
+import abstractgraph.LabelEntry
 import webgraph.Webpage
 
 /**

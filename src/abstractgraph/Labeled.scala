@@ -1,10 +1,10 @@
-package abstractGraph
+package abstractgraph
 
 /**
   * Created by nicohein on 06/03/16.
   */
-trait LabeledObject {
-  val label : Label = new Label()
+trait Labeled[L <: Label] {
+  protected var label : L 
 
   /**
     *
@@ -12,7 +12,7 @@ trait LabeledObject {
     * @return
     */
   def addLabelEntry(labelEntry: LabelEntry) = {
-    label.+=((labelEntry.key, labelEntry.value))
+    label.label += labelEntry
   }
 
   /**
@@ -21,7 +21,12 @@ trait LabeledObject {
     * @return value relatd to the key
     */
   def getLabelEntry(key : String): Any = {
-    label.get(key).get
+    for(labelentry <- label.label){
+      if(labelentry.key.equals(key)){
+        return labelentry.value
+      }
+    }
+    AnyRef
   }
 
   /**
@@ -30,11 +35,8 @@ trait LabeledObject {
     * @return
     */
   def updateLabelEntry(labelEntry: LabelEntry) = {
-    if(label.contains(labelEntry.key)){
-      label.update(labelEntry.key, labelEntry.value)
-    }else{
-      addLabelEntry(labelEntry)
-    }
+    removeLabelEntry(labelEntry.key)
+    addLabelEntry(labelEntry)
   }
 
   /**
@@ -43,6 +45,10 @@ trait LabeledObject {
     * @return
     */
   def removeLabelEntry(key : String) = {
-    label.-=(key)
+    for(labelentry <- label.label){
+      if(labelentry.key.equals(key)){
+        label.label -= labelentry
+      }
+    }
   }
 }
