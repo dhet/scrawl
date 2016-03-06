@@ -1,8 +1,8 @@
-package Webgraph
+package webgraph
 
-import java.net.URI
+import java.net.URL
 
-import AbstractGraph.Graph
+import abstractGraph.Graph
 
 
 /**
@@ -36,7 +36,11 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     * @return returns the next uncraled webpage found during a breadth first search
     */
   def nextUncrawledNode() : Webpage = {
-    nextPageConstraintBreadthFirst((node : Webpage) => !node.crawled)
+
+    val page = nextPageConstraintBreadthFirst((node : Webpage) => !node.crawled)
+    page.crawled = true
+    page
+
   }
 
   //TODO inefficient (implement next neighbor search in graph)
@@ -45,7 +49,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
       if(f(node))
         return node
     }
-    new Webpage("") //TODO implement this width case clases or Future/option
+    new Webpage(new URL("")) //TODO implement this width case clases or Future/option
   }
 
   //TODO inefficient
@@ -54,7 +58,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
       if(f(node))
         return node
     }
-    new Webpage("") //TODO implement this wit future/option
+    new Webpage(new URL("")) //TODO implement this wit future/option
   }
 
   //TODO analyze Node-level (shortest path through graph)
@@ -64,10 +68,10 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     */
   def analyzeLinktypes() = {
     analyzeEdges("linktype", (weblink: Weblink) =>
-      if(new URI(weblink.startNode.url).getHost == new URI(weblink.endNode.url).getHost)
-        new Inlink(new URI(weblink.endNode.url))
+      if(weblink.startNode.url.getHost == weblink.endNode.url.getHost)
+        new Inlink(weblink.endNode.url)
       else
-        new Outlink(new URI(weblink.endNode.url)))
+        new Outlink(weblink.endNode.url))
   }
 
   /**

@@ -1,4 +1,4 @@
-package AbstractGraph
+package abstractGraph
 
 import scala.collection.mutable
 
@@ -168,7 +168,7 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     */
   def analyzeEdges(labelkey : String, f:(E) => Any) : Graph[N, E] ={
     for(edge <- edges){
-      edge.updateLabelEntry(labelkey, f(edge))
+      edge.updateLabelEntry(new LabelEntry(labelkey, f(edge)))
     }
     this
   }
@@ -181,7 +181,7 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     */
   def analyzeNodes(labelkey : String, f:(N) => Any) : Graph[N, E] = {
     for(node <- nodes){
-      node.updateLabelEntry(labelkey, f(node))
+      node.updateLabelEntry(new LabelEntry(labelkey, f(node)))
     }
     this
   }
@@ -200,7 +200,7 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
     //for each node set distance to infinity
     analyzeNodes("dijkstra", (n : N) => MaxInt)
 
-    node.updateLabelEntry("dijkstra", 0)
+    node.updateLabelEntry(new LabelEntry("dijkstra", 0))
     var tempnode : N = node
 
     while(tempnodes.nonEmpty){
@@ -210,7 +210,7 @@ trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
       tempnodes = tempnodes.tail
       for(n <- tempnode.edges.toList.filter(f).map((e) => e.endNode)){
         if( n.getLabelEntry("dijkstra").asInstanceOf[Int] > tempnode.getLabelEntry("dijkstra").asInstanceOf[Int]+1 ){
-          n.updateLabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").asInstanceOf[Int]+1)
+          n.updateLabelEntry(new LabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").asInstanceOf[Int]+1))
         }
       }
     }

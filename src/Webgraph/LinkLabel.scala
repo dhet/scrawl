@@ -1,6 +1,6 @@
-package Webgraph
+package webgraph
 
-import AbstractGraph.Label
+import abstractGraph.Label
 
 /**
   * Created by nicohein on 01/03/16.

@@ -12,7 +12,7 @@ object MainSystem extends App{
   val crawlerMaster = mainSystem.actorOf(Props[CrawlerMaster])
   val mainActor = mainSystem.actorOf(Props(classOf[MainActor], crawlerMaster))
 
-  mainActor ! CrawlPage(new URL("http://golem.de"), new CrawlPrefs(2))
+  mainActor ! CrawlPage(new URL("http://golem.de"),  CrawlPrefs)
 
   class MainActor(crawlerMaster: ActorRef) extends Actor{
     def receive = {

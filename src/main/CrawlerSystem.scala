@@ -21,7 +21,7 @@ object CrawlerSystem extends App{
       case "hi" => println("sup?")
     }
 
-    private def crawlSubPage(url : URL, crawlPrefs : CrawlPrefs, currentDepth : Int, visited : Set[URL]) = {
+    private def crawlSubPage(url : URL, crawlPrefs : CrawlPrefs.type , currentDepth : Int, visited : Set[URL]) = {
       if(currentDepth <= crawlPrefs.maxDepth && !visited.contains(url)){
         val html = downloadPage(url)
         val map = extractInternalLinks(html, url)
@@ -36,7 +36,7 @@ object CrawlerSystem extends App{
       }
     }
 
-    private def crawlPage(url : URL, crawlPrefs : CrawlPrefs) = {
+    private def crawlPage(url : URL, crawlPrefs : CrawlPrefs.type ) = {
       crawlSubPage(url, crawlPrefs, 1, new HashSet[URL]())
     }
 

@@ -1,6 +1,6 @@
-package Webgraph
+package webgraph
 
-import AbstractGraph.AbstractEdge
+import abstractGraph.AbstractEdge
 
 /**
   * Created by nicohein on 29/02/16.
