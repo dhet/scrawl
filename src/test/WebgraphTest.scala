@@ -1,7 +1,9 @@
-package Test
+package test
 
-import AbstractGraph.Label
-import Webgraph._
+import java.net.URL
+
+import abstractGraph.{LabelEntry, Label}
+import webgraph._
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.mutable
@@ -50,51 +52,51 @@ class WebgraphTest extends FlatSpec with Matchers{
   }
 
   "A Webpage" should "provide labeling options" in {
-    var webpage = Webpage("url")
+    val webpage = Webpage(new URL("http://url"))
 
-    webpage.addLabelEntry("key", "value")
+    webpage.addLabelEntry(new LabelEntry("key", "value"))
     webpage.getLabelEntry("key") should be ("value")
 
-    webpage.updateLabelEntry("key", "updated")
+    webpage.updateLabelEntry(new LabelEntry("key", "updated"))
     webpage.getLabelEntry("key") should be ("updated")
 
-    webpage.toXML() should be ("<webpage><url>url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited><pagelabel><key>key</key><value>updated</value></pagelabel></webpage>")
+    webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited><pagelabel><key>key</key><value>updated</value></pagelabel></webpage>")
 
     webpage.removeLabelEntry("key")
-    webpage.toXML() should be ("<webpage><url>url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited></webpage>")
+    webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited></webpage>")
 
   }
   "A Weblink" should "provide labeling options" in {
-    var webpage1 = Webpage("url1")
-    var webpage2 = Webpage("url2")
+    var webpage1 = Webpage(new URL("http://url1"))
+    var webpage2 = Webpage(new URL("http://url2"))
     var weblink = Weblink(webpage1, webpage2)
 
-    weblink.addLabelEntry("key", "value")
+    weblink.addLabelEntry(new LabelEntry("key", "value"))
     weblink.getLabelEntry("key") should be ("value")
 
-    weblink.updateLabelEntry("key", "updated")
+    weblink.updateLabelEntry(new LabelEntry("key", "updated"))
     weblink.getLabelEntry("key") should be ("updated")
 
-    weblink.toXML() should be ("<weblink><startnode>url1</startnode><endnode>url2</ednode><linklabel><key>key</key><value>updated</value></linklabel></weblink>")
+    weblink.toXML() should be ("<weblink><startnode>http://url1</startnode><endnode>http://url2</ednode><linklabel><key>key</key><value>updated</value></linklabel></weblink>")
 
     weblink.removeLabelEntry("key")
-    weblink.toXML() should be ("<weblink><startnode>url1</startnode><endnode>url2</ednode></weblink>")
+    weblink.toXML() should be ("<weblink><startnode>http://url1</startnode><endnode>http://url2</ednode></weblink>")
 
   }
 
   "A Webpage" should "handle edges" in {
-    var webpage1 = Webpage("url1")
-    var webpage2 = Webpage("url2")
+    var webpage1 = Webpage(new URL("http://url1"))
+    var webpage2 = Webpage(new URL("http://url2"))
     var weblink = Weblink(webpage1, webpage2)
-    weblink.toXML() should be ("<weblink><startnode>url1</startnode><endnode>url2</ednode></weblink>")
+    weblink.toXML() should be ("<weblink><startnode>http://url1</startnode><endnode>http://url2</ednode></weblink>")
 
     webpage1.addEdge(weblink)
     webpage2.addEdge(weblink)
-    webpage1.toXML() should be ("<webpage><url>url1</url><content></content><edges><weblink><startnode>url1</startnode><endnode>url2</ednode></weblink></edges><crawled>false</crawled><visited>false</visited></webpage>")
-    webpage2.toXML() should be ("<webpage><url>url2</url><content></content><edges><weblink><startnode>url1</startnode><endnode>url2</ednode></weblink></edges><crawled>false</crawled><visited>false</visited></webpage>")
+    webpage1.toXML() should be ("<webpage><url>http://url1</url><content></content><edges><weblink><startnode>http://url1</startnode><endnode>http://url2</ednode></weblink></edges><crawled>false</crawled><visited>false</visited></webpage>")
+    webpage2.toXML() should be ("<webpage><url>http://url2</url><content></content><edges><weblink><startnode>http://url1</startnode><endnode>http://url2</ednode></weblink></edges><crawled>false</crawled><visited>false</visited></webpage>")
 
     webpage1.removeEdge(weblink)
-    webpage1.toXML() should be ("<webpage><url>url1</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited></webpage>")
+    webpage1.toXML() should be ("<webpage><url>http://url1</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited></webpage>")
 
   }
 
@@ -102,14 +104,14 @@ class WebgraphTest extends FlatSpec with Matchers{
 
   "A Webgraph" should "be conected" in {
     //nodes (Webpages) of graph
-    var root = Webpage("http://root.com")
-    var rootsub1 = Webpage("http://root.com/sub1")
-    var rootsub2 = Webpage("http://root.com/sub2")
-    var rootsub1sub1 = Webpage("http://root.com/sub1/sub1")
-    var rootsub2sub1 = Webpage("http://root.com/sub2/sub1")
+    var root = Webpage(new URL("http://root.com"))
+    var rootsub1 = Webpage(new URL("http://root.com/sub1"))
+    var rootsub2 = Webpage(new URL("http://root.com/sub2"))
+    var rootsub1sub1 = Webpage(new URL("http://root.com/sub1/sub1"))
+    var rootsub2sub1 = Webpage(new URL("http://root.com/sub2/sub1"))
 
-    var offpage1 = Webpage("http://offpage1.com")
-    var offpage2 = Webpage("http://offpage2.com")
+    var offpage1 = Webpage(new URL("http://offpage1.com"))
+    var offpage2 = Webpage(new URL("http://offpage2.com"))
 
     //edges (Weblinks) of graph
     var edge1 = Weblink(root, rootsub1)
@@ -139,19 +141,19 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.countNodes() should be (7)
     webgraph.countUncrawledNodes() should be (7)
 
-    webgraph.nextUncrawledNode().url should be ("http://root.com")
+    webgraph.nextUncrawledNode().url.toString should be ("http://root.com")
     root.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://root.com/sub1")
+    webgraph.nextUncrawledNode().url.toString should be ("http://root.com/sub1")
     rootsub1.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://root.com/sub2")
+    webgraph.nextUncrawledNode().url.toString should be ("http://root.com/sub2")
     rootsub2.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://root.com/sub1/sub1")
+    webgraph.nextUncrawledNode().url.toString should be ("http://root.com/sub1/sub1")
     rootsub1sub1.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://root.com/sub2/sub1")
+    webgraph.nextUncrawledNode().url.toString should be ("http://root.com/sub2/sub1")
     rootsub2sub1.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://offpage2.com")
+    webgraph.nextUncrawledNode().url.toString should be ("http://offpage2.com")
     offpage2.crawled = true
-    webgraph.nextUncrawledNode().url should be ("http://offpage1.com")
+    webgraph.nextUncrawledNode().url.toString should be ("http://offpage1.com")
     offpage1.crawled = true
 
 
@@ -160,12 +162,19 @@ class WebgraphTest extends FlatSpec with Matchers{
 
     root.edges.map((e) => e.endNode.url) should be (Set(rootsub1.url, rootsub2.url))
     webgraph.generateSitemap() should be (List("http://root.com", "http://root.com/sub1", "http://root.com/sub2", "http://root.com/sub2/sub1", "http://offpage2.com", "http://root.com/sub1/sub1", "http://offpage1.com"))
+    webgraph.analyzeLinktypes()
 
     edge1.getLabelEntry("linktype").asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub1)")
     edge2.getLabelEntry("linktype").asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub2)")
     edge6.getLabelEntry("linktype").asInstanceOf[Outlink].toString should be ("Outlink(http://offpage1.com)")
 
-    //webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype") == "inlink") true else false, (webpage: Webpage) => true ).map((webpage: Webpage) => webpage.url) should be (1)
+
+
+    //webgraph.edges.toList.map((edge : Weblink) => edge.getLabelEntry("linktype")) should be (9)
+
+    //webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype").isInstanceOf[Inlink]) true else false, (webpage: Webpage) => true )/*.map((webpage: Webpage) => webpage.url)*/ should be (1)
+    //webgraph.dijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra"), page.url)) should be (1)
+    //webgraph.constraintDijkstra(root, (edge) => edge.getLabelEntry("linktype").isInstanceOf[Inlink], (node) => true).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra"), page.url)) should be (1)
 
   }
 
