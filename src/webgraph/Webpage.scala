@@ -13,7 +13,6 @@ class Webpage ( val url : URL,
                 var crawled : Boolean = false,
                 override val label : PageLabel = PageLabel()) extends Node[Weblink, PageLabel]() {
 
-
   /**
     *
     * @return tring containing xml description of the Webpage
@@ -29,7 +28,6 @@ class Webpage ( val url : URL,
     }
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
-    xml += s"<visited>$visited</visited>"
     xml += label.toXML
     xml += s"</webpage>"
     xml
@@ -57,31 +55,13 @@ class Webpage ( val url : URL,
 
 object Webpage {
 
-  def apply(url : URL) : Webpage = new Webpage(url) //for root
+  def apply(url : URL) : Webpage = new Webpage(url)
 
-  def apply(url : URL, content : String ) : Webpage = new Webpage(url, content)//while crawling
+  def apply(url : URL, content : String ) : Webpage = new Webpage(url, content)
 
-  def apply(url : URL, edges : List[Weblink]) : Webpage = {
-    var webpage = new Webpage(url)
-    for(e<-edges){
-      webpage.addEdge(e)
-    }
-    webpage
-  }
-
-  def apply(url : URL, content : String , edges : List[Weblink]) : Webpage = {
-    var webpage = new Webpage(url, content)
-    for(e<-edges){
-      webpage.addEdge(e)
-    }
-    webpage
-  }
-
-  def apply(url : URL, content : String, edges : List[Weblink], crawled : Boolean, label : PageLabel) : Webpage = {
+  def apply(url : URL, content : String, crawled : Boolean, label : PageLabel) : Webpage = {
     var webpage = new Webpage(url, content, crawled, label)
-    for(e<-edges){
-      webpage.addEdge(e)
-    }
+
     webpage
   }
 

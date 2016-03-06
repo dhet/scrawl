@@ -1,4 +1,4 @@
-package webgraph
+package analyze
 
 import java.net.URL
 

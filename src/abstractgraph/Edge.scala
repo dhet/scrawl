@@ -5,7 +5,7 @@ package abstractgraph
   */
 trait Edge[N <: Node[_, _], L <: Label] extends Labeled[L] {
 
-  val startNode : N
-  val endNode : N
+  val startNode : N //public since it defines the edge
+  val endNode : N //public since it defines the edge
 
 }

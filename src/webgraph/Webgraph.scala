@@ -4,6 +4,7 @@ import java.net.URL
 
 
 import abstractgraph.Graph
+import analyze.{Outlink, Inlink}
 
 
 /**

@@ -4,7 +4,7 @@ package abstractgraph
   * Created by nicohein on 06/03/16.
   */
 trait Labeled[L <: Label] {
-  val label : L
+  protected var label : L 
 
   /**
     *
