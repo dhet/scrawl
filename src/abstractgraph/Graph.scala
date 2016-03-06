@@ -1,11 +1,11 @@
-package abstractGraph
+package abstractgraph
 
 import scala.collection.mutable
 
 /**
   * Created by nicohein on 29/02/16.
   */
-trait Graph[N <: AbstractNode[E], E <: AbstractEdge[N]] {
+trait Graph[N <: Node[E, _], E <: Edge[N, _]] {
   var nodes: Set[N] = Set[N]()//TODO do it with val
   var edges: Set[E] = Set[E]()//TODO do it with val
 

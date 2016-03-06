@@ -1,4 +1,4 @@
-package abstractGraph
+package abstractgraph
 
 /**
   * Created by nicohein on 06/03/16.

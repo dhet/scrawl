@@ -1,13 +1,8 @@
-package abstractGraph
-
-import scala.collection.mutable
-
+package abstractgraph
 
 /**
-  * Created by nicohein on 02/03/16.
+  * Created by nicohein on 06/03/16.
   */
-class Label extends mutable.ListMap[String, Any]
-
-object Label extends Label{
-  def apply()  = new Label()
+trait Label{
+  var label = Set[LabelEntry]()
 }

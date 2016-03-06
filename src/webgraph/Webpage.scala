@@ -2,7 +2,8 @@ package webgraph
 
 import java.net.URL
 
-import abstractGraph.AbstractNode
+
+import abstractgraph.Node
 
 /**
   * Created by nicohein on 29/02/16.
@@ -10,7 +11,7 @@ import abstractGraph.AbstractNode
 class Webpage ( val url : URL,
                 var content : String = "",
                 var crawled : Boolean = false,
-                override val label : PageLabel = PageLabel()) extends AbstractNode[Weblink]() {
+                override val label : PageLabel = PageLabel()) extends Node[Weblink, PageLabel]() {
 
 
   /**

@@ -1,10 +1,9 @@
-package abstractGraph
+package abstractgraph
 
 /**
-  * Created by nicohein on 29/02/16.
+  * Created by nicohein on 06/03/16.
   */
-abstract class AbstractNode[E](
-                                override val label : Label = Label()) extends LabeledObject {
+trait Node[E <: Edge[_ , _], L <: Label] extends Labeled[L]{
 
   var edges : Set[E] = Set[E]() //set as field since this is only internal structure like double linked list
   var visited : Boolean = false

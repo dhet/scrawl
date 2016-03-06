@@ -2,7 +2,8 @@ package webgraph
 
 import java.net.URL
 
-import abstractGraph.Graph
+
+import abstractgraph.Graph
 
 
 /**
