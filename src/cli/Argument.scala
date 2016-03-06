@@ -1,40 +1,32 @@
 package cli
 
+import crawling.CrawlPrefs
+
 object Argument {
-  val supportedArgs : List[Argument] = List[Argument](
-    new ParamArgument("analyze"){
-      synonyms = List[String] ("a")
-      helpText = "Analyze the crawled sites."
-    }, //-a does expect a list of random variables
-    new ParamArgument("level"){
+  var supportedArgs = Set[Argument]()
+
+  supportedArgs += new ParamArgument("level"){
       synonyms = List[String] ("l", "d", "depth")
       helpText = "Determines how many levels to crawl. Expects one argument of type Integer."
-      //      override def isValid = {
-      //        if(parameters.length == 1){
-      //          try{
-      //            Integer.parseInt(parameters.head.name)
-      //            true
-      //          } catch {
-      //            case ex : NumberFormatException => false
-      //          }
-      //        } else false
-      //      }
-    }, //-L does expect a level
-    new Flag("help"){
-      synonyms = List[String] ("h", "?", "wat")
-      helpText = "Print this help."
       override def action = {
-        println("Usage: scrawl url [url, ...][option, ...]")
-        for(arg <- supportedArgs){
-          println(s"-${arg.name} (${arg.synonyms.map(a => s"-$a").mkString(", ")})")
-          println(s"\t${arg.helpText}")
-        }
+        CrawlPrefs.maxDepth = parameters(0).toString.toInt
       }
     }
-  )
+
+  supportedArgs += new Flag("help") {
+    synonyms = List[String]("h", "?", "wat")
+    helpText = "Print this help."
+    override def action = {
+      println("Usage: scrawl url [url, ...][option, ...]")
+      for (arg <- supportedArgs) {
+        println(s"-${arg.name} (${arg.synonyms.map(a => s"-$a").mkString(", ")})")
+        println(s"\t${arg.helpText}")
+      }
+    }
+  }
 
   def printHelp = {
-    supportedArgs.find(arg => arg.name == "help") match{
+    supportedArgs.find(_.name equals "help") match{
       case Some(arg) => arg.action
       case None => println("No help defined.")
     }
@@ -43,20 +35,22 @@ object Argument {
   /**
     * Determine the type of an argument and return an appropriate object. If the type can't be determined return an
     * object of type {@link InvalidArgument}
+    *
     * @param arg  The argument you're looking for
     * @return     An object of a subclass of {@link Argument}
     */
   def apply(arg : String) : Argument = {
     if(arg.startsWith("-")) {
-      supportedArgs.find{a => arg.contains(a.name) || a.synonyms.contains(arg.substring(1))} match {
+      supportedArgs.find(a => a.name == arg.substring(1) || a.synonyms.contains(arg.substring(1))) match {
         case None => new InvalidArgument(arg)
         case Some(argument) => argument
       }
     }
     else {
-      new Value(arg) // should match as URL https://mathiasbynens.be/demo/url-regex
+      new Value(arg)
     }
   }
+
 }
 
 

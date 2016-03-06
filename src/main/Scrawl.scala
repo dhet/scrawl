@@ -7,6 +7,7 @@ object Scrawl {
     var websites : List[String] = Nil
     var activeArguments : List[Argument] = Nil
     if(args.isEmpty){
+      Argument.printHelp
       exit(s"Enter at least one website to crawl.\n")
     } else {
       for (arg <- args; argument = Argument(arg)) {
