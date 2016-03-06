@@ -2,7 +2,7 @@ package test
 
 import java.net.URL
 
-import abstractgraph.LabelEntry
+import graph.LabelEntry
 import analyze.{Outlink, Inlink}
 import org.scalatest.{FlatSpec, Matchers}
 import webgraph._
@@ -25,10 +25,10 @@ class WebgraphTest extends FlatSpec with Matchers{
     webpage.updateLabelEntry(new LabelEntry("key", "updated"))
     webpage.getLabelEntry("key") should be ("updated")
 
-    webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited><pagelabel><key>key</key><value>updated</value></pagelabel></webpage>")
+    webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled><pagelabel><key>key</key><value>updated</value></pagelabel></webpage>")
 
     webpage.removeLabelEntry("key")
-    webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled><visited>false</visited></webpage>")
+    webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled></webpage>")
 
   }
   "A Weblink" should "provide labeling options" in {

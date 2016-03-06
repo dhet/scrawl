@@ -1,18 +1,19 @@
-package abstractgraph
+package graph
+
+import scala.collection.mutable
 
 /**
   * Created by nicohein on 06/03/16.
   */
-trait Labeled[L <: Label] {
-  protected var label : L 
-
+trait Label{
+  val label : mutable.Set[LabelEntry]
   /**
     *
     * @param labelEntry labelentry to be added
     * @return
     */
   def addLabelEntry(labelEntry: LabelEntry) = {
-    label.label += labelEntry
+    label.add(labelEntry)
   }
 
   /**
@@ -21,7 +22,7 @@ trait Labeled[L <: Label] {
     * @return value relatd to the key
     */
   def getLabelEntry(key : String): Any = {
-    for(labelentry <- label.label){
+    for(labelentry <- label){
       if(labelentry.key.equals(key)){
         return labelentry.value
       }
@@ -45,9 +46,9 @@ trait Labeled[L <: Label] {
     * @return
     */
   def removeLabelEntry(key : String) = {
-    for(labelentry <- label.label){
+    for(labelentry <- label){
       if(labelentry.key.equals(key)){
-        label.label -= labelentry
+        label.remove(labelentry)
       }
     }
   }

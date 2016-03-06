@@ -1,6 +1,8 @@
 package webgraph
 
-import abstractgraph.Label
+import graph.{LabelEntry, Label}
+
+import scala.collection.mutable
 
 
 /**
@@ -8,13 +10,13 @@ import abstractgraph.Label
   * The value list contains results of analysis including
   * Flesh-Kincaid Index
   */
-class PageLabel extends Label{
-
+trait PageLabel extends Label{
+  override val label : mutable.Set[LabelEntry] = mutable.Set[LabelEntry]()
   /**
     *
     * @return string containing xml description of the label
     */
-  def toXML() : String = {
+  def pageToXML() : String = {
     var xml : String = ""
     if(label.nonEmpty) {
       xml += s"<pagelabel>"
@@ -28,6 +30,4 @@ class PageLabel extends Label{
   }
 }
 
-object PageLabel{
-  def apply() : PageLabel = new PageLabel()
-}
+object PageLabel extends PageLabel

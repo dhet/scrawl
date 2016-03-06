@@ -3,7 +3,7 @@ package webgraph
 import java.net.URL
 
 
-import abstractgraph.Graph
+import graph.Graph
 import analyze.{Outlink, Inlink}
 
 

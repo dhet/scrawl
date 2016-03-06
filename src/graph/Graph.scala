@@ -1,11 +1,11 @@
-package abstractgraph
+package graph
 
 import scala.collection.mutable
 
 /**
   * Created by nicohein on 29/02/16.
   */
-trait Graph[N <: Node[E, _], E <: Edge[N, _]] {
+trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   protected var nodes: Set[N] = Set[N]() //protected since every graph should be able to see its nodes
   protected var edges: Set[E] = Set[E]() //protected since every graph should be able to see its edges
 
