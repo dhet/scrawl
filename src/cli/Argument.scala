@@ -1,6 +1,8 @@
 package cli
 
 import crawling.CrawlPrefs
+import graph.LabelEntry
+import webgraph.Webpage
 
 object Argument {
   var supportedArgs = Set[Argument]()
@@ -33,6 +35,14 @@ object Argument {
     }
   }
 
+  supportedArgs += new Flag("words"){
+    synonyms = List[String]("wc")
+    helpText = "Count the number of words in every website."
+    override def action = {
+      CrawlPrefs.analyzeFunctions :+ ((webpage : Webpage) => LabelEntry("words", webpage.content.split(" ").size.toString))
+    }
+  }
+
   def printHelp = {
     supportedArgs.find(_.name equals "help") match{
       case Some(arg) => arg.action
@@ -41,8 +51,8 @@ object Argument {
   }
 
   /**
-    * Determine the type of an argument and return an appropriate object. If the type can't be determined return an
-    * object of type {@link InvalidArgument}
+    * Argument factory. Determine the type of an argument and return an appropriate object. If the type can't be
+    * determined return an object of type {@link InvalidArgument}
     *
     * @param arg  The argument you're looking for
     * @return     An object of a subclass of {@link Argument}
