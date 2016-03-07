@@ -27,7 +27,7 @@ class Webpage ( val url : URL,
     }
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
-    xml += pageToXML()
+    xml += labelToXML()
     xml += s"</webpage>"
     xml
   }
@@ -46,7 +46,7 @@ class Webpage ( val url : URL,
     }
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
-    xml += pageToXML()
+    xml += labelToXML()
     xml += s"</webpage>"
     xml
   }

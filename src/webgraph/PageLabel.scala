@@ -16,7 +16,7 @@ trait PageLabel extends Label{
     *
     * @return string containing xml description of the label
     */
-  def pageToXML() : String = {
+  def labelToXML() : String = {
     var xml : String = ""
     if(label.nonEmpty) {
       xml += s"<pagelabel>"

@@ -15,7 +15,7 @@ trait Node[E <: Edge[_]]{
     * @param edge edge to be adde to node
     */
   private[graph] def addEdge(edge: E) = {
-    edges = edges.+(edge)
+    edges = edges + edge
   }
 
   /**
@@ -23,6 +23,6 @@ trait Node[E <: Edge[_]]{
     * @param edge edge to be removed from node
     */
   private[graph] def removeEdge(edge: E) = {
-    edges = edges.-(edge)
+    edges = edges - edge
   }
 }

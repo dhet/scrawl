@@ -15,7 +15,7 @@ trait LinkLabel extends Label{
     *
     * @return string containing xml description of the label
     */
-  def linkToXML() : String = {
+  def labelToXML() : String = {
     var xml : String = ""
     if(label.nonEmpty) {
       xml += s"<linklabel>"

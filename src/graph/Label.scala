@@ -22,13 +22,13 @@ trait Label{
     * @param key key of the label to look up
     * @return value relatd to the key
     */
-  def getLabelEntry(key : String): Any = { //TODO safe return retrievable ...
+  def getLabelEntry(key : String): Option[Any] = {
     for(labelentry <- label){
       if(labelentry.key.equals(key)){
-        return labelentry.value
+        return Some(labelentry.value)
       }
     }
-    AnyRef
+    None
   }
 
   /**
