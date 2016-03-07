@@ -3,7 +3,7 @@ package webgraph
 import java.net.URL
 
 
-import abstractgraph.Graph
+import graph.Graph
 import analyze.{Outlink, Inlink}
 
 
@@ -51,7 +51,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
       if(f(node))
         return node
     }
-    new Webpage(new URL("")) //TODO implement this width case clases or Future/option
+    new Webpage(new URL("")) //TODO implement this with retrievable
   }
 
   //TODO inefficient
@@ -60,10 +60,8 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
       if(f(node))
         return node
     }
-    new Webpage(new URL("")) //TODO implement this wit future/option
+    new Webpage(new URL("")) //TODO implement this with retrievable
   }
-
-  //TODO analyze Node-level (shortest path through graph)
 
   /**
     * analyzes the linktypes (page internal, offpage, mail etc)

@@ -3,15 +3,14 @@ package webgraph
 import java.net.URL
 
 
-import abstractgraph.Node
+import graph.Node
 
 /**
   * Created by nicohein on 29/02/16.
   */
 class Webpage ( val url : URL,
                 var content : String = "",
-                var crawled : Boolean = false,
-                override val label : PageLabel = PageLabel()) extends Node[Weblink, PageLabel]() {
+                var crawled : Boolean = false) extends Node[Weblink] with PageLabel{
 
   /**
     *
@@ -28,7 +27,7 @@ class Webpage ( val url : URL,
     }
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
-    xml += label.toXML
+    xml += pageToXML()
     xml += s"</webpage>"
     xml
   }
@@ -47,7 +46,7 @@ class Webpage ( val url : URL,
     }
     xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
-    xml += label.toXML()
+    xml += pageToXML()
     xml += s"</webpage>"
     xml
   }
@@ -60,8 +59,10 @@ object Webpage {
   def apply(url : URL, content : String ) : Webpage = new Webpage(url, content)
 
   def apply(url : URL, content : String, crawled : Boolean, label : PageLabel) : Webpage = {
-    var webpage = new Webpage(url, content, crawled, label)
-
+    var webpage = new Webpage(url, content, crawled)
+    for(labelentry <- label.label){
+      webpage.addLabelEntry(labelentry)
+    }
     webpage
   }
 

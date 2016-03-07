@@ -1,18 +1,21 @@
 package webgraph
 
 
-import abstractgraph.Label
+import graph.{LabelEntry, Label}
+
+import scala.collection.mutable
 
 /**
   * Created by nicohein on 01/03/16.
   */
-class LinkLabel extends Label{
+trait LinkLabel extends Label{
+  override val label : mutable.Set[LabelEntry] = mutable.Set[LabelEntry]()
 
   /**
     *
     * @return string containing xml description of the label
     */
-  def toXML() : String = {
+  def linkToXML() : String = {
     var xml : String = ""
     if(label.nonEmpty) {
       xml += s"<linklabel>"
@@ -24,10 +27,4 @@ class LinkLabel extends Label{
     }
     xml
   }
-
 }
-
-object LinkLabel {
-  def apply() : LinkLabel = new LinkLabel()
-}
-

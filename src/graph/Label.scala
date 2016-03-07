@@ -1,18 +1,20 @@
-package abstractgraph
+package graph
+
+import scala.collection.mutable
 
 /**
   * Created by nicohein on 06/03/16.
   */
-trait Labeled[L <: Label] {
-  protected var label : L 
-
+trait Label{
+  protected val label : mutable.Set[LabelEntry] //access only via defined methods
   /**
     *
     * @param labelEntry labelentry to be added
     * @return
     */
-  def addLabelEntry(labelEntry: LabelEntry) = {
-    label.label += labelEntry
+  def addLabelEntry(labelEntry: LabelEntry) : Label = {
+    label.add(labelEntry)
+    this
   }
 
   /**
@@ -20,8 +22,8 @@ trait Labeled[L <: Label] {
     * @param key key of the label to look up
     * @return value relatd to the key
     */
-  def getLabelEntry(key : String): Any = {
-    for(labelentry <- label.label){
+  def getLabelEntry(key : String): Any = { //TODO safe return retrievable ...
+    for(labelentry <- label){
       if(labelentry.key.equals(key)){
         return labelentry.value
       }
@@ -34,9 +36,10 @@ trait Labeled[L <: Label] {
     * @param labelEntry labelentry to be updated
     * @return
     */
-  def updateLabelEntry(labelEntry: LabelEntry) = {
+  def updateLabelEntry(labelEntry: LabelEntry) : Label = {
     removeLabelEntry(labelEntry.key)
     addLabelEntry(labelEntry)
+    this
   }
 
   /**
@@ -44,11 +47,12 @@ trait Labeled[L <: Label] {
     * @param key key of the label to be removed
     * @return
     */
-  def removeLabelEntry(key : String) = {
-    for(labelentry <- label.label){
+  def removeLabelEntry(key : String) : Label = {
+    for(labelentry <- label){
       if(labelentry.key.equals(key)){
-        label.label -= labelentry
+        label.remove(labelentry)
       }
     }
+    this
   }
 }

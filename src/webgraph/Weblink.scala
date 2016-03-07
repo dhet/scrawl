@@ -1,13 +1,12 @@
 package webgraph
 
-import abstractgraph.Edge
+import graph.Edge
 
 /**
   * Created by nicohein on 29/02/16.
   */
 class Weblink ( override val startNode : Webpage,
-                override val endNode : Webpage,
-                override val label : LinkLabel = LinkLabel()) extends Edge[Webpage, LinkLabel]{
+                override val endNode : Webpage) extends Edge[Webpage] with LinkLabel{
 
   /**
     *
@@ -18,7 +17,7 @@ class Weblink ( override val startNode : Webpage,
     xml += s"<weblink>"
     xml += s"<startnode>${startNode.url}</startnode>"
     xml += s"<endnode>${endNode.url}</ednode>"
-    xml += label.toXML()
+    xml += linkToXML()
     xml += s"</weblink>"
     xml
   }
@@ -26,6 +25,12 @@ class Weblink ( override val startNode : Webpage,
 
 object Weblink {
   def apply(startNode : Webpage, endNode : Webpage) : Weblink = new Weblink(startNode, endNode)
-  def apply(startNode : Webpage, endNode : Webpage, label : LinkLabel) : Weblink  = new Weblink(startNode, endNode, label)
+  def apply(startNode : Webpage, endNode : Webpage, label : LinkLabel) : Weblink  = {
+    val weblink = new Weblink(startNode, endNode)
+    for(labelentry <- label.label){
+      weblink.addLabelEntry(labelentry)
+    }
+    weblink
+  }
 }
 
