@@ -1,10 +1,7 @@
 package webgraph
 
-import java.net.URL
-
-
+import analyze.{Inlink, Outlink}
 import graph.Graph
-import analyze.{Outlink, Inlink}
 
 
 /**
@@ -16,7 +13,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     *
     * @param weblink weblink that should be added to the graph
     */
-  def addWeblink(weblink : Weblink) = {
+  def addWeblink(weblink : Weblink) : Graph[Webpage, Weblink] = {
     addEdge(weblink)
   }
 
@@ -37,35 +34,39 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     *
     * @return returns the next uncraled webpage found during a breadth first search
     */
-  def nextUncrawledNode() : Webpage = {
+  def nextUncrawledNode() : Option[Webpage] = {
+    var page = nextPageConstraintBreadthFirst((node : Webpage) => !node.crawled)
+    page match {
+      case Some(webpage)  =>
+        page.get.crawled = true
+        page
+      case _ => None
 
-    val page = nextPageConstraintBreadthFirst((node : Webpage) => !node.crawled)
-    page.crawled = true
-    page
-
+    }
   }
 
   //TODO inefficient (implement next neighbor search in graph)
-  def nextPageConstraintBreadthFirst(f :(Webpage) => Boolean) : Webpage = {
+  def nextPageConstraintBreadthFirst(f :(Webpage) => Boolean) : Option[Webpage] = {
     for(node <- breadthFirstTraversal(root)){
       if(f(node))
-        return node
+        return Some(node)
     }
-    new Webpage(new URL("")) //TODO implement this with retrievable
+    None
   }
 
   //TODO inefficient
-  def nextPageContraintDepththFirst(f :(Webpage) => Boolean) : Webpage = {
+  def nextPageContraintDepththFirst(f :(Webpage) => Boolean) : Option[Webpage] = {
     for(node <- depthFirstTraversal(root)){
       if(f(node))
-        return node
+        return Some(node)
     }
-    new Webpage(new URL("")) //TODO implement this with retrievable
+    None
   }
 
   /**
     * analyzes the linktypes (page internal, offpage, mail etc)
     */
+  @deprecated("will be implemented using Crawlprefs")
   def analyzeLinktypes() = {
     analyzeEdges("linktype", (weblink: Weblink) =>
       if(weblink.startNode.url.getHost == weblink.endNode.url.getHost)

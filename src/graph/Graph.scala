@@ -168,7 +168,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     */
   def analyzeEdges(labelkey : String, f:(E) => Any) : Graph[N, E] ={
     for(edge <- edges){
-      edge.updateLabelEntry(new LabelEntry(labelkey, f(edge)))
+      edge.updateLabelEntry(new LabelEntry(labelkey, f(edge)))//map?
     }
     this
   }
@@ -181,7 +181,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     */
   def analyzeNodes(labelkey : String, f:(N) => Any) : Graph[N, E] = {
     for(node <- nodes){
-      node.updateLabelEntry(new LabelEntry(labelkey, f(node)))
+      node.updateLabelEntry(new LabelEntry(labelkey, f(node)))  //map?
     }
     this
   }

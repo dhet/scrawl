@@ -20,10 +20,10 @@ class WebgraphTest extends FlatSpec with Matchers{
     val webpage = Webpage(new URL("http://url"))
 
     webpage.addLabelEntry(new LabelEntry("key", "value"))
-    webpage.getLabelEntry("key") should be ("value")
+    webpage.getLabelEntry("key").get should be ("value")
 
     webpage.updateLabelEntry(new LabelEntry("key", "updated"))
-    webpage.getLabelEntry("key") should be ("updated")
+    webpage.getLabelEntry("key").get should be ("updated")
 
     webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled><pagelabel><key>key</key><value>updated</value></pagelabel></webpage>")
 
@@ -37,10 +37,10 @@ class WebgraphTest extends FlatSpec with Matchers{
     var weblink = Weblink(webpage1, webpage2)
 
     weblink.addLabelEntry(new LabelEntry("key", "value"))
-    weblink.getLabelEntry("key") should be ("value")
+    weblink.getLabelEntry("key").get should be ("value")
 
     weblink.updateLabelEntry(new LabelEntry("key", "updated"))
-    weblink.getLabelEntry("key") should be ("updated")
+    weblink.getLabelEntry("key").get should be ("updated")
 
     weblink.toXML() should be ("<weblink><startnode>http://url1</startnode><endnode>http://url2</ednode><linklabel><key>key</key><value>updated</value></linklabel></weblink>")
 
@@ -92,19 +92,19 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.countNodes() should be (7)
     webgraph.countUncrawledNodes() should be (7)
 
-    webgraph.nextUncrawledNode().url.toString should be ("http://root.com")
+    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com")
     root.crawled = true
-    webgraph.nextUncrawledNode().url.toString should be ("http://root.com/sub1")
+    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub1")
     rootsub1.crawled = true
-    webgraph.nextUncrawledNode().url.toString should be ("http://root.com/sub2")
+    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub2")
     rootsub2.crawled = true
-    webgraph.nextUncrawledNode().url.toString should be ("http://root.com/sub1/sub1")
+    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub1/sub1")
     rootsub1sub1.crawled = true
-    webgraph.nextUncrawledNode().url.toString should be ("http://root.com/sub2/sub1")
+    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub2/sub1")
     rootsub2sub1.crawled = true
-    webgraph.nextUncrawledNode().url.toString should be ("http://offpage2.com")
+    webgraph.nextUncrawledNode().get.url.toString should be ("http://offpage2.com")
     offpage2.crawled = true
-    webgraph.nextUncrawledNode().url.toString should be ("http://offpage1.com")
+    webgraph.nextUncrawledNode().get.url.toString should be ("http://offpage1.com")
     offpage1.crawled = true
 
 
@@ -115,9 +115,9 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.generateSitemap() should be (List("http://root.com", "http://root.com/sub1", "http://root.com/sub2", "http://root.com/sub2/sub1", "http://offpage2.com", "http://root.com/sub1/sub1", "http://offpage1.com"))
     webgraph.analyzeLinktypes()
 
-    edge1.getLabelEntry("linktype").asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub1)")
-    edge2.getLabelEntry("linktype").asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub2)")
-    edge6.getLabelEntry("linktype").asInstanceOf[Outlink].toString should be ("Outlink(http://offpage1.com)")
+    edge1.getLabelEntry("linktype").get.asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub1)")
+    edge2.getLabelEntry("linktype").get.asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub2)")
+    edge6.getLabelEntry("linktype").get.asInstanceOf[Outlink].toString should be ("Outlink(http://offpage1.com)")
 
 
 

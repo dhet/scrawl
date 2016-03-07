@@ -17,7 +17,7 @@ class Weblink ( override val startNode : Webpage,
     xml += s"<weblink>"
     xml += s"<startnode>${startNode.url}</startnode>"
     xml += s"<endnode>${endNode.url}</ednode>"
-    xml += linkToXML()
+    xml += labelToXML()
     xml += s"</weblink>"
     xml
   }
