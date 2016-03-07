@@ -3,7 +3,7 @@ package main
 import java.net.{MalformedURLException, URL}
 
 import cli._
-import crawling.MainSystem
+import crawling.CollectorSystem
 
 object Scrawl {
   def main(args : Array[String]) = {
@@ -30,7 +30,7 @@ object Scrawl {
       println(s"Crawling the sites [${websites.mkString(", ")}] with the arguments [${activeArguments.mkString(", ")}]")
       websites.foreach(website => {
         try{
-          MainSystem.crawlPage(new URL(prepareUrl(website)))
+          CollectorSystem.crawlPage(new URL(prepareUrl(website)))
         } catch {
           case e : MalformedURLException => exit(s"Invalid URL: $website")
         }
