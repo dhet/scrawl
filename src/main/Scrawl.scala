@@ -32,7 +32,7 @@ object Scrawl {
         try{
           MainSystem.crawlPage(new URL(prepareUrl(website)))
         } catch {
-          case MalformedURLException => exit(s"Invalid URL: $website")
+          case e : MalformedURLException => exit(s"Invalid URL: $website")
         }
       })
     }
