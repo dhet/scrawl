@@ -20,12 +20,6 @@ class Webpage ( val url : URL,
     var xml : String = ""
     xml += s"<webpage>"
     xml += s"<url>${url.toString}</url>"
-    xml += s"<content>$content</content>"
-    xml += s"<edges>"
-    for(edge <- edges){
-      xml += edges.head.toXML()
-    }
-    xml += s"</edges>"
     xml += s"<crawled>$crawled</crawled>"
     xml += labelToXML()
     xml += s"</webpage>"
