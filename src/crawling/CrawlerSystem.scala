@@ -30,6 +30,7 @@ object CrawlerSystem extends App{
 //      println("crawling " + parent.url)
       val page = downloadPage(url)
       if(currentDepth <= CrawlPrefs.maxDepth && !visited.contains(url)){
+        page.analyze(CrawlPrefs.analyzeFunctions)
         val link = Weblink(parent, page)
         collector ! CrawlResult(link)
         val map = extractInternalLinks(page.content, url)

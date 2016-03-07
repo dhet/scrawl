@@ -3,7 +3,7 @@ package webgraph
 import java.net.URL
 
 
-import graph.Node
+import graph.{LabelEntry, Node}
 
 /**
   * Created by nicohein on 29/02/16.
@@ -50,6 +50,8 @@ class Webpage ( val url : URL,
     xml += s"</webpage>"
     xml
   }
+
+  def analyze(algorithms : Seq[(Webpage) => LabelEntry]) = algorithms.foreach(alg => addLabelEntry(alg(this)))
 }
 
 object Webpage {
