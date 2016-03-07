@@ -111,7 +111,7 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.countUncrawledNodes() should be (0)
     webgraph.countNodes() should be (7)
 
-    root.edges.map((e) => e.endNode.url) should be (Set(rootsub1.url, rootsub2.url))
+
     webgraph.generateSitemap() should be (List("http://root.com", "http://root.com/sub1", "http://root.com/sub2", "http://root.com/sub2/sub1", "http://offpage2.com", "http://root.com/sub1/sub1", "http://offpage1.com"))
     webgraph.analyzeLinktypes()
 
@@ -123,9 +123,9 @@ class WebgraphTest extends FlatSpec with Matchers{
 
     //webgraph.edges.toList.map((edge : Weblink) => edge.getLabelEntry("linktype")) should be (9)
 
-    //webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype").isInstanceOf[Inlink]) true else false, (webpage: Webpage) => true )/*.map((webpage: Webpage) => webpage.url)*/ should be (1)
-    //webgraph.dijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra"), page.url)) should be (1)
-    //webgraph.constraintDijkstra(root, (edge) => edge.getLabelEntry("linktype").isInstanceOf[Inlink], (node) => true).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra"), page.url)) should be (1)
+    //webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype").isInstanceOf[Inlink]) true else false, (webpage: Webpage) => true ).map((webpage: Webpage) => webpage.url.toString) should be (1)
+    //webgraph.dijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra"), page.url.toString)) should be (1)
+    //webgraph.constraintDijkstra(root, (edge) => edge.getLabelEntry("linktype").isInstanceOf[Inlink], (node) => true).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra"), page.url.toString)) should be (1)
 
   }
 

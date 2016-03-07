@@ -6,7 +6,7 @@ package graph
 trait Node[E <: Edge[_]]{
   this : Label =>
 
-  var edges : Set[E] = Set[E]() //set as field since this is only internal structure like double linked list
+  protected[graph] var edges : Set[E] = Set[E]() //set as field since this is only internal structure like double linked list
 
   private[graph] var visited : Boolean = false
 

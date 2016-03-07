@@ -29,5 +29,3 @@ trait PageLabel extends Label{
     xml
   }
 }
-
-object PageLabel extends PageLabel

@@ -27,7 +27,4 @@ trait LinkLabel extends Label{
     }
     xml
   }
-
 }
-
-object LinkLabel extends LinkLabel
