@@ -26,15 +26,21 @@ object CollectorSystem{
     val future = crawlerRoot ! StartCrawling(url)
 //    val result = Await.result(future, timeout.duration)
 //    mainActor ! StartCrawling(url)
+
   }
 
   class CollectorActor(graph : Webgraph) extends Actor{
+    var counter = 0
     def receive = {
       case CrawlResult(link) => {
         println(s"added link ${link.startNode.url} -> ${link.endNode.url}")
         graph.addWeblink(link)
+        counter += 1
+        if(counter == 10){
+          context.self ! DoneCrawling
+        }
       }
-      case DoneCrawling => println("done!")
+      case DoneCrawling => println(graph.toXML())
     }
   }
 }
