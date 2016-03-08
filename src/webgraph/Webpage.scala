@@ -42,7 +42,22 @@ class Webpage ( val url : URL,
   }
 }
 
+case class ExternalWebpage(override val url : URL) extends Webpage(url)
+case class InternalWebpage(override val url : URL) extends Webpage(url)
+
+
 object Webpage {
+  def apply(url : String, parent : URL) : Option[Webpage] =  {
+    if(url.startsWith("/") || url.contains(parent.getHost)){
+      Some(InternalWebpage(new URL(parent, url)))
+    } else{
+      try{
+        Some(ExternalWebpage(new URL(url)))
+      } catch{
+        case e : Exception => None
+      }
+    }
+  }
 
   /**
     * Apply Function that takes an URL as parameter
