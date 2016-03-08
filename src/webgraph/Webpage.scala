@@ -4,6 +4,8 @@ import java.net.URL
 
 import graph.{LabelEntry, Node}
 
+import scala.xml.Elem
+
 /**
   * Created by nicohein on 29/02/16.
   */
@@ -16,6 +18,11 @@ class Webpage ( val url : URL,
       <links>
       {for (edge <- edges) yield <link url={edge.endNode.url.toString}/>}
       </links>
+    </webpage>
+
+  def substructure : Elem =
+    <webpage url={url.toString}>
+      {for(n <- edges.map((e) => e.endNode); if n.url.getPath.split("/").size - url.getPath.split("/").size == 1 ) yield n.substructure}
     </webpage>
 
   /**

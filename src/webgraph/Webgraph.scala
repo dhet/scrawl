@@ -21,6 +21,11 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
       }
     </webgraph>
 
+
+  def sitestructure =
+    <sitestructure>
+      {root.substructure}
+    </sitestructure>
   /**
     * Adds a weblink to the graph
     * @param weblink weblink to be added
