@@ -112,25 +112,30 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.addWeblink(edge2)
     webgraph.addWeblink(edge3)
 
+    var pp = new PrettyPrinter(80, 2)
     //adding the same link twice should not change anything
     webgraph.addWeblink(edge1)
+    webgraph.addWeblink(edge1)
+    //webgraph.nodes.map((node) => node.url ).toString() should be (1)
+    //webgraph.edges.toString should be (1)
+    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub1\"/>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub1\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
 
     webgraph.countNodes() should be (3)
     webgraph.countEdges() should be (3)
 
     //removing edge (root, rootsub2) should only delete one edge
-    webgraph.removeWeblink(edge2)
-    webgraph.countNodes() should be (3)
-    webgraph.countEdges() should be (2)
+//    webgraph.removeWeblink(edge2)
+//    webgraph.countNodes() should be (3)
+//    webgraph.countEdges() should be (2)
 
     //removing edge (root, rootsub1) however should also delete node sub1 since there isn't any link to it and the graph is defined as connected
-    webgraph.addWeblink(edge2)
-    webgraph.removeWeblink(edge1)
-    webgraph.countNodes() should be (2)
-    webgraph.countEdges() should be (1)
+   // webgraph.addWeblink(edge2)
+   // webgraph.removeWeblink(edge1)
+   // webgraph.countNodes() should be (2)
+   // webgraph.countEdges() should be (1)
 
-    var pp = new PrettyPrinter(80, 2)
-    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
+
+   // pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
   }
 
 
@@ -146,9 +151,9 @@ class WebgraphTest extends FlatSpec with Matchers{
     var edge1 = Weblink(root, rootsub1)
     var edge2 = Weblink(root, rootsub2)
     var edge3 = Weblink(rootsub1, rootsub2)
-    webgraph.addWeblink(edge1)
-    webgraph.addWeblink(edge2)
-    webgraph.addWeblink(edge3)
+    edge1 = webgraph.addWeblink(edge1)
+    edge2 = webgraph.addWeblink(edge2)
+    edge3 = webgraph.addWeblink(edge3)
 
     webgraph.analyzeEdges((link) => new LabelEntry("graphanalyze", 1))
     edge1.getLabelEntry("graphanalyze").get should be (1)
@@ -209,6 +214,7 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.weightedDijkstra(root, (link) => 2).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (2,http://root.com/sub1), (2,http://root.com/sub2), (4,http://root.com/sub1/sub1), (4,http://root.com/sub2/sub1), (4,http://offpage2.com), (6,http://offpage1.com))")
 
   }
+
 
 
 

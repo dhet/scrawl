@@ -42,8 +42,9 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     * Adds an directed edge to this graph (the graph is mutable)
     * @param edge edge to be added to the graph
     */
-  protected def addEdge(edge : E) : Graph[N, E] = {
-    edges = edges + edge
+  protected def addEdge(edge : E) : E = {
+    if(!edges.exists((e) => if (e.startNode.equals(edge.startNode) && e.endNode.equals(edge.endNode)) true else false))
+      edges = edges + edge
     //add edges to nodes
     edge.startNode.addEdge(edge)
     //add nodes of edge if not already existing
@@ -51,7 +52,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
       addNode(edge.startNode)
     if(!nodes.contains(edge.endNode))
       addNode(edge.endNode)
-    this
+    edge
   }
 
   /**

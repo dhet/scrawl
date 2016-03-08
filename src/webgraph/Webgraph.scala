@@ -26,8 +26,18 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     * @param weblink weblink to be added
     * @return this
     */
-  def addWeblink(weblink : Weblink) : Graph[Webpage, Weblink] = {
-    addEdge(weblink)
+  def addWeblink(weblink : Weblink) : Weblink = {
+    var tempstartnode = weblink.startNode
+    var tempendnode = weblink.endNode
+    for(webpage <- nodes){
+      if(tempstartnode.url.equals(webpage.url)){
+        tempstartnode = webpage.merge(weblink.startNode)
+      }
+      if(tempendnode.url.equals(webpage.url)){
+        tempendnode = webpage.merge(weblink.endNode)
+      }
+    }
+    addEdge(new Weblink(tempstartnode, tempendnode))
   }
 
   /**
