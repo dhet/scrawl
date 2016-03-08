@@ -133,7 +133,32 @@ class WebgraphTest extends FlatSpec with Matchers{
     pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
   }
 
-  "A Wabgraph" should "be traversable" in {
+
+  "A Webgraph" should "be able to analyze its nodes and edges" in {
+    var root = Webpage(new URL("http://root.com"))
+
+    val webgraph: Webgraph = Webgraph(root)
+
+    //adding an Weblink is implicit for adding two nodes and one edge
+    var rootsub1 = Webpage(new URL("http://root.com/sub1"))
+    var rootsub2 = Webpage(new URL("http://root.com/sub2"))
+
+    var edge1 = Weblink(root, rootsub1)
+    var edge2 = Weblink(root, rootsub2)
+    var edge3 = Weblink(rootsub1, rootsub2)
+    webgraph.addWeblink(edge1)
+    webgraph.addWeblink(edge2)
+    webgraph.addWeblink(edge3)
+
+    webgraph.analyzeEdges((link) => new LabelEntry("graphanalyze", 1))
+    edge1.getLabelEntry("graphanalyze").get should be (1)
+
+    webgraph.analyzeNodes((page) => new LabelEntry("graphanalyze", 2))
+    root.getLabelEntry("graphanalyze").get should be (2)
+
+  }
+
+  "A Wabgraph" should "be traversable and should perform dijkstra" in {
 
     //nodes (Webpages) of graph
     var root = Webpage(new URL("http://root.com"))
@@ -157,7 +182,7 @@ class WebgraphTest extends FlatSpec with Matchers{
     var edge9 = Weblink(rootsub2, offpage2)
 
 
-    val webgraph : Webgraph = Webgraph(root)
+    val webgraph: Webgraph = Webgraph(root)
     //to ensure the webgraph is fully connected is is constructed only with edges except the root
     webgraph.addWeblink(edge1)
     webgraph.addWeblink(edge2)
@@ -169,52 +194,25 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.addWeblink(edge8)
     webgraph.addWeblink(edge9)
 
-    webgraph.breadthFirstTraversal(root) should be (1)
-  }
+    webgraph.breadthFirstTraversal(root).toString() should be("List(Webpage(url:http://root.com, Set(Edge(startnode:http://root.com, endnode:http://root.com/sub1 ), Edge(startnode:http://root.com, endnode:http://root.com/sub2 ))), Webpage(url:http://root.com/sub1, Set(Edge(startnode:http://root.com/sub1, endnode:http://root.com/sub2 ), Edge(startnode:http://root.com/sub1, endnode:http://root.com/sub1/sub1 ), Edge(startnode:http://root.com/sub1, endnode:http://root.com/sub2/sub1 ))), Webpage(url:http://root.com/sub2, Set(Edge(startnode:http://root.com/sub2, endnode:http://root.com/sub2/sub1 ), Edge(startnode:http://root.com/sub2, endnode:http://offpage2.com ))), Webpage(url:http://root.com/sub1/sub1, Set(Edge(startnode:http://root.com/sub1/sub1, endnode:http://offpage1.com ), Edge(startnode:http://root.com/sub1/sub1, endnode:http://root.com/sub2/sub1 ))), Webpage(url:http://root.com/sub2/sub1, Set()), Webpage(url:http://offpage2.com, Set()), Webpage(url:http://offpage1.com, Set()))")
+    webgraph.depthFirstTraversal(root).toString() should be("List(Webpage(url:http://root.com, Set(Edge(startnode:http://root.com, endnode:http://root.com/sub1 ), Edge(startnode:http://root.com, endnode:http://root.com/sub2 ))), Webpage(url:http://root.com/sub1, Set(Edge(startnode:http://root.com/sub1, endnode:http://root.com/sub2 ), Edge(startnode:http://root.com/sub1, endnode:http://root.com/sub1/sub1 ), Edge(startnode:http://root.com/sub1, endnode:http://root.com/sub2/sub1 ))), Webpage(url:http://root.com/sub2, Set(Edge(startnode:http://root.com/sub2, endnode:http://root.com/sub2/sub1 ), Edge(startnode:http://root.com/sub2, endnode:http://offpage2.com ))), Webpage(url:http://root.com/sub2/sub1, Set()), Webpage(url:http://offpage2.com, Set()), Webpage(url:http://root.com/sub1/sub1, Set(Edge(startnode:http://root.com/sub1/sub1, endnode:http://offpage1.com ), Edge(startnode:http://root.com/sub1/sub1, endnode:http://root.com/sub2/sub1 ))), Webpage(url:http://offpage1.com, Set()))")
 
 
-  "A Webgraph" should "be conected" in {
+    webgraph.analyzeEdges((weblink) => new LabelEntry("linktype", if(weblink.endNode.url.getHost.equals(weblink.startNode.url.getHost)) "inlink" else "outlink"))
+    webgraph.analyzeNodes((webpage) => new LabelEntry("linktype", if(webpage.url.getHost.equals(root.url.getHost)) "inpage" else "outpage"))
+
+    webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype").get.equals("inlink")) true else false, (webpage: Webpage) => true ).map((webpage: Webpage) => webpage.url.toString).toString() should be ("List(http://root.com, http://root.com/sub1, http://root.com/sub2, http://root.com/sub1/sub1, http://root.com/sub2/sub1)")
+    webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => true, (webpage: Webpage) => if(webpage.getLabelEntry("linktype").get.equals("inpage")) true else false ).map((webpage: Webpage) => webpage.url.toString).toString() should be ("List(http://root.com, http://root.com/sub1, http://root.com/sub2, http://root.com/sub1/sub1, http://root.com/sub2/sub1)")
 
 
-    //webgraph.countNodes() should be (7)
-    //webgraph.countUncrawledNodes() should be (7)
-
-    //webgraph.xml should be (1)
-    /*webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com")
-    root.crawled = true
-    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub1")
-    rootsub1.crawled = true
-    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub2")
-    rootsub2.crawled = true
-    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub1/sub1")
-    rootsub1sub1.crawled = true
-    webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub2/sub1")
-    rootsub2sub1.crawled = true
-    webgraph.nextUncrawledNode().get.url.toString should be ("http://offpage2.com")
-    offpage2.crawled = true
-    webgraph.nextUncrawledNode().get.url.toString should be ("http://offpage1.com")
-    offpage1.crawled = true*/
-
-
-    //webgraph.countUncrawledNodes() should be (0)
-    //webgraph.countNodes() should be (7)
-
-
-    //webgraph.generateSitemap() should be (List("http://root.com", "http://root.com/sub1", "http://root.com/sub2", "http://root.com/sub2/sub1", "http://offpage2.com", "http://root.com/sub1/sub1", "http://offpage1.com"))
-    //webgraph.analyzeLinktypes()
-
-    //edge1.getLabelEntry("linktype").get.asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub1)")
-    //edge2.getLabelEntry("linktype").get.asInstanceOf[Inlink].toString should be ("Inlink(http://root.com/sub2)")
-    //edge6.getLabelEntry("linktype").get.asInstanceOf[Outlink].toString should be ("Outlink(http://offpage1.com)")
-
-
-
-    //webgraph.edges.toList.map((edge : Weblink) => edge.getLabelEntry("linktype")) should be (9)
-
-    //webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype").isInstanceOf[Inlink]) true else false, (webpage: Webpage) => true ).map((webpage: Webpage) => webpage.url.toString) should be (1)
-    //webgraph.dijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra"), page.url.toString)) should be (1)
-    //webgraph.constraintDijkstra(root, (edge) => edge.getLabelEntry("linktype").isInstanceOf[Inlink], (node) => true).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra"), page.url.toString)) should be (1)
+    webgraph.dijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (1,http://root.com/sub1), (1,http://root.com/sub2), (2,http://root.com/sub1/sub1), (2,http://root.com/sub2/sub1), (2,http://offpage2.com), (3,http://offpage1.com))")
+    webgraph.weightedDijkstra(root, (link) => 2).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (2,http://root.com/sub1), (2,http://root.com/sub2), (4,http://root.com/sub1/sub1), (4,http://root.com/sub2/sub1), (4,http://offpage2.com), (6,http://offpage1.com))")
 
   }
+
+
+
+
+
 
 }

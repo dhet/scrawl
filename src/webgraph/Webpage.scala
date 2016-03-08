@@ -29,6 +29,9 @@ class Webpage ( val url : URL,
     })
     crawled = true
   }
+
+  @Override
+  override def toString() : String = s"Webpage(url:${url.toString()}, ${edges.toString()})"
 }
 
 case class ExternalWebpage(override val url : URL) extends Webpage(url)

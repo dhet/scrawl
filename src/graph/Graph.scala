@@ -6,9 +6,8 @@ import scala.collection.mutable
   * Created by nicohein on 29/02/16.
   */
 trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
-  protected var nodes: Set[N] = Set[N]() //protected since every graph should be able to see its nodes
-
-  protected var edges: Set[E] = Set[E]() //protected since every graph should be able to see its edges
+  var nodes: Set[N] = Set[N]() //protected since every graph should be able to see its nodes
+  var edges: Set[E] = Set[E]() //protected since every graph should be able to see its edges
 
   /**
     * Counts the number of nodes in this graph
@@ -204,7 +203,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
     while(tempnodes.nonEmpty){
       //select node with smallest distance from source
-      tempnodes = tempnodes.sortWith((node1, node2) => node1.getLabelEntry("dijkstra").asInstanceOf[Int] < node2.getLabelEntry("dijkstra").asInstanceOf[Int])
+      tempnodes = tempnodes.sortWith((node1, node2) => node1.getLabelEntry("dijkstra").get.asInstanceOf[Int] < node2.getLabelEntry("dijkstra").get.asInstanceOf[Int])
       tempnode = tempnodes.head
       tempnodes = tempnodes.tail
       for(e <- tempnode.edges){
