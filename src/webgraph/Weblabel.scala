@@ -21,12 +21,11 @@ trait Weblabel extends Label{
   def labelToXML() : String = {
     var xml : String = ""
     if(label.nonEmpty) {
-      xml += s"<label>"
+      xml += s"<labels>"
       for (labelentry <- label) {
-        xml += s"<key>${labelentry.key.toString}</key>"
-        xml += s"<value>${labelentry.value.toString}</value>"
+        xml += s"<${labelentry.key.toString}>${labelentry.value.toString}</${labelentry.key.toString}>"
       }
-      xml += s"</label>"
+      xml += s"</labels>"
     }
     xml
   }

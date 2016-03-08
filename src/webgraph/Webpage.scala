@@ -2,7 +2,6 @@ package webgraph
 
 import java.net.URL
 
-
 import graph.{LabelEntry, Node}
 
 /**
@@ -16,6 +15,8 @@ class Webpage ( val url : URL,
     * Generates XML corresponding to the Webpage
     * @return tring containing xml description of the Webpage
     */
+
+
   def toXML() : String = {
     var xml : String = ""
     xml += s"<webpage>"
