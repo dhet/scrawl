@@ -79,7 +79,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
   def toXML() : String = {
     var xml : String = ""
     xml += s"<Webgraph>"
-    for(node <- depthFirstTraversal(root)){
+    for(node <- nodes){
       xml += node.toXML()
     }
     xml += s"</Webgraph>"
