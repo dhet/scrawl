@@ -29,6 +29,21 @@ class Webpage ( val url : URL,
     })
     crawled = true
   }
+
+  def merge(webpage : Webpage): Webpage = {
+    if(webpage.url.equals(url)){
+      //replace content if this page has none otherwise vorget new content
+      if(content.equals(""))
+        content = webpage.content
+      for(labelentry <- webpage.label){
+       updateLabelEntry(labelentry)
+      }
+    }
+    this
+  }
+
+  @Override
+  override def toString() : String = s"Webpage(url:${url.toString()}, ${edges.toString()})"
 }
 
 case class ExternalWebpage(override val url : URL) extends Webpage(url)

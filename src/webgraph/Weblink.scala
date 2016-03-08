@@ -18,6 +18,10 @@ class Weblink ( override val startNode : Webpage,
     * @param algorithms Algorithms to analyze the Edge
     */
   def analyze(algorithms : Seq[(Weblink) => LabelEntry]) = algorithms.foreach(alg => addLabelEntry(alg(this)))
+
+
+  @Override
+  override def toString() : String = s"Edge(startnode:${startNode.url.toString}, endnode:${endNode.url.toString} )"
 }
 
 object Weblink {
