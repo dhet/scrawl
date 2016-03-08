@@ -1,6 +1,5 @@
 package webgraph
 
-import analyze.{Inlink, Outlink}
 import graph.Graph
 
 
@@ -63,46 +62,12 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     None
   }
 
-  /**
-    * analyzes the linktypes (page internal, offpage, mail etc)
-    */
-  @deprecated("will be implemented using Crawlprefs")
-  def analyzeLinktypes() = {
-    analyzeEdges("linktype", (weblink: Weblink) =>
-      if(weblink.startNode.url.getHost == weblink.endNode.url.getHost)
-        new Inlink(weblink.endNode.url)
-      else
-        new Outlink(weblink.endNode.url))
-  }
-
-  /**
-    *
-    * @param labelkey The key referencing the results in labels
-    * @param f f : (E) => Any function on edge analyzing it
-    */
-  @deprecated("Use analyzeEdges instead")
-  def analyzeWeblinks(labelkey: String, f: (Weblink) => Any): Webgraph = {
-    analyzeEdges(labelkey, f)
-    this
-  }
-
-  /**
-    *
-    * @param labelkey  The key referencing the results in labels
-    * @param f f : (N) => Any function on node analyzing it
-    */
-  @deprecated("Use analyzeNodes instead")
-  def analyzeWebpages(labelkey: String, f: (Webpage) => Any): Webgraph = {
-    analyzeNodes(labelkey, f)
-    this
-  }
 
   /**
     *
     * @return generates sitemap of the crawled page
     */
   def generateSitemap() : List[String] = {
-    analyzeLinktypes()
     depthFirstTraversal(root).map((node: Webpage) => node.url.toString)
   }
 
@@ -114,7 +79,7 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
   def toXML() : String = {
     var xml : String = ""
     xml += s"<Webgraph>"
-    for(node <- nodes){
+    for(node <- depthFirstTraversal(root)){
       xml += node.toXML()
     }
     xml += s"</Webgraph>"

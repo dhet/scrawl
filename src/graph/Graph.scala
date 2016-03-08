@@ -7,19 +7,11 @@ import scala.collection.mutable
   */
 trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   protected var nodes: Set[N] = Set[N]() //protected since every graph should be able to see its nodes
+
   protected var edges: Set[E] = Set[E]() //protected since every graph should be able to see its edges
 
   /**
-    *
-    * @return number of nodes contained in this graph
-    */
-  @deprecated("Counts nodes but is ambiguous")
-  def count() : Int = {
-    countNodes()
-  }
-
-  /**
-    *
+    * Counts the number of nodes in this graph
     * @return number of nodes contained in this graph
     */
   def countNodes() : Int = {
@@ -27,7 +19,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    *
+    * Counts the number of edges contained in this graph
     * @return number of edges contained in this graph
     */
   def countEdges() : Int = {
@@ -35,7 +27,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    *
+    * Adds a node to this graph (the graph is mutable)
     * @param node node to be added to the graph
     */
   protected def addNode(node : N) : Graph[N, E] = {
@@ -48,24 +40,24 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    *
+    * Adds an edge to this graph (the graph is mutable)
     * @param edge edge to be added to the graph
     */
   protected def addEdge(edge : E) : Graph[N, E] = {
     edges = edges + edge
     //add edges to nodes
     edge.startNode.addEdge(edge)
-    edge.endNode.addEdge(edge)
+    //TODO check edge.endNode.addEdge(edge)
     //add nodes of edge if not already existing
     if(!nodes.contains(edge.startNode))
       addNode(edge.startNode)
-    if(!nodes.contains(edge.endNode))
-      addNode(edge.endNode)
+    //TODO check if(!nodes.contains(edge.endNode))
+      //TODO check addNode(edge.endNode)
     this
   }
 
   /**
-    *
+    * Removes a Node from the graph
     * @param node node to be removed frpm graph
     */
   protected def removeNode(node : N) : Graph[N, E] = {
@@ -78,24 +70,24 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    *
+    * Removes an Edge from the Graph
     * @param edge edge to be removed from graph
     */
   protected def removeEdge(edge : E) : Graph[N, E] = {
     //it is not necessary to remove the edges from all nodes
     edge.startNode.removeEdge(edge)
-    edge.endNode.removeEdge(edge)
+    //TODO check edge.endNode.removeEdge(edge)
     if(edge.startNode.edges.isEmpty)
       removeNode(edge.startNode)
-    if(edge.endNode.edges.isEmpty)
-      removeNode(edge.endNode)
+    //TODO check if(edge.endNode.edges.isEmpty)
+      //TODO check removeNode(edge.endNode)
     //now remove edge from graph
     edges = edges - edge
     this
   }
 
   /**
-    *
+    * Depth first traversal on the graph
     * @param node depth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
@@ -104,6 +96,11 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     node :: depthFirstTraversalHelper(node)
   }
 
+  /**
+    * The implementation of the recursive depth first traveral
+    * @param node depth first traversal is starting with this node
+    * @return List of nodes in order of the traversal
+    */
   private def depthFirstTraversalHelper(node: N): List[N] = {
     var pagelist : List[N] = Nil
     node.visited = true
@@ -116,7 +113,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    *
+    * Breadth first traversal on the graph
     * @param node breadth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
@@ -125,11 +122,11 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    *
+    * Constraint  Breadth first search
     * @param node constraint breadth first traversal is starting with this node
     * @param f Function that maps Edges to Boolean to constrain paths
     * @param g Function that maps Nodes to Boolean to constrain node visits
-    * @return
+    * @return List of nodes in order of the traversal
     */
   def contraintBreadthFirstTraversal(node: N, f: (E) => Boolean, g: (N) => Boolean): List[N] = {
     setUnvisited()
@@ -137,7 +134,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     val queue : mutable.Queue[N] = mutable.Queue[N]()
     queue.enqueue(node)
     node.visited = true
-
     while(queue.nonEmpty){
       val tempnode = queue.dequeue()
       pagelist = tempnode :: pagelist
@@ -152,7 +148,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    * is called before an breadth or depth first traversal
+    * Sets all nodes to unvisited and is needs to be called before any traversal
     */
   protected def setUnvisited() : Graph[N, E] = {
     for(node <- nodes){
@@ -162,43 +158,48 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    *
-    * @param labelkey The key referencing the results in labels
-    * @param f f : (E) => Any function on edge analyzing it
+    * Analyzes every edge with a given function and adds the result to the label
+    * @param f Analyze function
     */
-  def analyzeEdges(labelkey : String, f:(E) => Any) : Graph[N, E] ={
+  def analyzeEdges(f:(E) => LabelEntry) : Graph[N, E] ={
     for(edge <- edges){
-      edge.updateLabelEntry(new LabelEntry(labelkey, f(edge)))//map?
+      edge.updateLabelEntry(f(edge)) //map??
     }
     this
   }
 
   /**
-    *
-    * @param labelkey  The key referencing the results in labels
+    * Analyzes every node with a given function and adds the result to the label
     * @param f f : (N) => Any function on node analyzing it
     * @return this
     */
-  def analyzeNodes(labelkey : String, f:(N) => Any) : Graph[N, E] = {
+  def analyzeNodes(f:(N) => LabelEntry) : Graph[N, E] = {
     for(node <- nodes){
-      node.updateLabelEntry(new LabelEntry(labelkey, f(node)))  //map?
+      node.updateLabelEntry(f(node))  //map??
     }
     this
   }
 
   /**
-    *
+    * Runs a simple Dijkstra and adds the label "dijkstra" to every node (every edge is weighted with 1)
     * @param node node where dijkstra starts
     * @return this
     */
   def dijkstra(node : N) : Graph[N, E] = {
-    constraintDijkstra(node, (e) => true, (n) => true)
+    weightedDijkstra(node, (e) => 1)
   }
-  def constraintDijkstra(node : N, f: (E) => Boolean, g: (N) => Boolean ): Graph[N, E] = {
+
+  /**
+    * Runs a constraint dikstra and adds the label "dijkstra" to every node - unvisited pages are labeled with maxint
+    * @param node node where dijkstra starts
+    * @param f function defining barriers for edges
+    * @return this
+    */
+  def weightedDijkstra(node : N, f: (E) => Int): Graph[N, E] = { //TODO what happens if int is negative?
     val MaxInt = 32767
-    var tempnodes = nodes.toList.filter(g)
+    var tempnodes = nodes.toList
     //for each node set distance to infinity
-    analyzeNodes("dijkstra", (n : N) => MaxInt)
+    analyzeNodes((node) => new LabelEntry("dijkstra", MaxInt))
 
     node.updateLabelEntry(new LabelEntry("dijkstra", 0))
     var tempnode : N = node
@@ -208,9 +209,9 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
       tempnodes = tempnodes.sortWith((node1, node2) => node1.getLabelEntry("dijkstra").asInstanceOf[Int] < node2.getLabelEntry("dijkstra").asInstanceOf[Int])
       tempnode = tempnodes.head
       tempnodes = tempnodes.tail
-      for(n <- tempnode.edges.toList.filter(f).map((e) => e.endNode)){
-        if( n.getLabelEntry("dijkstra").asInstanceOf[Int] > tempnode.getLabelEntry("dijkstra").asInstanceOf[Int]+1 ){
-          n.updateLabelEntry(new LabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").asInstanceOf[Int]+1))
+      for(e <- tempnode.edges){
+        if(e.endNode.getLabelEntry("dijkstra").get.asInstanceOf[Int] > tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + f(e)){
+          e.endNode.updateLabelEntry(new LabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + f(e)))
         }
       }
     }

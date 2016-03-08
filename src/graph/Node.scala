@@ -11,7 +11,7 @@ trait Node[E <: Edge[_]]{
   private[graph] var visited : Boolean = false
 
   /**
-    *
+    * Adds an outgoing Edge to the Node (no integrity check here)
     * @param edge edge to be adde to node
     */
   private[graph] def addEdge(edge: E) = {
@@ -19,7 +19,7 @@ trait Node[E <: Edge[_]]{
   }
 
   /**
-    *
+    * Removes an outgoing Edge from the Node (no integrity check here)
     * @param edge edge to be removed from node
     */
   private[graph] def removeEdge(edge: E) = {

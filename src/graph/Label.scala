@@ -7,6 +7,7 @@ import scala.collection.mutable
   */
 trait Label{
   protected val label : mutable.Set[LabelEntry] //access only via defined methods
+
   /**
     *
     * @param labelEntry labelentry to be added
