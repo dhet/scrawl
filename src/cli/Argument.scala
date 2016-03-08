@@ -40,7 +40,7 @@ object Argument {
     helpText = "Count the number of words in every website."
     override def action = {
       CrawlPrefs.addPageAnalyzeFunction((webpage) => {
-        LabelEntry("words", webpage.content.split(" ").size.toString)
+        Some(LabelEntry("words", webpage.content.split(" ").size.toString))
       })
     }
   }
