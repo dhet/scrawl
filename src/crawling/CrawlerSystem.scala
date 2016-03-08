@@ -27,14 +27,12 @@ object CrawlerSystem extends App{
     }
 
     private def crawlSubPage(parent : Webpage, url : URL, currentDepth : Int, visited : Set[URL]) = {
-//      println("crawling " + parent.url)
       val page = downloadPage(url)
       if(currentDepth <= CrawlPrefs.maxDepth && !visited.contains(url)){
         page.analyze(CrawlPrefs.analyzeFunctions)
         val link = Weblink(parent, page)
         collector ! CrawlResult(link)
         val map = extractInternalLinks(page.content, url)
-//        println(s"$currentDepth crawled " + url.toString)
         val newVisited = visited ++ map.map{case (link, label) => buildUrl(url, link)}.toSet
         for((link, label) <- map) {
           val name = safeActorName(s"$currentDepth-$link")

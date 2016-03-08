@@ -18,9 +18,9 @@ object CollectorSystem{
   def crawlPage(url : URL) = {
     val mainSystem = ActorSystem("crawling", ConfigFactory.load.getConfig("mainsystem"))
     val crawlSystem = ActorSystem("crawlSystem", ConfigFactory.load.getConfig("crawlsystem"))
-    val mainActor = mainSystem.actorOf(Props(classOf[CollectorActor]), "main-actor")
-    println(mainActor.path)
-    val crawlerMaster = crawlSystem.actorOf(Props(classOf[CrawlerSystem.CrawlerWorker], mainActor), "crawler-master")
+    val graph = Webgraph(Webpage(url))
+    val collector = mainSystem.actorOf(Props(classOf[CollectorActor], graph), "main-actor")
+    val crawlerMaster = crawlSystem.actorOf(Props(classOf[CrawlerSystem.CrawlerWorker], collector), "crawler-master")
 
 //    implicit val timeout = Timeout(5, TimeUnit.MINUTES)
     val future = crawlerMaster ! StartCrawling(url)
@@ -28,9 +28,12 @@ object CollectorSystem{
 //    mainActor ! StartCrawling(url)
   }
 
-  class CollectorActor extends Actor{
+  class CollectorActor(graph : Webgraph) extends Actor{
     def receive = {
-      case CrawlResult(result) => println("received " + result.toXML())
+      case CrawlResult(link) => {
+        println(s"added link ${link.startNode.url} -> ${link.endNode.url}")
+        graph.addWeblink(link)
+      }
       case DoneCrawling => println("done!")
     }
   }
