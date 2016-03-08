@@ -9,6 +9,10 @@ object CrawlPrefs {
   var analyzeFunctionsPages = Seq[(Webpage) => LabelEntry]()
   var analyzeFunctionsLinks = Seq[(Weblink) => LabelEntry]()
 
+  def addPageAnalyzeFunction(alg : (Webpage) => LabelEntry) = {
+    analyzeFunctionsPages = analyzeFunctionsPages :+ alg
+  }
+
 }
 
 
