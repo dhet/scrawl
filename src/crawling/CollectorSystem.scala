@@ -16,14 +16,14 @@ import scala.concurrent.Await
 object CollectorSystem{
 
   def crawlPage(url : URL) = {
-    val mainSystem = ActorSystem("crawling", ConfigFactory.load.getConfig("mainsystem"))
-    val crawlSystem = ActorSystem("crawlSystem", ConfigFactory.load.getConfig("crawlsystem"))
+    val collectorSystem = ActorSystem("collectorsystem", ConfigFactory.load.getConfig("collectorsystem"))
+    val crawlSystem = ActorSystem("crawlsystem", ConfigFactory.load.getConfig("crawlsystem"))
     val graph = Webgraph(Webpage(url))
-    val collector = mainSystem.actorOf(Props(classOf[CollectorActor], graph), "main-actor")
-    val crawlerMaster = crawlSystem.actorOf(Props(classOf[CrawlerSystem.CrawlerWorker], collector), "crawler-master")
+    val collector = collectorSystem.actorOf(Props(classOf[CollectorActor], graph), "collector")
+    val crawlerRoot = crawlSystem.actorOf(Props(classOf[CrawlerSystem.CrawlerWorker], collector), "crawler")
 
 //    implicit val timeout = Timeout(5, TimeUnit.MINUTES)
-    val future = crawlerMaster ! StartCrawling(url)
+    val future = crawlerRoot ! StartCrawling(url)
 //    val result = Await.result(future, timeout.duration)
 //    mainActor ! StartCrawling(url)
   }
