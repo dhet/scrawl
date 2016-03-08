@@ -13,7 +13,9 @@ class Webpage ( val url : URL,
 
   def xml =
     <webpage url={url.toString} crawled={crawled.toString}>{labelxml}
+      <links>
       {for (edge <- edges) yield <link url={edge.endNode.url.toString}/>}
+      </links>
     </webpage>
 
   /**
