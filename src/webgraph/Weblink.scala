@@ -1,31 +1,40 @@
 package webgraph
 
-import graph.Edge
+import graph.{LabelEntry, Edge}
 
 /**
   * Created by nicohein on 29/02/16.
   */
 class Weblink ( override val startNode : Webpage,
-                override val endNode : Webpage) extends Edge[Webpage] with LinkLabel{
+                override val endNode : Webpage) extends Edge[Webpage] with Weblabel {
+
+  @deprecated
+  def toXML(): String = ""
 
   /**
-    *
-    * @return tring containing xml description of the Weblink
+    * Runs a provided sequence of Analyzes on the Weblink (Edge) and stores them in the Label
+    * @param algorithms Algorithms to analyze the Edge
     */
-  def toXML(): String = {
-    var xml : String = ""
-    xml += s"<weblink>"
-    xml += s"<startnode>${startNode.url}</startnode>"
-    xml += s"<endnode>${endNode.url}</ednode>"
-    xml += labelToXML()
-    xml += s"</weblink>"
-    xml
-  }
+  def analyze(algorithms : Seq[(Weblink) => LabelEntry]) = algorithms.foreach(alg => addLabelEntry(alg(this)))
 }
 
 object Weblink {
+  /**
+    * Apply Function that takes linksource and linktarget as parameter
+    * @param startNode webpage which is the links source
+    * @param endNode webpage which ist the links target
+    * @return returns a new weblink object
+    */
   def apply(startNode : Webpage, endNode : Webpage) : Weblink = new Weblink(startNode, endNode)
-  def apply(startNode : Webpage, endNode : Webpage, label : LinkLabel) : Weblink  = {
+
+  /**
+    * Apply Function that takes linksource, linktarget and linklabel  as parameter
+    * @param startNode webpage which is the links source
+    * @param endNode webpage which ist the links target
+    * @param label label of the weblink
+    * @return returns a new weblink object
+    */
+  def apply(startNode : Webpage, endNode : Webpage, label : Weblabel) : Weblink  = {
     val weblink = new Weblink(startNode, endNode)
     for(labelentry <- label.label){
       weblink.addLabelEntry(labelentry)

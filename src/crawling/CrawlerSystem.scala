@@ -1,18 +1,11 @@
 package crawling
 
 import java.net.URL
-import java.util.concurrent.TimeUnit
-import akka.pattern.ask
-import akka.actor.Status.{Failure, Success}
-import akka.actor.{ActorRef, Props, Actor, ActorSystem}
-import akka.util.Timeout
-import com.typesafe.config.ConfigFactory
-import crawling.CollectorSystem.CollectorActor
-import crawling.Messages.{CrawlResult, CrawlSubPage, StartCrawling}
-import webgraph.{Webpage, Weblink}
 
-import scala.collection.immutable.HashSet
-import scala.concurrent.Await
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import com.typesafe.config.ConfigFactory
+import crawling.Messages.{CrawlResult, CrawlSubPage, StartCrawling}
+import webgraph.{Weblink, Webpage}
 
 object CrawlerSystem extends App{
   val crawlSystem = ActorSystem("crawlSystem", ConfigFactory.load.getConfig("crawlsystem"))
@@ -29,7 +22,7 @@ object CrawlerSystem extends App{
     private def crawlSubPage(parent : Webpage, url : URL, currentDepth : Int, visited : Set[URL]) = {
       val page = downloadPage(url)
       if(currentDepth <= CrawlPrefs.maxDepth && !visited.contains(url)){
-        page.analyze(CrawlPrefs.analyzeFunctions)
+        page.analyze(CrawlPrefs.analyzeFunctionsPages)
         val link = Weblink(parent, page)
         collector ! CrawlResult(link)
         val map = extractInternalLinks(page.content, url)
