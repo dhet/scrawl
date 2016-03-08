@@ -91,13 +91,52 @@ class WebgraphTest extends FlatSpec with Matchers{
     var rootsub1 = Webpage(new URL("http://root.com/sub1"))
     var edge1 = Weblink(root, rootsub1)
     webgraph.addWeblink(edge1)
-    webgraph.countNodes() should be (1)
-    webgraph.countEdges() should be (0)
-
+    webgraph.countNodes() should be (2)
+    webgraph.countEdges() should be (1)
 
 
   }
 
+  "A Graph" should "should handle remove and add operations" in {
+    var root = Webpage(new URL("http://root.com"))
+
+    val webgraph : Webgraph = Webgraph(root)
+
+    //adding an Weblink is implicit for adding two nodes and one edge
+    var rootsub1 = Webpage(new URL("http://root.com/sub1"))
+    var rootsub2 = Webpage(new URL("http://root.com/sub2"))
+
+    var edge1 = Weblink(root, rootsub1)
+    var edge2 = Weblink(root, rootsub2)
+    var edge3 = Weblink(rootsub1, rootsub2)
+    webgraph.addWeblink(edge1)
+    webgraph.addWeblink(edge2)
+    webgraph.addWeblink(edge3)
+
+    //adding the same link twice should not change anything
+    webgraph.addWeblink(edge1)
+
+    webgraph.countNodes() should be (3)
+    webgraph.countEdges() should be (3)
+
+    //removing edge (root, rootsub2) should only delete one edge
+    webgraph.removeWeblink(edge2)
+    webgraph.countNodes() should be (3)
+    webgraph.countEdges() should be (2)
+
+    //removing edge (root, rootsub1) however should also delete node sub1 since there isn't any link to it and the graph is defined as connected
+    webgraph.addWeblink(edge2)
+    webgraph.removeWeblink(edge1)
+    webgraph.countNodes() should be (2)
+    webgraph.countEdges() should be (1)
+
+    var pp = new PrettyPrinter(80, 2)
+    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\"> </webpage>\n</webgraph>")
+  }
+
+  "A Wabgraph" should "be traversable" in {
+
+  }
 
 
   "A Webgraph" should "be conected" in {

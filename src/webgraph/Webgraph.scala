@@ -10,7 +10,10 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
 
   nodes = nodes + root
 
-
+  /**
+    * gives the XML version of the graph
+    * @return xml
+    */
   def xml =
     <webgraph>
       { for (node <- nodes) yield
@@ -19,15 +22,25 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     </webgraph>
 
   /**
-    *
-    * @param weblink weblink that should be added to the graph
+    * Adds a weblink to the graph
+    * @param weblink weblink to be added
+    * @return this
     */
   def addWeblink(weblink : Weblink) : Graph[Webpage, Weblink] = {
     addEdge(weblink)
   }
 
   /**
-    *
+    * Removes an weblink from the graph
+    * @param weblink weblink to be removed
+    * @return this
+    */
+  def removeWeblink(weblink: Weblink) : Graph[Webpage, Weblink] = {
+    removeEdge(weblink)
+  }
+
+  /**
+    * Counts the number of uncrawled pages / is equal to links deaper than specified crawl level
     * @return number of nodes not crawled yet
     */
   def countUncrawledNodes() : Int = {

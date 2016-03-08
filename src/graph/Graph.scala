@@ -40,14 +40,13 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    * Adds an edge to this graph (the graph is mutable)
+    * Adds an directed edge to this graph (the graph is mutable)
     * @param edge edge to be added to the graph
     */
   protected def addEdge(edge : E) : Graph[N, E] = {
     edges = edges + edge
     //add edges to nodes
     edge.startNode.addEdge(edge)
-    //TODO if edge.endNode.addEdge(edge)
     //add nodes of edge if not already existing
     if(!nodes.contains(edge.startNode))
       addNode(edge.startNode)
@@ -61,7 +60,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     * @param node node to be removed frpm graph
     */
   protected def removeNode(node : N) : Graph[N, E] = {
-    //remove all edges of node, then remove node
+    //remove all outgoing edges of node, then remove node
     for(edge <- node.edges){
       removeEdge(edge)
     }
@@ -74,15 +73,14 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     * @param edge edge to be removed from graph
     */
   protected def removeEdge(edge : E) : Graph[N, E] = {
-    //it is not necessary to remove the edges from all nodes
+    //remove edge from startnode (it does not exist at endnode)
     edge.startNode.removeEdge(edge)
-    //TODO check edge.endNode.removeEdge(edge)
-    if(edge.startNode.edges.isEmpty)
-      removeNode(edge.startNode)
-    //TODO check if(edge.endNode.edges.isEmpty)
-      //TODO check removeNode(edge.endNode)
     //now remove edge from graph
     edges = edges - edge
+    //if there is't any edge containing the endnode as endnode the endnode isnt reachable anymore
+    if(!edges.exists((e) => e.endNode.equals(edge.endNode)))
+      removeNode(edge.endNode)
+
     this
   }
 
