@@ -36,7 +36,10 @@ class Webpage ( val url : URL,
     * Runs a provided sequence of Analyzes on the Webpage (Node) and stores them in the Label
     * @param algorithms Algorithms to analyze the Node
     */
-  def analyze(algorithms : Seq[(Webpage) => LabelEntry]) = algorithms.foreach(alg => addLabelEntry(alg(this)))
+  def analyze(algorithms : Seq[(Webpage) => LabelEntry]) = {
+    algorithms.foreach(alg => addLabelEntry(alg(this)))
+    crawled = true
+  }
 }
 
 object Webpage {
