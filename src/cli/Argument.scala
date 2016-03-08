@@ -31,8 +31,8 @@ object Argument {
 
   supportedArgs += new ParamArgument("out"){
     synonyms = List[String]("o, path, dir")
-    helpText = "Specifies the directory where to save the sitemap(s). The files are saved in the ./generated directory" +
-      "by default. The name of the xml files correspond to the crawled sites"
+    helpText = "Specifies the directory where to save the sitemap(s). The files are saved in the ./sitemaps directory" +
+      "by default. The name of the xml files correspond to the crawled sites."
     override def action = {
       CrawlPrefs.outDir = Paths.get(parameter.toString)
     }
