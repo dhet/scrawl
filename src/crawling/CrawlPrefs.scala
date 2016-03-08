@@ -11,7 +11,7 @@ object CrawlPrefs {
   var threads = 3
   var analyzeFunctionsPages = Seq[(Webpage) => Option[LabelEntry]]()
   var analyzeFunctionsLinks = Seq[(Weblink) => Option[LabelEntry]]()
-  var outDir = Paths.get("./generated")
+  var outDir = Paths.get("./sitemaps")
 
   addPageAnalyzeFunction(extractPageTitle)
 

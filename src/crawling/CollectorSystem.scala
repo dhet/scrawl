@@ -54,7 +54,7 @@ object CollectorSystem{
       file.mkdirs()
       val resultingPath = new java.io.File(file, filename)
       Files.write(resultingPath.toPath, content)
-      println(s"File saved to ${resultingPath.getName}.")
+      println(s"File saved to ${resultingPath.getAbsolutePath}.")
     }
   }
 }
