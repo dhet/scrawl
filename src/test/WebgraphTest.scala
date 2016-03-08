@@ -124,18 +124,18 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.countEdges() should be (3)
 
     //removing edge (root, rootsub2) should only delete one edge
-//    webgraph.removeWeblink(edge2)
-//    webgraph.countNodes() should be (3)
-//    webgraph.countEdges() should be (2)
+    webgraph.removeWeblink(edge2)
+    webgraph.countNodes() should be (3)
+    webgraph.countEdges() should be (2)
 
     //removing edge (root, rootsub1) however should also delete node sub1 since there isn't any link to it and the graph is defined as connected
-   // webgraph.addWeblink(edge2)
-   // webgraph.removeWeblink(edge1)
-   // webgraph.countNodes() should be (2)
-   // webgraph.countEdges() should be (1)
+    webgraph.addWeblink(edge2)
+    webgraph.removeWeblink(edge1)
+    webgraph.countNodes() should be (2)
+    webgraph.countEdges() should be (1)
 
 
-   // pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
+    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
   }
 
 

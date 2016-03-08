@@ -4,13 +4,13 @@ import java.net.URL
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import crawling.Messages._
-import webgraph.{ExternalWebpage, InternalWebpage, Weblink, Webpage}
-import akka.pattern.ask
+import webgraph.{Weblink, Webpage}
 
-import scala.concurrent.{Future, Await}
+import scala.concurrent.Await
 
 object CrawlerSystem extends App{
   val crawlSystem = ActorSystem("crawlSystem", ConfigFactory.load.getConfig("crawlsystem"))
@@ -43,7 +43,7 @@ object CrawlerSystem extends App{
         implicit val timeout = Timeout(20, TimeUnit.SECONDS)
         val future = collector ? Visited(visited)
         val v = Await.result(future, timeout.duration)
-        if(currentDepth <= CrawlPrefs.maxDepth && !v.asInstanceOf[Visited].urls.contains(url)){
+        if(currentDepth <= CrawlPrefs.maxDepth /*&& !v.asInstanceOf[Visited].urls.contains(url)*/){
           val map = extractInternalLinks(page.content, url)
           val newVisited = visited ++ map.map{case (link, label) => buildUrl(url, link)}.toSet
 //          var futures = List[Future[Any]]()

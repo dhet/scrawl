@@ -75,8 +75,8 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   protected def removeEdge(edge : E) : Graph[N, E] = {
     //remove edge from startnode (it does not exist at endnode)
     edge.startNode.removeEdge(edge)
-    //now remove edge from graph
-    edges = edges - edge
+    //now remove edge from graph (sipler with reliable equals but... it works
+    edges = edges.filter((e) => if(edge.startNode.equals(e.startNode) && edge.endNode.equals(e.endNode)) false else true)
     //if there is't any edge containing the endnode as endnode the endnode isnt reachable anymore
     if(!edges.exists((e) => e.endNode.equals(edge.endNode)))
       removeNode(edge.endNode)

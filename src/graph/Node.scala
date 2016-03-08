@@ -14,7 +14,7 @@ trait Node[E <: Edge[_]]{
     * Adds an outgoing Edge to the Node (no integrity check here)
     * @param edge edge to be adde to node
     */
-  private[graph] def addEdge(edge: E) = {
+  protected[graph] def addEdge(edge: E) = {
     edges = edges + edge
   }
 
@@ -22,7 +22,7 @@ trait Node[E <: Edge[_]]{
     * Removes an outgoing Edge from the Node (no integrity check here)
     * @param edge edge to be removed from node
     */
-  private[graph] def removeEdge(edge: E) = {
-    edges = edges - edge
+  protected[graph] def removeEdge(edge: E) = {
+    edges = edges.filter((e) => if(edge.startNode.equals(e.startNode)&& edge.endNode.equals(e.endNode)) false else true)
   }
 }

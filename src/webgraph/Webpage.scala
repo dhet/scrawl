@@ -38,6 +38,9 @@ class Webpage ( val url : URL,
       for(labelentry <- webpage.label){
        updateLabelEntry(labelentry)
       }
+      for(edge <- webpage.edges){
+        addEdge(edge)
+      }
     }
     this
   }

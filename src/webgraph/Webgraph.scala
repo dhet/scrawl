@@ -46,7 +46,11 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     * @return this
     */
   def removeWeblink(weblink: Weblink) : Graph[Webpage, Weblink] = {
-    removeEdge(weblink)
+    for(edge <- edges){
+      if(weblink.startNode.url.equals(edge.startNode.url) && weblink.endNode.url.equals(edge.endNode.url))
+        removeEdge(edge)
+    }
+    this
   }
 
   /**
