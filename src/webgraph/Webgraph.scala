@@ -8,6 +8,16 @@ import graph.Graph
   */
 class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
 
+  nodes = nodes + root
+
+
+  def xml =
+    <webgraph>
+      { for (node <- nodes) yield
+      {node.xml}
+      }
+    </webgraph>
+
   /**
     *
     * @param weblink weblink that should be added to the graph
@@ -69,21 +79,6 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
     */
   def generateSitemap() : List[String] = {
     depthFirstTraversal(root).map((node: Webpage) => node.url.toString)
-  }
-
-  //TODO should this method return the xml version of the graph or the crawled page? See generate Sitemap
-  /**
-    *
-    * @return string containing xml description of the webgraph
-    */
-  def toXML() : String = {
-    var xml : String = ""
-    xml += s"<Webgraph>"
-    for(node <- nodes){
-      xml += node.toXML()
-    }
-    xml += s"</Webgraph>"
-    xml
   }
 
 }

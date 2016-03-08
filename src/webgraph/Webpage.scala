@@ -11,28 +11,11 @@ class Webpage ( val url : URL,
                 var content : String = "",
                 var crawled : Boolean = false) extends Node[Weblink] with Weblabel{
 
-  /**
-    * Generates XML corresponding to the Webpage
-    * @return tring containing xml description of the Webpage
-    */
+  def xml =
+    <webpage url={url.toString} crawled={crawled.toString}>{labelxml}
+      {for (edge <- edges) yield <link url={edge.endNode.url.toString}/>}
+    </webpage>
 
-
-  def toXML() : String = {
-    var xml : String = ""
-    xml += s"<webpage>"
-    xml += s"<url>${url.toString}</url>"
-    xml += labelToXML()
-    xml += s"<crawled>$crawled</crawled>"
-    if(edges.nonEmpty){
-      xml += s"<edges>"
-      for(url <- edges.map((weblink) => weblink.endNode.url)){
-        xml += s"<outlink>${url.toString}</outlink>"
-      }
-      xml += s"</edges>"
-    }
-    xml += s"</webpage>"
-    xml
-  }
   /**
     * Runs a provided sequence of Analyzes on the Webpage (Node) and stores them in the Label
     * @param algorithms Algorithms to analyze the Node

@@ -3,8 +3,11 @@ package test
 import java.net.URL
 
 import analyze.{Inlink, Outlink}
+import graph.LabelEntry
 import org.scalatest.{FlatSpec, Matchers}
 import webgraph._
+
+import scala.xml.PrettyPrinter
 
 /**
   * Created by nicohein on 02/03/16.
@@ -12,8 +15,11 @@ import webgraph._
   */
 class WebgraphTest extends FlatSpec with Matchers{
 
+  /**
+    * The Label is tested implicitly
+    */
 
-  /*"A Webpage" should "provide labeling options" in {
+  "A Webpage" should "provide labeling options" in {
     val webpage = Webpage(new URL("http://url"))
 
     webpage.addLabelEntry(new LabelEntry("key", "value"))
@@ -22,13 +28,23 @@ class WebgraphTest extends FlatSpec with Matchers{
     webpage.updateLabelEntry(new LabelEntry("key", "updated"))
     webpage.getLabelEntry("key").get should be ("updated")
 
-    webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled><pagelabel><key>key</key><value>updated</value></pagelabel></webpage>")
+    //for remove see test "A webpage should provide xml"
+
+  }
+
+  "A Webpage" should "provide xml" in {
+    val webpage = Webpage(new URL("http://url"))
+    webpage.addLabelEntry(new LabelEntry("key", "value"))
+
+    var pp = new PrettyPrinter(80, 2)
+    pp.format(webpage.xml) should be ("<webpage url=\"http://url\" crawled=\"false\">\n  <label key=\"key\" value=\"value\"/>\n</webpage>")
 
     webpage.removeLabelEntry("key")
-    webpage.toXML() should be ("<webpage><url>http://url</url><content></content><edges></edges><crawled>false</crawled></webpage>")
+    pp.format(webpage.xml) should be ("<webpage url=\"http://url\" crawled=\"false\"> </webpage>")
 
-  }*/
-  /*"A Weblink" should "provide labeling options" in {
+  }
+
+  "A Weblink" should "provide labeling options" in {
     var webpage1 = Webpage(new URL("http://url1"))
     var webpage2 = Webpage(new URL("http://url2"))
     var weblink = Weblink(webpage1, webpage2)
@@ -39,14 +55,48 @@ class WebgraphTest extends FlatSpec with Matchers{
     weblink.updateLabelEntry(new LabelEntry("key", "updated"))
     weblink.getLabelEntry("key").get should be ("updated")
 
-    //weblink.toXML() should be ("<weblink><startnode>http://url1</startnode><endnode>http://url2</ednode><linklabel><key>key</key><value>updated</value></linklabel></weblink>")
+    //for remove see test "A weblink should provide xml"
+  }
 
-    weblink.removeLabelEntry("key")
-    //weblink.toXML() should be ("<weblink><startnode>http://url1</startnode><endnode>http://url2</ednode></weblink>")
+  "A weblink" should "ba analyzable" in {
+    var webpage1 = Webpage(new URL("http://url1"))
+    var webpage2 = Webpage(new URL("http://url2"))
+    var weblink = Weblink(webpage1, webpage2)
 
-  }*/
+    weblink.analyze(Seq((w : Weblink) => new LabelEntry("test" , "1")))
+    weblink.getLabelEntry("test").get should be ("1")
+  }
+
+  "A weblink" should "provide xml" in {
+    var webpage1 = Webpage(new URL("http://url1"))
+    var webpage2 = Webpage(new URL("http://url2"))
+    var weblink = Weblink(webpage1, webpage2)
+
+    var pp = new PrettyPrinter(300, 2)
+    pp.format(weblink.xml) should be ("<weblink source=\"http://url1\" target=\"http://url2\"> </weblink>")
+
+    weblink.addLabelEntry(new LabelEntry("key", "value"))
+    pp.format(weblink.xml) should be ("<weblink source=\"http://url1\" target=\"http://url2\">\n  <label key=\"key\" value=\"value\"/>\n</weblink>")
+  }
 
 
+  "A Graph" should "count its elements" in {
+    var root = Webpage(new URL("http://root.com"))
+
+    val webgraph : Webgraph = Webgraph(root)
+    webgraph.countNodes() should be (1)
+    webgraph.countEdges() should be (0)
+
+    //adding an Weblink
+    var rootsub1 = Webpage(new URL("http://root.com/sub1"))
+    var edge1 = Weblink(root, rootsub1)
+    webgraph.addWeblink(edge1)
+    webgraph.countNodes() should be (1)
+    webgraph.countEdges() should be (0)
+
+
+
+  }
 
 
 
@@ -78,6 +128,9 @@ class WebgraphTest extends FlatSpec with Matchers{
     //to ensure the webgraph is fully connected is is constructed only with edges except the root
     webgraph.addWeblink(edge1)
     webgraph.addWeblink(edge2)
+
+    webgraph.xml should be (1)
+
     webgraph.addWeblink(edge3)
     webgraph.addWeblink(edge4)
     webgraph.addWeblink(edge5)
@@ -89,6 +142,7 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.countNodes() should be (7)
     webgraph.countUncrawledNodes() should be (7)
 
+    webgraph.xml should be (1)
     /*webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com")
     root.crawled = true
     webgraph.nextUncrawledNode().get.url.toString should be ("http://root.com/sub1")

@@ -11,12 +11,19 @@ import scala.collection.mutable
 
 
 trait Weblabel extends Label{
+
   override val label : mutable.Set[LabelEntry] = mutable.Set[LabelEntry]()
+
+  def labelxml =
+    {for (labelentry <- label) yield
+        <label key={labelentry.key.toString} value={labelentry.value.toString}/>
+    }
 
   /**
     * Generates XML corresponding to the Label
     * @return string containing xml description of the label
     */
+
 
   def labelToXML() : String = {
     var xml : String = ""
