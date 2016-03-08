@@ -1,5 +1,7 @@
 package crawling
 
+import java.nio.file.Paths
+
 import com.sun.deploy.util.StringUtils
 import graph.LabelEntry
 import webgraph.{Weblink, Webpage}
@@ -9,6 +11,7 @@ object CrawlPrefs {
   var threads = 3
   var analyzeFunctionsPages = Seq[(Webpage) => Option[LabelEntry]]()
   var analyzeFunctionsLinks = Seq[(Weblink) => Option[LabelEntry]]()
+  var outDir = Paths.get("./generated")
 
   addPageAnalyzeFunction(extractPageTitle)
 
@@ -19,7 +22,7 @@ object CrawlPrefs {
   private def extractPageTitle(page : Webpage) : Option[LabelEntry] = {
     val selectionPattern = """<title>(.*?)</title>""".r.unanchored
     selectionPattern.findFirstMatchIn(page.content) match{
-      case Some(title) => Some(LabelEntry("PageTitle", title.group(1)))
+      case Some(title) => Some(LabelEntry("page-title", title.group(1)))
       case None => None
     }
   }

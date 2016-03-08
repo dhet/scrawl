@@ -1,5 +1,7 @@
 package cli
 
+import java.nio.file.Paths
+
 import crawling.CrawlPrefs
 import graph.LabelEntry
 import webgraph.Webpage
@@ -24,6 +26,15 @@ object Argument {
         println(s"-${arg.name} (${arg.synonyms.map(a => s"-$a").mkString(", ")})")
         println(s"\t${arg.helpText}")
       }
+    }
+  }
+
+  supportedArgs += new ParamArgument("out"){
+    synonyms = List[String]("o, path, dir")
+    helpText = "Specifies the directory where to save the sitemap(s). The files are saved in the ./generated directory" +
+      "by default. The name of the xml files correspond to the crawled sites"
+    override def action = {
+      CrawlPrefs.outDir = Paths.get(parameter.toString)
     }
   }
 

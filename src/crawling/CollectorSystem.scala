@@ -1,6 +1,7 @@
 package crawling
 
 import java.net.URL
+import java.nio.file.{Files, Paths}
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{Props, Actor, ActorRef, ActorSystem}
@@ -12,6 +13,8 @@ import webgraph.{Webpage, Webgraph, Weblink}
 import akka.pattern.ask
 
 import scala.concurrent.Await
+import scala.reflect.io.File
+import scala.xml.PrettyPrinter
 
 object CollectorSystem{
 
@@ -40,7 +43,18 @@ object CollectorSystem{
           context.self ! DoneCrawling
         }
       }
-      case DoneCrawling => println(graph.toXML())
+      case DoneCrawling => saveGraphToDisk()
+    }
+
+    def saveGraphToDisk() : Unit ={
+      val printer = new PrettyPrinter(300, 2)
+      val content = printer.format(graph.xml).getBytes()
+      val filename = graph.root.url.getHost.replace("[.\\]", "_") + ".xml"
+      val file = CrawlPrefs.outDir.toFile
+      file.mkdirs()
+      val resultingPath = new java.io.File(file, filename)
+      Files.write(resultingPath.toPath, content)
+      println(s"File saved to ${resultingPath.getName}.")
     }
   }
 }
