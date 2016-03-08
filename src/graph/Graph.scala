@@ -47,12 +47,12 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     edges = edges + edge
     //add edges to nodes
     edge.startNode.addEdge(edge)
-    //TODO check edge.endNode.addEdge(edge)
+    //TODO if edge.endNode.addEdge(edge)
     //add nodes of edge if not already existing
     if(!nodes.contains(edge.startNode))
       addNode(edge.startNode)
-    //TODO check if(!nodes.contains(edge.endNode))
-      //TODO check addNode(edge.endNode)
+    if(!nodes.contains(edge.endNode))
+      addNode(edge.endNode)
     this
   }
 
