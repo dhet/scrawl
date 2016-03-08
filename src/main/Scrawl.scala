@@ -59,8 +59,6 @@ object Scrawl {
   def exit(message : String) = {
     println(message)
     println()
-    Argument.printHelp
-    println()
     println("Exiting...")
     sys.exit(1)
   }
