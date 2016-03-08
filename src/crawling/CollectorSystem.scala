@@ -8,7 +8,7 @@ import akka.actor.{Props, Actor, ActorRef, ActorSystem}
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import crawling.CrawlerSystem.CrawlerWorker
-import crawling.Messages.{DoneCrawling, CrawlResult, StartCrawling}
+import crawling.Messages._
 import webgraph.{Webpage, Webgraph, Weblink}
 import akka.pattern.ask
 
@@ -33,17 +33,22 @@ object CollectorSystem{
   }
 
   class CollectorActor(graph : Webgraph) extends Actor{
-    var counter = 0
+    var visited = Set[URL]()
+    var threadCounter = 0
+
     def receive = {
-      case CrawlResult(link) => {
-        println(s"added link ${link.startNode.url} -> ${link.endNode.url}")
-        graph.addWeblink(link)
-        counter += 1
-        if(counter == 10){
-          context.self ! DoneCrawling
-        }
+      case CrawlResult(link) => graph.addWeblink(link)
+      case Visited(urls) => extendVisitedAndRespond(urls)
+      case BeginThread => threadCounter += 1
+      case EndThread => {
+        threadCounter = threadCounter - 1
+        if(threadCounter == 0) saveGraphToDisk()
       }
-      case DoneCrawling => saveGraphToDisk()
+    }
+
+    def extendVisitedAndRespond(urls : Set[URL]) = {
+      visited = visited ++ urls
+      sender ! Visited(visited)
     }
 
     def saveGraphToDisk() : Unit ={
