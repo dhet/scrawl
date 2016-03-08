@@ -6,7 +6,7 @@ import graph.Graph
 /**
   * Created by nicohein on 29/02/16.
   */
-class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
+class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
 
   nodes = nodes + root
 
@@ -50,48 +50,6 @@ class Webgraph(root : Webpage) extends Graph[Webpage, Weblink] {
         count += 1
     }
     count
-  }
-
-  /**
-    *
-    * @return returns the next uncraled webpage found during a breadth first search
-    */
-  def nextUncrawledNode() : Option[Webpage] = {
-    var page = nextPageConstraintBreadthFirst((node : Webpage) => !node.crawled)
-    page match {
-      case Some(webpage)  =>
-        page.get.crawled = true
-        page
-      case _ => None
-
-    }
-  }
-
-  //TODO inefficient (implement next neighbor search in graph)
-  def nextPageConstraintBreadthFirst(f :(Webpage) => Boolean) : Option[Webpage] = {
-    for(node <- breadthFirstTraversal(root)){
-      if(f(node))
-        return Some(node)
-    }
-    None
-  }
-
-  //TODO inefficient
-  def nextPageContraintDepththFirst(f :(Webpage) => Boolean) : Option[Webpage] = {
-    for(node <- depthFirstTraversal(root)){
-      if(f(node))
-        return Some(node)
-    }
-    None
-  }
-
-
-  /**
-    *
-    * @return generates sitemap of the crawled page
-    */
-  def generateSitemap() : List[String] = {
-    depthFirstTraversal(root).map((node: Webpage) => node.url.toString)
   }
 
 }
