@@ -39,7 +39,9 @@ object Argument {
     synonyms = List[String]("wc")
     helpText = "Count the number of words in every website."
     override def action = {
-      CrawlPrefs.analyzeFunctionsPages :+ ((webpage : Webpage) => LabelEntry("words", webpage.content.split(" ").size.toString))
+      CrawlPrefs.addPageAnalyzeFunction((webpage) => {
+        LabelEntry("words", webpage.content.split(" ").size.toString)
+      })
     }
   }
 

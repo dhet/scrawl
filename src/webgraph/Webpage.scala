@@ -20,10 +20,28 @@ class Webpage ( val url : URL,
     * Runs a provided sequence of Analyzes on the Webpage (Node) and stores them in the Label
     * @param algorithms Algorithms to analyze the Node
     */
-  def analyze(algorithms : Seq[(Webpage) => LabelEntry]) = algorithms.foreach(alg => addLabelEntry(alg(this)))
+  def analyze(algorithms : Seq[(Webpage) => LabelEntry]) = {
+    algorithms.foreach(alg => addLabelEntry(alg(this)))
+    crawled = true
+  }
 }
 
+case class ExternalWebpage(override val url : URL) extends Webpage(url)
+case class InternalWebpage(override val url : URL) extends Webpage(url)
+
+
 object Webpage {
+  def apply(url : String, parent : URL) : Option[Webpage] =  {
+    if(url.startsWith("/") || url.contains(parent.getHost)){
+      Some(InternalWebpage(new URL(parent, url)))
+    } else{
+      try{
+        Some(ExternalWebpage(new URL(url)))
+      } catch{
+        case e : Exception => None
+      }
+    }
+  }
 
   /**
     * Apply Function that takes an URL as parameter
