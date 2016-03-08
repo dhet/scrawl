@@ -1,11 +1,14 @@
 name := "scrawl"
+version := "1.0.0"
 
 scalaVersion := "2.11.7"
 
-mainClass in (Compile, run) := Some("main.Scrawl")
+mainClass := Some("main.Scrawl")
 
 scalaSource in Compile := baseDirectory.value / "src"
 resourceDirectory in Compile := baseDirectory.value / "resources"
+
+exportJars := true
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-cluster" % "2.3.9",
