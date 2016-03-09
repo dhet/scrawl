@@ -213,11 +213,13 @@ class WebgraphTest extends FlatSpec with Matchers{
 
     webgraph.runDijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (1,http://root.com/sub1), (1,http://root.com/sub2), (2,http://root.com/sub1/sub1), (2,http://root.com/sub2/sub1), (2,http://offpage2.com), (3,http://offpage1.com))")
     webgraph.runWeightedDijkstra(root, (link) => 2).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (2,http://root.com/sub1), (2,http://root.com/sub2), (4,http://root.com/sub1/sub1), (4,http://root.com/sub2/sub1), (4,http://offpage2.com), (6,http://offpage1.com))")
-    //webgraph.weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
+
+    //just a test with a simple similarity function
+    webgraph.runWeightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (1,http://root.com/sub1), (1,http://root.com/sub2), (2,http://root.com/sub1/sub1), (2,http://root.com/sub2/sub1), (1001,http://offpage2.com), (1002,http://offpage1.com))")
 
     var pp = new PrettyPrinter(80, 2)
-    //pp.format(webgraph.sitestructure) should be (1)
-    webgraph.runWeightedDijkstra(root, (link) => (AnalyzeURL.distance(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
+    pp.format(webgraph.siteStructure) should be ("<sitestructure>\n  <webpage url=\"http://root.com\">\n    <webpage url=\"http://root.com/sub1\">\n      <webpage url=\"http://root.com/sub1/sub1\">\n        <webpage url=\"http://offpage1.com\"> </webpage>\n      </webpage>\n    </webpage>\n    <webpage url=\"http://root.com/sub2\">\n      <webpage url=\"http://root.com/sub2/sub1\"> </webpage>\n      <webpage url=\"http://offpage2.com\"> </webpage>\n    </webpage>\n  </webpage>\n</sitestructure>")
+    webgraph.runWeightedDijkstra(root, (link) => (AnalyzeURL.distance(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (70,http://root.com/sub1), (70,http://root.com/sub2), (125,http://root.com/sub1/sub1), (128,http://root.com/sub2/sub1), (295,http://offpage2.com), (366,http://offpage1.com))")
 
 
   }
