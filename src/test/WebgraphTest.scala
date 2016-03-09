@@ -2,6 +2,7 @@ package test
 
 import java.net.URL
 
+import analyze.urlAnalyzer
 import graph.LabelEntry
 import org.scalatest.{FlatSpec, Matchers}
 import webgraph._
@@ -212,11 +213,11 @@ class WebgraphTest extends FlatSpec with Matchers{
 
     webgraph.dijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (1,http://root.com/sub1), (1,http://root.com/sub2), (2,http://root.com/sub1/sub1), (2,http://root.com/sub2/sub1), (2,http://offpage2.com), (3,http://offpage1.com))")
     webgraph.weightedDijkstra(root, (link) => 2).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (2,http://root.com/sub1), (2,http://root.com/sub2), (4,http://root.com/sub1/sub1), (4,http://root.com/sub2/sub1), (4,http://offpage2.com), (6,http://offpage1.com))")
+    //webgraph.weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
 
     var pp = new PrettyPrinter(80, 2)
     //pp.format(webgraph.sitestructure) should be (1)
-
-    webgraph.weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
+    webgraph.weightedDijkstra(root, (link) => (urlAnalyzer.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
 
 
   }

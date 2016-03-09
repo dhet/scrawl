@@ -13,6 +13,10 @@ class Webpage ( val url : URL,
                 var content : String = "",
                 var crawled : Boolean = false) extends Node[Weblink] with Weblabel{
 
+  /**
+    * Returns the resurlt of the analyzes in a plane structure
+    * @return xml
+    */
   def xml =
     <webpage url={url.toString} crawled={crawled.toString}>{labelxml}
       <links>
@@ -20,13 +24,16 @@ class Webpage ( val url : URL,
       </links>
     </webpage>
 
+  /**
+    * Resturns the most likely sitestructure based on dijkstra with a custom url-distance function
+    * @return recursive xml
+    */
   def substructure : Elem  = {
     <webpage url={url.toString}>
       {for (n <- edges.map((e) => e.endNode);
-            //if the distance from this node to the next is equal to the distanse of the shortest path to this node we are on one of the shortest pths
+            //The label "parent" is set by during dijkstra to be able to reconstruct paths
             if(n.getLabelEntry("parent").get.asInstanceOf[Webpage].equals(this));
-            //if n.getLabelEntry("dijkstra").get.asInstanceOf[Int] - getLabelEntry("dijkstra").get.asInstanceOf[Int] == 1;
-            if !n.url.getPath.equals(url.getPath))
+            if !n.url.getPath.equals(url.getPath)) //to prevent the circles - they should not occur with dijkstra .. however... testing required
       yield n.substructure}
     </webpage>
   }
@@ -43,6 +50,11 @@ class Webpage ( val url : URL,
     crawled = true
   }
 
+  /**
+    * Merges two webpages with the same urls (the ID) to prevent double occurence of webpages is the graph
+    * @param webpage the webpage which should be merges into this
+    * @return this
+    */
   def merge(webpage : Webpage): Webpage = {
     if(webpage.url.equals(url)){
       //replace content if this page has none otherwise vorget new content
@@ -58,6 +70,10 @@ class Webpage ( val url : URL,
     this
   }
 
+  /**
+    * Gives a shortenes string with essential data of the object...
+    * @return
+    */
   @Override
   override def toString() : String = s"Webpage(url:${url.toString()}, ${edges.toString()})"
 }
@@ -67,6 +83,12 @@ case class InternalWebpage(override val url : URL) extends Webpage(url)
 
 
 object Webpage {
+  /**
+    * Apply function that gives either an Internal or External Webpage
+    * @param url (String) url of the new webpage to be constructed
+    * @param parent of the Parent
+    * @return returns a new internel or external webpage
+    */
   def apply(url : String, parent : URL) : Option[Webpage] =  {
     if(url.startsWith("/") || url.contains(parent.getHost)){
       Some(InternalWebpage(new URL(parent, url)))

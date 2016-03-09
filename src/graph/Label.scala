@@ -9,7 +9,7 @@ trait Label{
   protected val label : mutable.Set[LabelEntry] //access only via defined methods
 
   /**
-    *
+    * Adds a labelentry (key value pair) to a label
     * @param labelEntry labelentry to be added
     * @return
     */
@@ -19,7 +19,7 @@ trait Label{
   }
 
   /**
-    *
+    * returns a Value (encapulated) to a given Key
     * @param key key of the label to look up
     * @return value relatd to the key
     */
@@ -33,9 +33,9 @@ trait Label{
   }
 
   /**
-    *
+    * Updates or Creates a label for a given Labelentry
     * @param labelEntry labelentry to be updated
-    * @return
+    * @return this
     */
   def updateLabelEntry(labelEntry: LabelEntry) : Label = {
     removeLabelEntry(labelEntry.key)
@@ -44,9 +44,9 @@ trait Label{
   }
 
   /**
-    *
+    * removes a labelentry from the label
     * @param key key of the label to be removed
-    * @return
+    * @return this
     */
   def removeLabelEntry(key : String) : Label = {
     for(labelentry <- label){

@@ -8,6 +8,10 @@ import graph.{LabelEntry, Edge}
 class Weblink ( override val startNode : Webpage,
                 override val endNode : Webpage) extends Edge[Webpage] with Weblabel {
 
+  /**
+    * Returns the resurlt of the analyzes in a plane structure
+    * @return xml
+    */
   def xml =
     <weblink source={startNode.url.toString} target={endNode.url.toString}>
       {labelxml}
@@ -19,7 +23,10 @@ class Weblink ( override val startNode : Webpage,
     */
   def analyze(algorithms : Seq[(Weblink) => LabelEntry]) = algorithms.foreach(alg => addLabelEntry(alg(this)))
 
-
+  /**
+    * Gives a shortenes string with essential data of the object...
+    * @return
+    */
   @Override
   override def toString() : String = s"Edge(startnode:${startNode.url.toString}, endnode:${endNode.url.toString} )"
 }
