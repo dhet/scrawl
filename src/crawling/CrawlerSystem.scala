@@ -36,7 +36,11 @@ object CrawlerSystem extends App{
         var futures = Set[Future[SendCrawlResult]]()
         implicit val timeout = Timeout(300, TimeUnit.SECONDS)
         implicit val ec : ExecutionContext = ExecutionContext.fromExecutor(context.dispatcher)
-        val combined = Future.traverse(links.drop(links.size - CrawlPrefs.limit))(link =>{
+        var linksToCrawl = links
+        if(CrawlPrefs.limit != 0){
+          linksToCrawl = linksToCrawl.drop(linksToCrawl.size - CrawlPrefs.limit)
+        }
+        val combined = Future.traverse(linksToCrawl)(link =>{
           val absoluteUrl = buildUrl(parent.url, link.toString)
           var future = Future(SendCrawlResult(None))
           if(!visited.exists(url => url.equals(link))){
