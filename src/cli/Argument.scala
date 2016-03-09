@@ -74,7 +74,8 @@ object Argument {
 
   supportedArgs += new ParamArgument("similarity"){
     synonyms = List[String]("sim", "dist")
-    helpText = "Adjusts the length of the substrings of the URLs, used to determine the similarity of two urls. (default is 3)"
+    helpText = "Adjusts the length of the substrings of the URLs, used to determine the similarity of two urls. " +
+      "(the default value is 3)"
     override def executeAction = {
       CrawlPrefs.similarityAdjustment = parameter.toString.toInt
     }
@@ -82,9 +83,10 @@ object Argument {
 
   supportedArgs += new Flag("sitestructure"){
     synonyms = List[String]("structure")
-    helpText = "Specifies that an additinal outputfile containing the sitestructure will be given (default is only xml with all the analyses)"
+    helpText = "Specifies that an additional output file containing the site structure will be given (default is only " +
+      "xml with all the analyses)"
     override def executeAction = {
-      CrawlPrefs.printSitestructure = true
+      CrawlPrefs.printSiteStructure = true
     }
   }
 
