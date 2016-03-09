@@ -52,6 +52,26 @@ object Argument {
     }
   }
 
+  supportedArgs += new ParamArgument("limit"){
+    helpText = "Only crawl the first [param] pages for each crawl level. Expects a parameter of type Integer. It might " +
+      "be useful to limit the number of crawled pages for debugging. The default value is 0 (don't limit)."
+    override def executeAction = {
+      CrawlPrefs.limit = parameter.toString.toInt
+    }
+  }
+
+
+  supportedArgs += new Flag("size"){
+    synonyms = List[String]("s")
+    helpText = "Estimate the size of each HTML page. (Assumes UTF-8 encoding)"
+    override def executeAction = {
+      CrawlPrefs.addPageAnalyzeFunction((webpage) => {
+        val sizeInKB = (webpage.content.size) / 1024
+        Some(LabelEntry("size", sizeInKB + " KB"))
+      })
+    }
+  }
+
   /**
     * Argument factory. Determines the type of an argument based on an input string and returns an appropriate object.
     * If the type can't be determined return an object of type [[cli.InvalidArgument]]
