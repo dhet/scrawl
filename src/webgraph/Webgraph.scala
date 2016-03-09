@@ -1,5 +1,6 @@
 package webgraph
 
+import analyze.urlAnalyzer
 import graph.Graph
 
 
@@ -22,12 +23,17 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     </webgraph>
 
 
+  /**
+    * Resturns the most likely sitestructure based on dijkstra with a custom url-distance function
+    * @return recursive xml
+    */
   def sitestructure = {
-    weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 )
+    weightedDijkstra(root, (link) => (urlAnalyzer.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] )
     <sitestructure>
       {root.substructure}
     </sitestructure>
   }
+
 
 
   /**
@@ -74,7 +80,6 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     }
     count
   }
-
 }
 
 

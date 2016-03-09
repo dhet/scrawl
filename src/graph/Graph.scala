@@ -188,7 +188,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    * Runs a constraint dikstra and adds the label "dijkstra" to every node - unvisited pages are labeled with maxint
+    * Runs a constraint dikstra and adds the labels "dijkstra" with distance and "parent" with a node to every node
     * @param node node where dijkstra starts
     * @param f function defining barriers for edges
     * @return this
@@ -198,6 +198,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     var tempnodes = nodes.toList
     //for each node set distance to infinity
     analyzeNodes((node) => new LabelEntry("dijkstra", MaxInt))
+    analyzeNodes((node) => new LabelEntry("parent", node))
 
     node.updateLabelEntry(new LabelEntry("dijkstra", 0))
     var tempnode : N = node
@@ -210,6 +211,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
       for(e <- tempnode.edges){
         if(e.endNode.getLabelEntry("dijkstra").get.asInstanceOf[Int] > tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + f(e)){
           e.endNode.updateLabelEntry(new LabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + f(e)))
+          e.endNode.updateLabelEntry(new LabelEntry("parent", tempnode ))
         }
       }
     }
