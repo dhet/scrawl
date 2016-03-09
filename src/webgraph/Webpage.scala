@@ -4,6 +4,8 @@ import java.net.URL
 
 import graph.{LabelEntry, Node}
 
+import scala.xml.Elem
+
 /**
   * Created by nicohein on 29/02/16.
   */
@@ -17,6 +19,15 @@ class Webpage ( val url : URL,
       {for (edge <- edges) yield <link url={edge.endNode.url.toString}/>}
       </links>
     </webpage>
+
+  def substructure : Elem  = {
+    <webpage url={url.toString}>
+      {for (n <- edges.map((e) => e.endNode);
+            if n.getLabelEntry("dijkstra").get.asInstanceOf[Int] - getLabelEntry("dijkstra").get.asInstanceOf[Int] == 1;
+            if !n.url.getPath.equals(url.getPath))
+      yield n.substructure}
+    </webpage>
+  }
 
   /**
     * Runs a provided sequence of Analyzes on the Webpage (Node) and stores them in the Label
@@ -37,6 +48,9 @@ class Webpage ( val url : URL,
         content = webpage.content
       for(labelentry <- webpage.label){
        updateLabelEntry(labelentry)
+      }
+      for(edge <- webpage.edges){
+        addEdge(edge)
       }
     }
     this

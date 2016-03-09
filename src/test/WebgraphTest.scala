@@ -124,18 +124,18 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.countEdges() should be (3)
 
     //removing edge (root, rootsub2) should only delete one edge
-//    webgraph.removeWeblink(edge2)
-//    webgraph.countNodes() should be (3)
-//    webgraph.countEdges() should be (2)
+    webgraph.removeWeblink(edge2)
+    webgraph.countNodes() should be (3)
+    webgraph.countEdges() should be (2)
 
     //removing edge (root, rootsub1) however should also delete node sub1 since there isn't any link to it and the graph is defined as connected
-   // webgraph.addWeblink(edge2)
-   // webgraph.removeWeblink(edge1)
-   // webgraph.countNodes() should be (2)
-   // webgraph.countEdges() should be (1)
+    webgraph.addWeblink(edge2)
+    webgraph.removeWeblink(edge1)
+    webgraph.countNodes() should be (2)
+    webgraph.countEdges() should be (1)
 
 
-   // pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
+    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
   }
 
 
@@ -213,12 +213,11 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.dijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (1,http://root.com/sub1), (1,http://root.com/sub2), (2,http://root.com/sub1/sub1), (2,http://root.com/sub2/sub1), (2,http://offpage2.com), (3,http://offpage1.com))")
     webgraph.weightedDijkstra(root, (link) => 2).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (2,http://root.com/sub1), (2,http://root.com/sub2), (4,http://root.com/sub1/sub1), (4,http://root.com/sub2/sub1), (4,http://offpage2.com), (6,http://offpage1.com))")
 
+    var pp = new PrettyPrinter(80, 2)
+    //pp.format(webgraph.sitestructure) should be (1)
+
+    webgraph.weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
+
+
   }
-
-
-
-
-
-
-
 }
