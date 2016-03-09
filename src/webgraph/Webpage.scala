@@ -77,30 +77,10 @@ class Webpage ( val url : URL,
   override def toString() : String = s"Webpage(url:${url.toString()}, ${outgoingEdges.toString()})"
 }
 
-case class ExternalWebpage(override val url : URL) extends Webpage(url)
-case class InternalWebpage(override val url : URL) extends Webpage(url)
-
 /**
   * Factory Object for Webpages
   */
 object Webpage {
-  /**
-    * Apply function that gives either an Internal or External Webpage
-    * @param url (String) url of the new webpage to be constructed
-    * @param parent of the Parent
-    * @return returns a new internel or external webpage
-    */
-  def apply(url : String, parent : URL) : Option[Webpage] =  {
-    if(url.startsWith("/") || url.contains(parent.getHost)){
-      Some(InternalWebpage(new URL(parent, url)))
-    } else{
-      try{
-        Some(ExternalWebpage(new URL(url)))
-      } catch{
-        case e : Exception => None
-      }
-    }
-  }
 
   /**
     * Apply Function that takes an URL as parameter
