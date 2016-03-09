@@ -23,8 +23,8 @@ object urlAnalyzer {
     */
   def sim(url1: URL, url2: URL) : Double = {
     //http://www2007.org/workshops/paper_103.pdf
-    if(url1.toString.length >0 || url2.toString.length >0)
-      return set(url1.toString, 4).intersect(set(url2.toString, 4)).size.asInstanceOf[Double] / set(url1.toString, 4).union(set(url2.toString, 4)).size.asInstanceOf[Double]
+    if(url1.toString.length >10 || url2.toString.length >10)
+      return set(url1.toString, 10).intersect(set(url2.toString, 10)).size.asInstanceOf[Double] / set(url1.toString, 10).union(set(url2.toString, 10)).size.asInstanceOf[Double]
     return 1
   }
 

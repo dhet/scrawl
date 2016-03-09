@@ -1,6 +1,7 @@
 package crawling
 
 import java.net.URL
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
@@ -68,68 +69,63 @@ object CrawlerSystem extends App{
       }
     }
 
-    private def crawl(parent : Webpage, url : URL, currentDepth : Int, visited : Set[URL]) : Unit = {
-      if(currentDepth <= CrawlPrefs.maxDepth && !visited.contains(url)){
-        val links = extractInternalLinks(parent.content, url).map{case (link, label) => buildUrl(url, link)}.toSet
+    private def crawl(parent : Webpage, deleteme : URL, currentDepth : Int, VISITED : Set[URL]) : Set[URL] = {
+      if(currentDepth <= CrawlPrefs.maxDepth){
+        val links = extractInternalLinks(parent.content, deleteme).map{case (link, label) => buildUrl(deleteme, link)}.toSet
         var futures = Set[Future[SendCrawlResult]]()
         implicit val timeout = Timeout(300, TimeUnit.SECONDS)
         implicit val ec : ExecutionContext = ExecutionContext.fromExecutor(context.dispatcher)
-        val combined = Future.traverse(links -- visited)(link =>{
+        val combined = Future.traverse(links)(link =>{
           val name = safeActorName(s"$currentDepth-${link.toString}")
           val worker = createWorkerActor(name)
-          val absoluteUrl = buildUrl(url, link.toString)
+          val absoluteUrl = buildUrl(parent.url, link.toString)
           var future = Future(SendCrawlResult(None))
-          if(!visited.contains(link)){
+          if(!VISITED.find(url => url.equals(link)).isDefined){
             future = ask(worker, CrawlSubPage(absoluteUrl, parent)).mapTo[SendCrawlResult]
             futures = futures + future
           } else{
+            val endNode = Webpage(link)
+            if(!endNode.url.equals(parent.url)) collector ! CrawlResult(Weblink(parent, endNode))
             println("skipping link " + link.toString)
           }
           future
         })
 
-        var visited2 = visited
-        // block
+        var visited2 = VISITED ++ links
+        // block until all pages are downloaded and analyzed
         Await result (combined, timeout.duration)
         println(s"Done crawling level $currentDepth")
-        println(futures.size)
-        if(currentDepth == CrawlPrefs.maxDepth){
+        println(s"${futures.size} jobs")
+
+        for(future <- futures.filter(f => f.value.isDefined); link <- future.value.get.get.link){
+          visited2 = visited2 ++ crawl(link.endNode, link.endNode.url, currentDepth + 1, visited2 - link.startNode.url)
+          visited2 = visited2 + link.endNode.url
+        }
+//        if(currentDepth == CrawlPrefs.maxDepth){
 //          println("done")
 //          collector ! DoneCrawling
-        } else{
-          for(future <- futures){
-            future.value match{
-              case Some(res) => {
-                try{
-                  val link = res.get.link
-                  link match {
-                    case Some(l) => {
-                      crawl(l.startNode, l.endNode.url, currentDepth + 1, visited ++ links - l.endNode.url)
-                      visited2 = visited2 + l.endNode.url
-                    }
-                  }
-                } catch{
-                  case e : Exception => println(e.getMessage)
-                }
-              }
-              case None => println("asdf")
-            }
-          }
-        }
+//        }
+        links
+      } else{
+        Set[URL]()
       }
     }
 
-    private def crawlSinglePage(url : URL, parent : Webpage) = {
+    private def crawlSinglePage(url : URL, parent : Webpage) : Option[Weblink] = {
       collector ! BeginThread
       val page = Webpage(url)
       try{
         page.content = downloadPage(url)
         page.analyze(CrawlPrefs.analyzeFunctionsPages)
         val link = Weblink(parent, page)
-        collector ! CrawlResult(link)
+        if(!page.url.equals(parent.url)) collector ! CrawlResult(link)
         sender ! SendCrawlResult(Some(link))
+        Some(link)
       } catch{
-        case e : Exception => sender ! SendCrawlResult(None)
+        case e : Exception => {
+          sender ! SendCrawlResult(None)
+          None
+        }
       } finally{
         collector ! EndThread
       }
@@ -160,7 +156,10 @@ object CrawlerSystem extends App{
       val root = new Webpage(url)
       root.content = downloadPage(url)
       root.analyze(CrawlPrefs.analyzeFunctionsPages)
+//      val nextLinks = extractInternalLinks(root.content, root.url).map{case (link, label) => buildUrl(url, link)}.toSet
       crawl(root, url, 1, Set[URL]())
+      println("probably done for good!")
+      collector ! DoneCrawling
     }
 
     private def buildUrl(base : URL, path : String) = {
@@ -173,7 +172,7 @@ object CrawlerSystem extends App{
 
     private def createWorkerActor(name : String) : ActorRef = {
       println(name)
-      context.actorOf(Props(classOf[CrawlerWorker], collector), name = name)
+      context.actorOf(Props(classOf[CrawlerWorker], collector), name = name + UUID.randomUUID().toString)
     }
 
     private def downloadPage(url : URL) : String = {
@@ -223,5 +222,6 @@ object CrawlerSystem extends App{
 //      }).toList
 //      linkSet
 //    }
+
   }
 }

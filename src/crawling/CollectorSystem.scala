@@ -36,7 +36,10 @@ object CollectorSystem{
     var visited = Set[URL]()
 
     def receive = {
-      case CrawlResult(link) => graph.addWeblink(link)
+      case CrawlResult(link) => {
+        println(link)
+        graph.addWeblink(link)
+      }
       case Visited(urls) => extendVisitedAndRespond(urls)
       case DoneCrawling => saveGraphToDisk()
     }
@@ -48,7 +51,7 @@ object CollectorSystem{
 
     def saveGraphToDisk() : Unit ={
       val printer = new PrettyPrinter(300, 2)
-      val content = printer.format(graph.xml).getBytes()
+      val content = printer.format(graph.sitestructure).getBytes()
       val filename = graph.root.url.getHost.replace("[.\\]", "_") + ".xml"
       val file = CrawlPrefs.outDir.toFile
       file.mkdirs()
