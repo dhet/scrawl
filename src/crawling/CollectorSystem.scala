@@ -13,7 +13,7 @@ import akka.pattern.ask
 import scala.concurrent.Await
 
 /**
-  * An acca system to collect weblinks and assemble a graph from the links. Provides a high level crawling function.
+  * An akka system to collect weblinks and assemble a graph from the links. Provides a high level crawling function.
   */
 object CollectorSystem{
   val collectorSystem = ActorSystem("collectorsystem", ConfigFactory.load.getConfig("collectorsystem"))
@@ -27,7 +27,7 @@ object CollectorSystem{
     */
   def crawlPage(url : URL) = {
     val graph = Webgraph(Webpage(url))
-    val safeUrlName = url.toString.replaceAll("[^w]", "~")
+    val safeUrlName = url.toString.replaceAll("[^\\w]", "~")
     val collector = collectorSystem.actorOf(Props(classOf[CollectorActor], graph), "collector" + safeUrlName)
     val crawlerMaster = crawlSystem.actorOf(Props(classOf[CrawlerSystem.CrawlerMaster], collector), "crawler" + safeUrlName)
 

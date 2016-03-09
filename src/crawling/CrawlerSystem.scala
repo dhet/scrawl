@@ -13,8 +13,12 @@ import webgraph.{Weblink, Webpage}
 
 import scala.concurrent.{ExecutionContext, Future, Await}
 
+/**
+  * An akka system housing actors to crawl pages.
+  */
 object CrawlerSystem extends App{
-  val crawlSystem = ActorSystem("crawlSystem", ConfigFactory.load.getConfig("crawlsystem"))
+//  val crawlSystem = ActorSystem("crawlsystem", ConfigFactory.load.getConfig("crawlsystem"))
+
 
   class CrawlerMaster(collector : ActorRef) extends Actor{
     val selectionPattern = "<a.*?</a>".r
@@ -28,7 +32,7 @@ object CrawlerSystem extends App{
 
     private def crawl(parent : Webpage, currentDepth : Int, visited : Set[URL]) : Set[URL] = {
       if(currentDepth <= CrawlPrefs.maxDepth){
-        val links = extractInternalLinks(parent.content, parent.url).map{case (link, label) => buildUrl(parent.url, link)}.toSet
+        val links = extractInternal(parent.content, parent.url).map(buildUrl(parent.url, _)).toSet
         var futures = Set[Future[SendCrawlResult]]()
         implicit val timeout = Timeout(300, TimeUnit.SECONDS)
         implicit val ec : ExecutionContext = ExecutionContext.fromExecutor(context.dispatcher)
@@ -124,6 +128,7 @@ object CrawlerSystem extends App{
     private def createWorkerActor(name : String) : ActorRef = {
 //      println(name)
       context.actorOf(Props(classOf[CrawlerMaster], collector), name = name + UUID.randomUUID().toString)
+//      crawlSystem.actorOf(Props(classOf[CrawlerWorker]), name = name + UUID.randomUUID().toString)
     }
 
     private def downloadPage(url : URL) : String = {
@@ -144,6 +149,22 @@ object CrawlerSystem extends App{
       extractAllLinks(html).filterKeys(key => key.contains(baseSite.getHost) || key.startsWith("/"))
     }
 
+    private def extractAll(html : String) : Set[String] = {
+      val links = selectionPattern.findAllIn(html)
+      val linkSet = links.map(link => {
+        link match{
+          case linkPattern(url, text) => url.stripSuffix("/")
+          case _ => "?"
+        }
+      }).toSet
+
+      linkSet.filter(link => !link.startsWith("#") && !link.startsWith("mailto"))
+      linkSet
+    }
+
+    private def extractInternal(html : String, baseSite : URL) : Set[String] = {
+      extractAll(html).filter(link => link.contains(baseSite.getHost) || link.startsWith("/"))
+    }
 
     private def extractAllLinks(html : String) : Map[String, String] = {
       val links = selectionPattern.findAllIn(html)
@@ -174,7 +195,7 @@ object CrawlerSystem extends App{
 //      linkSet
 //    }
 
-    class CrawlerWorker(collector : ActorRef) extends Actor{
+    class CrawlerWorker() extends Actor{
       override def receive = {
         case CrawlSubPage(url, parent) => crawlPage(url, parent)
       }
