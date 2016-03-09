@@ -5,28 +5,26 @@ import graph.Graph
 
 
 /**
-  * Created by nicohein on 29/02/16.
+  * A Webgraph is an implemetation of a Graph
+  * A webgraph has an root in addition to the properties: connected, directed and unweighted
   */
 class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
 
   addNode(root)
 
   /**
-    * gives the XML version of the graph
-    *
+    * Returns the XML version of the complete graph
     * @return xml
     */
   def xml =
     <webgraph>
-      { for (node <- nodes) yield
+      { for (node <- breadthFirstTraversal(root)) yield //breadth first traversal puts a bit order into the output
         {node.xml}
       }
     </webgraph>
 
-
   /**
     * Returns the most likely site structure based on dijkstra with a custom url-distance function
-    *
     * @return recursive xml
     */
   def siteStructure = {
@@ -36,15 +34,13 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     </sitestructure>
   }
 
-
-
   /**
     * Adds a weblink to the graph
-    *
     * @param weblink weblink to be added
     * @return this
     */
   def addWeblink(weblink : Weblink) : Weblink = {
+    //the following is necessary due to the fact that a Sets + operator uses == to compare objects... thus an equals functuion did not work
     var tempStartNode = weblink.startNode
     var tempEndNode = weblink.endNode
     for(webpage <- nodes){
@@ -56,13 +52,13 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
       }
     }
     val newLink = new Weblink(tempStartNode, tempEndNode)
+    weblink.label.foreach((labelEntry) => newLink.addLabelEntry(labelEntry)) //merges the new with the given weblink
     addEdge(newLink)
     newLink
   }
 
   /**
     * Removes an weblink from the graph
-    *
     * @param weblink weblink to be removed
     * @return this
     */
@@ -76,7 +72,6 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
 
   /**
     * Counts the number of uncrawled pages / is equal to links deaper than specified crawl level
-    *
     * @return number of nodes not crawled yet
     */
   def countUncrawledNodes() : Int = {

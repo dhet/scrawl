@@ -6,7 +6,9 @@ import graph.{LabelEntry, Label}
 import scala.collection.mutable
 
 /**
-  * Created by nicohein on 01/03/16.
+  * The Weblabel is a concrete implemetation of a Label (Which is used in all edges (Weblinks) ans nodes (Webpages)
+  * In addition to label trait it supports xml output
+  * It takes advantage of the default LabelEntry
   */
 trait Weblabel extends Label{
 

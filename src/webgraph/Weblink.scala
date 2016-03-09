@@ -32,6 +32,9 @@ class Weblink ( override val startNode : Webpage,
   override def toString() : String = s"Edge(startnode:${startNode.url.toString}, endnode:${endNode.url.toString} )"
 }
 
+/**
+  * Factory Object for Weblinks
+  */
 object Weblink {
   /**
     * Apply Function that takes linksource and linktarget as parameter

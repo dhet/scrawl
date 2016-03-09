@@ -37,9 +37,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     */
   protected def addNode(node : N) : Graph[N, E] = {
     nodes = nodes + node
-    for(edge <- node.outgoingEdges) {
-      //not really beatuiful
-      if(!edges.contains(edge))
+    for(edge <- node.outgoingEdges; if !edges.contains(edge)) yield {
         addEdge(edge)
     }
     this
@@ -51,7 +49,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     * @return this
     */
   protected def addEdge(edge : E) : Graph[N, E] = {
-    if(!edges.exists((e) => (e.startNode.equals(edge.startNode) && e.endNode.equals(edge.endNode)) )) //in case there is no edge with the same identity (there my be a difference in
+    if(!edges.exists((e) => e.startNode.equals(edge.startNode) && e.endNode.equals(edge.endNode)) ) //in case there is no edge with the same identity (there my be a difference in
       edges = edges + edge
     //add edges to nodes
     edge.startNode.addOutgoingEdge(edge)
@@ -122,7 +120,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Breadth first traversal on the graph
-    *
     * @param node breadth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
@@ -132,7 +129,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Constraint  Breadth first search
-    *
     * @param node constraint breadth first traversal is starting with this node
     * @param edgeConstraint Function that maps Edges to Boolean to constrain paths
     * @param nodeConstraint Function that maps Nodes to Boolean to constrain node visits
@@ -167,7 +163,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Analyzes every edge with a given function and adds the result to the label
-    *
     * @param analyzeFunction Analyze function
     */
   def analyzeEdges(analyzeFunction:(E) => LabelEntry) : Graph[N, E] ={
@@ -177,7 +172,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Analyzes every node with a given function and adds the result to the label
-    *
     * @param f f : (N) => Any function on node analyzing it
     * @return this
     */
@@ -190,7 +184,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Runs a simple Dijkstra and adds the label "dijkstra" to every node (every edge is weighted with 1)
-    *
     * @param node node where dijkstra starts
     * @return this
     */
@@ -200,7 +193,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Runs a constraint dijkstra and adds the labels "dijkstra" with distance and "parent" with a node to every node
-    *
     * @param node node where dijkstra starts
     * @param weightFunction function defining barriers for edges
     * @return this

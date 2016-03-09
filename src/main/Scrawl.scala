@@ -23,7 +23,10 @@ object Scrawl extends CommandLineInterpreter{
       println(s"Crawling the sites [${websites.mkString(", ")}] with the arguments [${arguments.mkString(", ")}]")
       websites.foreach(website => {
         val graph = CollectorSystem.crawlPage(new URL(prepareUrl(website.toString)))
-        saveGraphToFile(graph)
+        if(CrawlPrefs.printSiteXML)
+          saveGraphToFile(graph)
+        if(CrawlPrefs.printSitestructure)
+          saveSitemapToFile(graph)
       })
       sys.exit()
     } catch {
@@ -47,6 +50,23 @@ object Scrawl extends CommandLineInterpreter{
     Files.write(resultingPath.toPath, content)
     println(s"File saved to ${resultingPath.getAbsolutePath}.")
   }
+
+  /**
+    * Saves the site structure to file. The location of the file is specified in the [[crawling.CrawlPrefs]]. The filename is
+    * derived from the crawled page.
+    * @param graph  The graph to save
+    */
+  private def saveSitemapToFile(graph : Webgraph): Unit ={
+    val printer = new PrettyPrinter(300, 2)
+    val content = printer.format(graph.siteStructure).getBytes()
+    val filename = graph.root.url.getHost.replace("[.\\]", "_") + ".sitestructure.xml"
+    val file = CrawlPrefs.outDir.toFile
+    file.mkdirs()
+    val resultingPath = new java.io.File(file, filename)
+    Files.write(resultingPath.toPath, content)
+    println(s"File saved to ${resultingPath.getAbsolutePath}.")
+  }
+
 
   /**
     * Helper function to filter a list of arguments to only contain websites. It is assumed that websites exist in the
