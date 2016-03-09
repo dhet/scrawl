@@ -31,8 +31,7 @@ class Webpage ( val url : URL,
   def subStructure : Elem  = {
     <webpage url={url.toString}>
       {for (n <- outgoingEdges.map((e) => e.endNode)
-            //The label "parent" is set by during dijkstra to be able to reconstruct paths
-            if(n.getLabelEntry("parent").get.asInstanceOf[Webpage].equals(this))
+            if n.getLabelEntry("parent").get.asInstanceOf[Webpage].equals(this) //The label "parent" is set by during dijkstra to be able to reconstruct paths
             if !n.url.getPath.equals(url.getPath)) //to prevent the circles - they should not occur with dijkstra .. however... testing required
       yield n.subStructure}
     </webpage>
