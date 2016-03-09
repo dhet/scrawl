@@ -110,7 +110,7 @@ object CrawlerSystem extends App{
       root.analyze(CrawlPrefs.analyzeFunctionsPages)
       val visited = crawl(root, 1, Set[URL]())
       println("crawled " + visited.size + " Pages")
-      collector ! DoneCrawling
+      sender ! DoneCrawling
     }
 
     private def buildUrl(base : URL, path : String) = {
@@ -192,7 +192,7 @@ object CrawlerSystem extends App{
             sender ! SendCrawlResult(None)
           }
         } finally{
-          sender ! SendCrawlResult(None)
+//          sender ! SendCrawlResult(None)
         }
       }
 
