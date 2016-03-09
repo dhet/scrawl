@@ -1,6 +1,5 @@
 package webgraph
 
-import analyze.urlAnalyzer
 import graph.Graph
 
 
@@ -8,6 +7,7 @@ import graph.Graph
   * Created by nicohein on 29/02/16.
   */
 class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
+
 
   nodes = nodes + root
 
@@ -28,7 +28,7 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     * @return recursive xml
     */
   def sitestructure = {
-    weightedDijkstra(root, (link) => (urlAnalyzer.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] )
+    weightedDijkstra(root, (link) => (AnalyzeURL.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] )
     <sitestructure>
       {root.substructure}
     </sitestructure>
