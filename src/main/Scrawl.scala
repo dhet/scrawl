@@ -5,40 +5,43 @@ import java.net.{MalformedURLException, URL}
 import cli._
 import crawling.CollectorSystem
 
-object Scrawl {
+/**
+  * Command line tool to crawl websites. Generates customizable site maps and saves them as XML files on the disk.
+  * For a list of the supported arguments see [[cli.Argument]] or call the program with the parameter `-help`. Site map
+  * customization can also be defined there.
+  */
+object Scrawl extends CommandLineInterpreter{
   def main(args : Array[String]) = {
-    var websites : List[String] = Nil
-    var activeArguments : List[Argument] = Nil
-    if(args.isEmpty){
-      Argument.printHelp
-      exit(s"Enter at least one website to crawl.\n")
-    } else {
-      for (arg <- args; argument = Argument(arg)) {
-        argument match {
-          case Flag(_) => activeArguments :+= argument
-          case ParamArgument(_) => activeArguments :+= argument
-          case InvalidArgument(_) => exit(s"Unsupported Command $arg.")
-          case Value(_) =>
-            if(activeArguments.nonEmpty && activeArguments.last.isInstanceOf[ParamArgument]){
-              activeArguments.last.asInstanceOf[ParamArgument].parameter = argument
-            } else{
-              websites :+= arg
-            }
-        }
-      }
-      applyArguments(activeArguments)
-      println(s"Crawling the sites [${websites.mkString(", ")}] with the arguments [${activeArguments.mkString(", ")}]")
+    try{
+      val arguments = interpretArguments(args)
+      val websites = onlyWebsites(arguments)
+      if(websites.isEmpty) throw new CommandLineException("Enter at least one website to crawl.")
+      println(s"Crawling the sites [${websites.mkString(", ")}] with the arguments [${arguments.mkString(", ")}]")
       websites.foreach(website => {
-        try{
-          CollectorSystem.crawlPage(new URL(prepareUrl(website)))
-        } catch {
-          case e : MalformedURLException => exit(s"Invalid URL: $website")
-        }
+        CollectorSystem.crawlPage(new URL(prepareUrl(website.toString)))
       })
+    } catch {
+      case e : Exception => exit(e.getMessage)
+      case e : MalformedURLException => exit(s"Invalid URL: ${e.getCause}")
     }
   }
 
-  def prepareUrl(website : String) : String ={
+  /**
+    * Helper function to filter a list of arguments to only contain websites. It is assumed that websites exist in the
+    * Form of [[cli.Value]]s.
+    * @param args The list of arguments to filter
+    * @return     The filtered List
+    */
+  private def onlyWebsites(args : List[Argument]) = {
+    args.filter(_.isInstanceOf[Value])
+  }
+
+  /**
+    * Helper function to prepend a URL with `http://` if applicable.
+    * @param website  The website string to prepare
+    * @return         A new URL that should be instantiable with [[java.net.URL]]
+    */
+  private def prepareUrl(website : String) : String ={
     if(!website.startsWith("http")){
       "http://" + website
     } else{
@@ -46,19 +49,14 @@ object Scrawl {
     }
   }
 
-  def applyArguments(args : List[Argument]) = {
-    for(arg <- args){
-      try{
-        arg.action
-      } catch {
-        case e : Exception => exit(s"""Wrong usage of argument "$arg".""")
-      }
-    }
-  }
-
-  def exit(message : String) = {
+  /**
+    * Exits the program in case of an error and prints the provided message. Also prints a usage hint.
+    * @param message  The message to print
+    */
+  private def exit(message : String) : Unit = {
     println(message)
     println()
+    println("Use -help for information on how to use the program.")
     println("Exiting...")
     sys.exit(1)
   }
