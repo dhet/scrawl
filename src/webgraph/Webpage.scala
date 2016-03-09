@@ -20,10 +20,14 @@ class Webpage ( val url : URL,
       </links>
     </webpage>
 
-  def substructure : Elem =
+  def substructure : Elem  = {
     <webpage url={url.toString}>
-      {for(n <- edges.map((e) => e.endNode); if n.url.getPath.split("/").size - url.getPath.split("/").size == 1 ) yield n.substructure}
+      {for (n <- edges.map((e) => e.endNode);
+            if n.getLabelEntry("dijkstra").get.asInstanceOf[Int] - getLabelEntry("dijkstra").get.asInstanceOf[Int] == 1;
+            if !n.url.getPath.equals(url.getPath))
+      yield n.substructure}
     </webpage>
+  }
 
   /**
     * Runs a provided sequence of Analyzes on the Webpage (Node) and stores them in the Label

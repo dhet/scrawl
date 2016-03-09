@@ -214,13 +214,10 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.weightedDijkstra(root, (link) => 2).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (2,http://root.com/sub1), (2,http://root.com/sub2), (4,http://root.com/sub1/sub1), (4,http://root.com/sub2/sub1), (4,http://offpage2.com), (6,http://offpage1.com))")
 
     var pp = new PrettyPrinter(80, 2)
-    pp.format(webgraph.sitestructure) should be (1)
+    //pp.format(webgraph.sitestructure) should be (1)
+
+    webgraph.weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
+
+
   }
-
-
-
-
-
-
-
 }

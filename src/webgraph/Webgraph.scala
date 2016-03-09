@@ -22,10 +22,14 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     </webgraph>
 
 
-  def sitestructure =
+  def sitestructure = {
+    weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 )
     <sitestructure>
       {root.substructure}
     </sitestructure>
+  }
+
+
   /**
     * Adds a weblink to the graph
     * @param weblink weblink to be added
