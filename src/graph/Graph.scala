@@ -3,19 +3,19 @@ package graph
 import scala.collection.mutable
 
 /**
-  * Created by nicohein on 29/02/16.
+  * Every graph consist of nodes and edges.
+  * This is an abstrat definition of an connected, directed and unweighted graph (different weights can be given indirectly using edge labels)
   */
 trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   protected[graph] var nodes: Set[N] = Set[N]() //protected since every graph should be able to see its nodes
   protected[graph] var edges: Set[E] = Set[E]() //protected since every graph should be able to see its edges
 
-  //exists only for test
+  //exist only for test purpose
   def getNodes() : Set[N] = nodes
   def getEdges() : Set[E] = edges
 
   /**
     * Counts the number of nodes in this graph
-    *
     * @return number of nodes contained in this graph
     */
   def countNodes() : Int = {
@@ -24,7 +24,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Counts the number of edges contained in this graph
-    *
     * @return number of edges contained in this graph
     */
   def countEdges() : Int = {
@@ -33,7 +32,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Adds a node to this graph (the graph is mutable)
-    *
     * @param node node to be added to the graph
     * @return this
     */
@@ -49,11 +47,11 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Adds an directed edge to this graph (the graph is mutable)
-    *
     * @param edge edge to be added to the graph
+    * @return this
     */
-  protected def addEdge(edge : E) : E = {
-    if(!edges.exists((e) => if (e.startNode.equals(edge.startNode) && e.endNode.equals(edge.endNode)) true else false))
+  protected def addEdge(edge : E) : Graph[N, E] = {
+    if(!edges.exists((e) => (e.startNode.equals(edge.startNode) && e.endNode.equals(edge.endNode)) )) //in case there is no edge with the same identity (there my be a difference in
       edges = edges + edge
     //add edges to nodes
     edge.startNode.addOutgoingEdge(edge)
@@ -62,13 +60,13 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
       addNode(edge.startNode)
     if(!nodes.contains(edge.endNode))
       addNode(edge.endNode)
-    edge
+    this
   }
 
   /**
     * Removes a Node from the graph
-    *
     * @param node node to be removed frpm graph
+    * @return this
     */
   protected def removeNode(node : N) : Graph[N, E] = {
     //remove all outgoing edges of node, then remove node
@@ -81,8 +79,8 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Removes an Edge from the Graph
-    *
     * @param edge edge to be removed from graph
+    * @return this
     */
   protected def removeEdge(edge : E) : Graph[N, E] = {
     //remove edge from startnode (it does not exist at endnode)
@@ -97,8 +95,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   }
 
   /**
-    * Depth first traversal on the graph
-    *
+    * Depth first traversal on the graph (there is no constraint depth first traversal implemented yet)
     * @param node depth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
@@ -109,7 +106,6 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * The implementation of the recursive depth first traveral
-    *
     * @param node depth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
