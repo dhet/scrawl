@@ -11,6 +11,6 @@ resourceDirectory in Compile := baseDirectory.value / "resources"
 exportJars := true
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-cluster" % "2.3.9",
+  "com.typesafe.akka" %% "akka-cluster" % "2.4.2",
   "org.scalatest" %% "scalatest" % "2.2.1"
 )
