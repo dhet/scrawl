@@ -3,7 +3,7 @@ package graph
 import scala.collection.mutable
 
 /**
-  * Created by nicohein on 06/03/16.
+  * Every label (mixed into all nodes and edges) consists of a list of label entries.
   */
 trait Label{
   protected val label : mutable.Set[LabelEntry] //access only via defined methods

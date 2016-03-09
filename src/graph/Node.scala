@@ -1,7 +1,9 @@
 package graph
 
 /**
-  * Created by nicohein on 06/03/16.
+  * Every graph consist of nodes and edges
+  * Every node points to all outgoing edges (of custom edge type) for fast iterations on the graph
+  * Every edge should have a label (implemented using dependency injection)
   */
 trait Node[E <: Edge[_]]{
   this : Label =>
@@ -12,7 +14,6 @@ trait Node[E <: Edge[_]]{
 
   /**
     * Adds an outgoing Edge to the Node (no integrity check here)
- *
     * @param edge edge to be adde to node
     */
   protected[graph] def addOutgoingEdge(edge: E) = {
@@ -21,14 +22,12 @@ trait Node[E <: Edge[_]]{
 
   /**
     * Removes an outgoing Edge from the Node (no integrity check here)
- *
     * @param edge edge to be removed from node
     */
   protected[graph] def removeOutgoingEdge(edge: E) = {
-    outgoingEdges = outgoingEdges.filter((anEdge) => !compareEdges(edge, anEdge))
+    outgoingEdges = outgoingEdges.filter((anEdge) => {
+      !(edge.startNode.equals(anEdge.startNode) && edge.endNode.equals(anEdge.endNode)) //compares two edges
+    })
   }
 
-  private def compareEdges(a : E, b : E) : Boolean = {
-    a.startNode.equals(b.startNode) && a.endNode.equals(b.endNode)
-  }
 }

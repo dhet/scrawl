@@ -55,7 +55,9 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
         tempEndNode = webpage.mergeWith(weblink.endNode)
       }
     }
-    addEdge(new Weblink(tempStartNode, tempEndNode))
+    val newLink = new Weblink(tempStartNode, tempEndNode)
+    addEdge(newLink)
+    newLink
   }
 
   /**
