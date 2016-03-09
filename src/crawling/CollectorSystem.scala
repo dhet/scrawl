@@ -34,16 +34,11 @@ object CollectorSystem{
 
   class CollectorActor(graph : Webgraph) extends Actor{
     var visited = Set[URL]()
-    var threadCounter = 0
 
     def receive = {
       case CrawlResult(link) => graph.addWeblink(link)
       case Visited(urls) => extendVisitedAndRespond(urls)
-      case BeginThread => threadCounter += 1
-      case EndThread => {
-        threadCounter = threadCounter - 1
-        if(threadCounter == 0) saveGraphToDisk()
-      }
+      case DoneCrawling => saveGraphToDisk()
     }
 
     def extendVisitedAndRespond(urls : Set[URL]) = {

@@ -12,4 +12,7 @@ object Messages {
   case class AddToVisited(urls : Set[URL])
   case class BeginThread()
   case class EndThread()
+  case class SendCrawlResult(link : Option[Weblink])
+  case class CrawlSubPage(url : URL, parent : Webpage)
+  case class DoneCrawling()
 }
