@@ -2,7 +2,7 @@ package test
 
 import java.net.URL
 
-import analyze.urlAnalyzer
+import analyze.AnalyzeURL
 import graph.LabelEntry
 import org.scalatest.{FlatSpec, Matchers}
 import webgraph._
@@ -217,7 +217,7 @@ class WebgraphTest extends FlatSpec with Matchers{
 
     var pp = new PrettyPrinter(80, 2)
     //pp.format(webgraph.sitestructure) should be (1)
-    webgraph.weightedDijkstra(root, (link) => (urlAnalyzer.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
+    webgraph.weightedDijkstra(root, (link) => (AnalyzeURL.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
 
 
   }
