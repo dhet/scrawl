@@ -18,7 +18,7 @@ object CrawlPrefs {
   var analyzeFunctionsPages = Seq[(Webpage) => Option[LabelEntry]]()
   var analyzeFunctionsLinks = Seq[(Weblink) => Option[LabelEntry]]()
   var outDir = Paths.get("./sitemaps")
-  var limit = 100
+  var limit = 0
   var similarityAdjustment = 3
   var printSitestructure = false
   var printSiteXML = true //currently not specifiable but used

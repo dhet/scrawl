@@ -40,7 +40,7 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     * @return this
     */
   def addWeblink(weblink : Weblink) : Weblink = {
-    //the following is necessary due to the fact that a Sets + operator uses == to compare objects... thus an equals functuion did not work
+    //the following is necessary due to the fact that a Sets + operator uses == to compare objects... thus a custom equals functuion would not work
     var tempStartNode = weblink.startNode
     var tempEndNode = weblink.endNode
     for(webpage <- nodes){
