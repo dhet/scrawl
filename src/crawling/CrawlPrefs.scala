@@ -15,7 +15,6 @@ import webgraph.{Weblink, Webpage}
   */
 object CrawlPrefs {
   var maxDepth = 2
-  var threads = 3
   var analyzeFunctionsPages = Seq[(Webpage) => Option[LabelEntry]]()
   var analyzeFunctionsLinks = Seq[(Weblink) => Option[LabelEntry]]()
   var outDir = Paths.get("./sitemaps")
