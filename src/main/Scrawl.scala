@@ -7,7 +7,7 @@ import cli._
 import crawling.{CrawlPrefs, CollectorSystem}
 import webgraph.Webgraph
 
-import scala.xml.PrettyPrinter
+import scala.xml.{Elem, PrettyPrinter}
 
 /**
   * Command line tool to crawl websites. Generates customizable site maps and saves them as XML files on the disk.
@@ -36,30 +36,33 @@ object Scrawl extends CommandLineInterpreter{
   }
 
   /**
-    * Saves a graph to file. The location of the file is specified in the [[crawling.CrawlPrefs]]. The filename is
+    * Saves a graph to disk. The location of the file is specified in the [[crawling.CrawlPrefs]]. The filename is
     * derived from the crawled page.
     * @param graph  The graph to save
     */
-  private def saveGraphToFile(graph : Webgraph): Unit ={
-    val printer = new PrettyPrinter(300, 2)
-    val content = printer.format(graph.xml).getBytes()
+  private def saveGraphToFile(graph : Webgraph): Unit = {
     val filename = graph.root.url.getHost.replace("[.\\]", "_") + ".xml"
-    val file = CrawlPrefs.outDir.toFile
-    file.mkdirs()
-    val resultingPath = new java.io.File(file, filename)
-    Files.write(resultingPath.toPath, content)
-    println(s"File saved to ${resultingPath.getAbsolutePath}.")
+    saveToFile(graph.xml, filename)
   }
 
   /**
-    * Saves the site structure to file. The location of the file is specified in the [[crawling.CrawlPrefs]]. The filename is
-    * derived from the crawled page.
+    * Saves the site structure to disk. The location of the file is specified in the [[crawling.CrawlPrefs]]. The
+    * filename is derived from the crawled page.
     * @param graph  The graph to save
     */
   private def saveSitemapToFile(graph : Webgraph): Unit ={
-    val printer = new PrettyPrinter(300, 2)
-    val content = printer.format(graph.siteStructure).getBytes()
     val filename = graph.root.url.getHost.replace("[.\\]", "_") + ".sitestructure.xml"
+    saveToFile(graph.siteStructure, filename)
+  }
+
+  /**
+    * Saves a pretty printed XML structure to disk.
+    * @param xml      The XML to save
+    * @param filename The name of the file
+    */
+  private def saveToFile(xml : Elem, filename : String) = {
+    val printer = new PrettyPrinter(300, 2)
+    val content = printer.format(xml).getBytes()
     val file = CrawlPrefs.outDir.toFile
     file.mkdirs()
     val resultingPath = new java.io.File(file, filename)
