@@ -51,7 +51,7 @@ object CollectorSystem{
 
     def saveGraphToDisk() : Unit ={
       val printer = new PrettyPrinter(300, 2)
-      val content = printer.format(graph.sitestructure).getBytes()
+      val content = printer.format(graph.siteStructure).getBytes()
       val filename = graph.root.url.getHost.replace("[.\\]", "_") + ".xml"
       val file = CrawlPrefs.outDir.toFile
       file.mkdirs()

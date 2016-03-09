@@ -207,17 +207,17 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.analyzeEdges((weblink) => new LabelEntry("linktype", if(weblink.endNode.url.getHost.equals(weblink.startNode.url.getHost)) "inlink" else "outlink"))
     webgraph.analyzeNodes((webpage) => new LabelEntry("linktype", if(webpage.url.getHost.equals(root.url.getHost)) "inpage" else "outpage"))
 
-    webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype").get.equals("inlink")) true else false, (webpage: Webpage) => true ).map((webpage: Webpage) => webpage.url.toString).toString() should be ("List(http://root.com, http://root.com/sub1, http://root.com/sub2, http://root.com/sub1/sub1, http://root.com/sub2/sub1)")
-    webgraph.contraintBreadthFirstTraversal(root, (weblink: Weblink) => true, (webpage: Webpage) => if(webpage.getLabelEntry("linktype").get.equals("inpage")) true else false ).map((webpage: Webpage) => webpage.url.toString).toString() should be ("List(http://root.com, http://root.com/sub1, http://root.com/sub2, http://root.com/sub1/sub1, http://root.com/sub2/sub1)")
+    webgraph.constraintBreadthFirstTraversal(root, (weblink: Weblink) => if(weblink.getLabelEntry("linktype").get.equals("inlink")) true else false, (webpage: Webpage) => true ).map((webpage: Webpage) => webpage.url.toString).toString() should be ("List(http://root.com, http://root.com/sub1, http://root.com/sub2, http://root.com/sub1/sub1, http://root.com/sub2/sub1)")
+    webgraph.constraintBreadthFirstTraversal(root, (weblink: Weblink) => true, (webpage: Webpage) => if(webpage.getLabelEntry("linktype").get.equals("inpage")) true else false ).map((webpage: Webpage) => webpage.url.toString).toString() should be ("List(http://root.com, http://root.com/sub1, http://root.com/sub2, http://root.com/sub1/sub1, http://root.com/sub2/sub1)")
 
 
-    webgraph.dijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (1,http://root.com/sub1), (1,http://root.com/sub2), (2,http://root.com/sub1/sub1), (2,http://root.com/sub2/sub1), (2,http://offpage2.com), (3,http://offpage1.com))")
-    webgraph.weightedDijkstra(root, (link) => 2).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (2,http://root.com/sub1), (2,http://root.com/sub2), (4,http://root.com/sub1/sub1), (4,http://root.com/sub2/sub1), (4,http://offpage2.com), (6,http://offpage1.com))")
+    webgraph.runDijkstra(root).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (1,http://root.com/sub1), (1,http://root.com/sub2), (2,http://root.com/sub1/sub1), (2,http://root.com/sub2/sub1), (2,http://offpage2.com), (3,http://offpage1.com))")
+    webgraph.runWeightedDijkstra(root, (link) => 2).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be ("List((0,http://root.com), (2,http://root.com/sub1), (2,http://root.com/sub2), (4,http://root.com/sub1/sub1), (4,http://root.com/sub2/sub1), (4,http://offpage2.com), (6,http://offpage1.com))")
     //webgraph.weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
 
     var pp = new PrettyPrinter(80, 2)
     //pp.format(webgraph.sitestructure) should be (1)
-    webgraph.weightedDijkstra(root, (link) => (AnalyzeURL.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
+    webgraph.runWeightedDijkstra(root, (link) => (AnalyzeURL.distance(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] ).breadthFirstTraversal(root).map((page) => (page.getLabelEntry("dijkstra").get, page.url.toString)).toString should be (1)
 
 
   }

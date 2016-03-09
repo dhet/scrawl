@@ -10,7 +10,7 @@ import scala.collection.mutable
   */
 trait Weblabel extends Label{
 
-  override val label : mutable.Set[LabelEntry] = mutable.Set[LabelEntry]()
+  override val label = mutable.Set[LabelEntry]()
 
   /**
     * Returns the resurlt of the analyzes in a plane structure

@@ -21,13 +21,14 @@ class Weblink ( override val startNode : Webpage,
     * Runs a provided sequence of Analyzes on the Weblink (Edge) and stores them in the Label
     * @param algorithms Algorithms to analyze the Edge
     */
-  def analyze(algorithms : Seq[(Weblink) => LabelEntry]) = algorithms.foreach(alg => addLabelEntry(alg(this)))
+  def analyze(algorithms : Seq[(Weblink) => LabelEntry]) = {
+    algorithms.foreach(alg => addLabelEntry(alg(this)))
+  }
 
   /**
     * Gives a shortenes string with essential data of the object...
     * @return
     */
-  @Override
   override def toString() : String = s"Edge(startnode:${startNode.url.toString}, endnode:${endNode.url.toString} )"
 }
 

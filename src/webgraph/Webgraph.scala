@@ -1,5 +1,6 @@
 package webgraph
 
+import analyze.AnalyzeURL
 import graph.Graph
 
 
@@ -8,29 +9,30 @@ import graph.Graph
   */
 class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
 
-
-  nodes = nodes + root
+  addNode(root)
 
   /**
     * gives the XML version of the graph
+    *
     * @return xml
     */
   def xml =
     <webgraph>
       { for (node <- nodes) yield
-      {node.xml}
+        {node.xml}
       }
     </webgraph>
 
 
   /**
-    * Resturns the most likely sitestructure based on dijkstra with a custom url-distance function
+    * Returns the most likely site structure based on dijkstra with a custom url-distance function
+    *
     * @return recursive xml
     */
-  def sitestructure = {
-    weightedDijkstra(root, (link) => (AnalyzeURL.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] )
+  def siteStructure = {
+    runWeightedDijkstra(root, (link) => (AnalyzeURL.distance(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] )
     <sitestructure>
-      {root.substructure}
+      {root.subStructure}
     </sitestructure>
   }
 
@@ -38,25 +40,27 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
 
   /**
     * Adds a weblink to the graph
+    *
     * @param weblink weblink to be added
     * @return this
     */
   def addWeblink(weblink : Weblink) : Weblink = {
-    var tempstartnode = weblink.startNode
-    var tempendnode = weblink.endNode
+    var tempStartNode = weblink.startNode
+    var tempEndNode = weblink.endNode
     for(webpage <- nodes){
-      if(tempstartnode.url.equals(webpage.url)){
-        tempstartnode = webpage.merge(weblink.startNode)
+      if(tempStartNode.url.equals(webpage.url)){
+        tempStartNode = webpage.mergeWith(weblink.startNode)
       }
-      if(tempendnode.url.equals(webpage.url)){
-        tempendnode = webpage.merge(weblink.endNode)
+      if(tempEndNode.url.equals(webpage.url)){
+        tempEndNode = webpage.mergeWith(weblink.endNode)
       }
     }
-    addEdge(new Weblink(tempstartnode, tempendnode))
+    addEdge(new Weblink(tempStartNode, tempEndNode))
   }
 
   /**
     * Removes an weblink from the graph
+    *
     * @param weblink weblink to be removed
     * @return this
     */
@@ -70,6 +74,7 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
 
   /**
     * Counts the number of uncrawled pages / is equal to links deaper than specified crawl level
+    *
     * @return number of nodes not crawled yet
     */
   def countUncrawledNodes() : Int = {
@@ -82,7 +87,9 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
   }
 }
 
-
+/**
+  * Factory for Webgraphs
+ */
 object Webgraph {
   def apply(root: Webpage) = new Webgraph(root)
 }

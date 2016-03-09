@@ -6,11 +6,16 @@ import scala.collection.mutable
   * Created by nicohein on 29/02/16.
   */
 trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
-  var nodes: Set[N] = Set[N]() //protected since every graph should be able to see its nodes
-  var edges: Set[E] = Set[E]() //protected since every graph should be able to see its edges
+  protected[graph] var nodes: Set[N] = Set[N]() //protected since every graph should be able to see its nodes
+  protected[graph] var edges: Set[E] = Set[E]() //protected since every graph should be able to see its edges
+
+  //exists only for test
+  def getNodes() : Set[N] = nodes
+  def getEdges() : Set[E] = edges
 
   /**
     * Counts the number of nodes in this graph
+    *
     * @return number of nodes contained in this graph
     */
   def countNodes() : Int = {
@@ -19,6 +24,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Counts the number of edges contained in this graph
+    *
     * @return number of edges contained in this graph
     */
   def countEdges() : Int = {
@@ -27,11 +33,14 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Adds a node to this graph (the graph is mutable)
+    *
     * @param node node to be added to the graph
+    * @return this
     */
   protected def addNode(node : N) : Graph[N, E] = {
     nodes = nodes + node
-    for(edge <- node.edges){  //not really beatuiful
+    for(edge <- node.outgoingEdges) {
+      //not really beatuiful
       if(!edges.contains(edge))
         addEdge(edge)
     }
@@ -40,13 +49,14 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Adds an directed edge to this graph (the graph is mutable)
+    *
     * @param edge edge to be added to the graph
     */
   protected def addEdge(edge : E) : E = {
     if(!edges.exists((e) => if (e.startNode.equals(edge.startNode) && e.endNode.equals(edge.endNode)) true else false))
       edges = edges + edge
     //add edges to nodes
-    edge.startNode.addEdge(edge)
+    edge.startNode.addOutgoingEdge(edge)
     //add nodes of edge if not already existing
     if(!nodes.contains(edge.startNode))
       addNode(edge.startNode)
@@ -57,11 +67,12 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Removes a Node from the graph
+    *
     * @param node node to be removed frpm graph
     */
   protected def removeNode(node : N) : Graph[N, E] = {
     //remove all outgoing edges of node, then remove node
-    for(edge <- node.edges){
+    for (edge <- node.outgoingEdges){
       removeEdge(edge)
     }
     nodes = nodes - node
@@ -70,11 +81,12 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Removes an Edge from the Graph
+    *
     * @param edge edge to be removed from graph
     */
   protected def removeEdge(edge : E) : Graph[N, E] = {
     //remove edge from startnode (it does not exist at endnode)
-    edge.startNode.removeEdge(edge)
+    edge.startNode.removeOutgoingEdge(edge)
     //now remove edge from graph (sipler with reliable equals but... it works
     edges = edges.filter((e) => if(edge.startNode.equals(e.startNode) && edge.endNode.equals(e.endNode)) false else true)
     //if there is't any edge containing the endnode as endnode the endnode isnt reachable anymore
@@ -86,23 +98,25 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Depth first traversal on the graph
+    *
     * @param node depth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
   def depthFirstTraversal(node : N ) : List[N] = {
-    setUnvisited()
+    setAllNodesUnvisited()
     node :: depthFirstTraversalHelper(node)
   }
 
   /**
     * The implementation of the recursive depth first traveral
+    *
     * @param node depth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
   private def depthFirstTraversalHelper(node: N): List[N] = {
     var pagelist : List[N] = Nil
     node.visited = true
-    for(child <- node.edges.toList.map((e) => e.endNode)){
+    for (child <- node.outgoingEdges.toList.map((e) => e.endNode)){
       if(!child.visited){
         pagelist = pagelist ::: child :: depthFirstTraversalHelper(child)
       }
@@ -112,22 +126,24 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
 
   /**
     * Breadth first traversal on the graph
+    *
     * @param node breadth first traversal is starting with this node
     * @return List of nodes in order of the traversal
     */
   def breadthFirstTraversal(node : N ) : List[N] = {
-    contraintBreadthFirstTraversal(node, (Edge) => true, (Node) =>true)
+    constraintBreadthFirstTraversal(node, (Edge) => true, (Node) =>true)
   }
 
   /**
     * Constraint  Breadth first search
+    *
     * @param node constraint breadth first traversal is starting with this node
-    * @param f Function that maps Edges to Boolean to constrain paths
-    * @param g Function that maps Nodes to Boolean to constrain node visits
+    * @param edgeConstraint Function that maps Edges to Boolean to constrain paths
+    * @param nodeConstraint Function that maps Nodes to Boolean to constrain node visits
     * @return List of nodes in order of the traversal
     */
-  def contraintBreadthFirstTraversal(node: N, f: (E) => Boolean, g: (N) => Boolean): List[N] = {
-    setUnvisited()
+  def constraintBreadthFirstTraversal(node: N, edgeConstraint: (E) => Boolean, nodeConstraint: (N) => Boolean): List[N] = {
+    setAllNodesUnvisited()
     var pagelist : List[N] = Nil
     val queue : mutable.Queue[N] = mutable.Queue[N]()
     queue.enqueue(node)
@@ -135,8 +151,8 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     while(queue.nonEmpty){
       val tempnode = queue.dequeue()
       pagelist = tempnode :: pagelist
-      for(child <- tempnode.edges.toList.filter(f).map((e) => e.endNode)){
-        if(!child.visited && g(child)){
+      for (child <- tempnode.outgoingEdges.toList.filter(edgeConstraint).map((e) => e.endNode)){
+        if(!child.visited && nodeConstraint(child)){
           queue.enqueue(child)
           child.visited = true
         }
@@ -148,52 +164,52 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   /**
     * Sets all nodes to unvisited and is needs to be called before any traversal
     */
-  protected def setUnvisited() : Graph[N, E] = {
-    for(node <- nodes){
-      node.visited = false
-    }
+  protected def setAllNodesUnvisited() : Graph[N, E] = {
+    nodes.foreach(_.visited = false)
     this
   }
 
   /**
     * Analyzes every edge with a given function and adds the result to the label
-    * @param f Analyze function
+    *
+    * @param analyzeFunction Analyze function
     */
-  def analyzeEdges(f:(E) => LabelEntry) : Graph[N, E] ={
-    for(edge <- edges){
-      edge.updateLabelEntry(f(edge)) //map??
-    }
+  def analyzeEdges(analyzeFunction:(E) => LabelEntry) : Graph[N, E] ={
+    edges.foreach(edge => edge.updateLabelEntry(analyzeFunction(edge)))
     this
   }
 
   /**
     * Analyzes every node with a given function and adds the result to the label
+    *
     * @param f f : (N) => Any function on node analyzing it
     * @return this
     */
   def analyzeNodes(f:(N) => LabelEntry) : Graph[N, E] = {
     for(node <- nodes){
-      node.updateLabelEntry(f(node))  //map??
+      node.updateLabelEntry(f(node))
     }
     this
   }
 
   /**
     * Runs a simple Dijkstra and adds the label "dijkstra" to every node (every edge is weighted with 1)
+    *
     * @param node node where dijkstra starts
     * @return this
     */
-  def dijkstra(node : N) : Graph[N, E] = {
-    weightedDijkstra(node, (e) => 1)
+  def runDijkstra(node : N) : Graph[N, E] = {
+    runWeightedDijkstra(node, (e) => 1)
   }
 
   /**
-    * Runs a constraint dikstra and adds the labels "dijkstra" with distance and "parent" with a node to every node
+    * Runs a constraint dijkstra and adds the labels "dijkstra" with distance and "parent" with a node to every node
+    *
     * @param node node where dijkstra starts
-    * @param f function defining barriers for edges
+    * @param weightFunction function defining barriers for edges
     * @return this
     */
-  def weightedDijkstra(node : N, f: (E) => Int): Graph[N, E] = { //TODO what happens if int is negative?
+  def runWeightedDijkstra(node : N, weightFunction: (E) => Int): Graph[N, E] = { //TODO what happens if int is negative?
     val MaxInt = 32767
     var tempnodes = nodes.toList
     //for each node set distance to infinity
@@ -208,9 +224,9 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
       tempnodes = tempnodes.sortWith((node1, node2) => node1.getLabelEntry("dijkstra").get.asInstanceOf[Int] < node2.getLabelEntry("dijkstra").get.asInstanceOf[Int])
       tempnode = tempnodes.head
       tempnodes = tempnodes.tail
-      for(e <- tempnode.edges){
-        if(e.endNode.getLabelEntry("dijkstra").get.asInstanceOf[Int] > tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + f(e)){
-          e.endNode.updateLabelEntry(new LabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + f(e)))
+      for(e <- tempnode.outgoingEdges){
+        if(e.endNode.getLabelEntry("dijkstra").get.asInstanceOf[Int] > tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + weightFunction(e)){
+          e.endNode.updateLabelEntry(new LabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + weightFunction(e)))
           e.endNode.updateLabelEntry(new LabelEntry("parent", tempnode ))
         }
       }
