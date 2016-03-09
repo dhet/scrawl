@@ -15,7 +15,6 @@ class Webpage ( val url : URL,
 
   /**
     * Returns the result of the analyzes in a plane structure
-    *
     * @return xml
     */
   def xml =
@@ -27,14 +26,13 @@ class Webpage ( val url : URL,
 
   /**
     * Returns the most likely site structure based on dijkstra with a custom url-distance function
-    *
     * @return recursive xml
     */
   def subStructure : Elem  = {
     <webpage url={url.toString}>
-      {for (n <- outgoingEdges.map((e) => e.endNode);
+      {for (n <- outgoingEdges.map((e) => e.endNode)
             //The label "parent" is set by during dijkstra to be able to reconstruct paths
-            if(n.getLabelEntry("parent").get.asInstanceOf[Webpage].equals(this));
+            if(n.getLabelEntry("parent").get.asInstanceOf[Webpage].equals(this))
             if !n.url.getPath.equals(url.getPath)) //to prevent the circles - they should not occur with dijkstra .. however... testing required
       yield n.subStructure}
     </webpage>
@@ -42,7 +40,6 @@ class Webpage ( val url : URL,
 
   /**
     * Runs a provided sequence of Analyzes on the Webpage (Node) and stores them in the Label
-    *
     * @param algorithms Algorithms to analyze the Node
     */
   def analyze(algorithms : Seq[(Webpage) => Option[LabelEntry]]) = {
@@ -55,7 +52,6 @@ class Webpage ( val url : URL,
 
   /**
     * Merges two webpages with the same urls (the ID) to prevent double occurence of webpages is the graph
-    *
     * @param webpage the webpage which should be merges into this
     * @return this
     */
@@ -76,7 +72,6 @@ class Webpage ( val url : URL,
 
   /**
     * Gives a shortenes string with essential data of the object...
-    *
     * @return
     */
   override def toString() : String = s"Webpage(url:${url.toString()}, ${outgoingEdges.toString()})"
@@ -85,7 +80,9 @@ class Webpage ( val url : URL,
 case class ExternalWebpage(override val url : URL) extends Webpage(url)
 case class InternalWebpage(override val url : URL) extends Webpage(url)
 
-
+/**
+  * Factory Object for Webpages
+  */
 object Webpage {
   /**
     * Apply function that gives either an Internal or External Webpage

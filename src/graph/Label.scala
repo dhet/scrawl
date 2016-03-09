@@ -6,7 +6,7 @@ import scala.collection.mutable
   * Every label (mixed into all nodes and edges) consists of a list of label entries.
   */
 trait Label{
-  protected val label : mutable.Set[LabelEntry] //access only via defined methods
+  val label : mutable.Set[LabelEntry] //access only via defined methods
 
   /**
     * Adds a labelentry (key value pair) to a label

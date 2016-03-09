@@ -66,11 +66,29 @@ object Argument {
     helpText = "Estimate the size of each HTML page. (Assumes UTF-8 encoding)"
     override def executeAction = {
       CrawlPrefs.addPageAnalyzeFunction((webpage) => {
-        val sizeInKB = (webpage.content.size) / 1024
+        val sizeInKB = webpage.content.length / 1024
         Some(LabelEntry("size", sizeInKB + " KB"))
       })
     }
   }
+
+  supportedArgs += new ParamArgument("similarity"){
+    synonyms = List[String]("sim", "dist")
+    helpText = "Adjusts the length of the substrings of the URLs, used to determine the similarity of two urls. (default is 3)"
+    override def executeAction = {
+      CrawlPrefs.similarityAdjustment = parameter.toString.toInt
+    }
+  }
+
+  supportedArgs += new Flag("sitestructure"){
+    synonyms = List[String]("structure")
+    helpText = "Specifies that an additinal outputfile containing the sitestructure will be given (default is only xml with all the analyses)"
+    override def executeAction = {
+      CrawlPrefs.printSitestructure = true
+    }
+  }
+
+
 
   /**
     * Argument factory. Determines the type of an argument based on an input string and returns an appropriate object.
@@ -111,7 +129,7 @@ object Argument {
   * `-wc` of type [[cli.Flag]]; `-d` of type [[cli.ParamArgument]]; `4` of type [[cli.Value]] where `4` is part of the
   * preceding `-d` as it is its parameter; and `-undefined` of type [[cli.InvalidArgument]] as it isn't defined.
   *
-  * @param name
+  * @param name provides the name of the argument
   */
 abstract class Argument(val name : String){
   var synonyms : List[String] = List[String]()
