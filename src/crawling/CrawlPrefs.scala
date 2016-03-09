@@ -20,7 +20,7 @@ object CrawlPrefs {
   var outDir = Paths.get("./sitemaps")
   var limit = 0
   var similarityAdjustment = 3
-  var printSitestructure = false
+  var printSiteStructure = false
   var printSiteXML = true //currently not specifiable but used
 
   addPageAnalyzeFunction(extractPageTitle)

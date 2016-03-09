@@ -25,7 +25,7 @@ object Scrawl extends CommandLineInterpreter{
         val graph = CollectorSystem.crawlPage(new URL(prepareUrl(website.toString)))
         if(CrawlPrefs.printSiteXML)
           saveGraphToFile(graph)
-        if(CrawlPrefs.printSitestructure)
+        if(CrawlPrefs.printSiteStructure)
           saveSitemapToFile(graph)
       })
       sys.exit()

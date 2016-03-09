@@ -44,7 +44,7 @@ object CollectorSystem{
     */
   class CollectorActor(graph : Webgraph) extends Actor{
     def receive = {
-      case CrawlResult(link) => {
+      case LinkResult(link) => {
         println(s"Added Link $link")
         graph.addWeblink(link)
       }
