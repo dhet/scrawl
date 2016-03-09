@@ -198,6 +198,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
     var tempnodes = nodes.toList
     //for each node set distance to infinity
     analyzeNodes((node) => new LabelEntry("dijkstra", MaxInt))
+    analyzeNodes((node) => new LabelEntry("parent", node))
 
     node.updateLabelEntry(new LabelEntry("dijkstra", 0))
     var tempnode : N = node
@@ -210,6 +211,7 @@ trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
       for(e <- tempnode.edges){
         if(e.endNode.getLabelEntry("dijkstra").get.asInstanceOf[Int] > tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + f(e)){
           e.endNode.updateLabelEntry(new LabelEntry("dijkstra", tempnode.getLabelEntry("dijkstra").get.asInstanceOf[Int] + f(e)))
+          e.endNode.updateLabelEntry(new LabelEntry("parent", tempnode ))
         }
       }
     }

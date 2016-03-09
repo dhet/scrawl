@@ -23,7 +23,9 @@ class Webpage ( val url : URL,
   def substructure : Elem  = {
     <webpage url={url.toString}>
       {for (n <- edges.map((e) => e.endNode);
-            if n.getLabelEntry("dijkstra").get.asInstanceOf[Int] - getLabelEntry("dijkstra").get.asInstanceOf[Int] == 1;
+            //if the distance from this node to the next is equal to the distanse of the shortest path to this node we are on one of the shortest pths
+            if(n.getLabelEntry("parent").get.asInstanceOf[Webpage].equals(this));
+            //if n.getLabelEntry("dijkstra").get.asInstanceOf[Int] - getLabelEntry("dijkstra").get.asInstanceOf[Int] == 1;
             if !n.url.getPath.equals(url.getPath))
       yield n.substructure}
     </webpage>

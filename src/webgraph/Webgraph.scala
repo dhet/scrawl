@@ -1,5 +1,7 @@
 package webgraph
 
+import java.net.URL
+
 import graph.Graph
 
 
@@ -23,7 +25,7 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
 
 
   def sitestructure = {
-    weightedDijkstra(root, (link) => if(link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size > 0) link.endNode.url.getPath.split("/").size - link.startNode.url.getPath.split("/").size else 1000 )
+    weightedDijkstra(root, (link) => (urlAnalyzer.dist(link.startNode.url, link.endNode.url)*100).asInstanceOf[Int] )
     <sitestructure>
       {root.substructure}
     </sitestructure>
@@ -75,6 +77,25 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     count
   }
 
+  object urlAnalyzer{
+    def dist(url1: URL, url2: URL) : Double = 1/ sim(url1, url2)
+
+    def sim(url1: URL, url2: URL) : Double = {
+      //http://www2007.org/workshops/paper_103.pdf
+      if(url1.toString.length >0 || url2.toString.length >0)
+        return set(url1.toString, 4).intersect(set(url2.toString, 4)).size.asInstanceOf[Double] / set(url1.toString, 4).union(set(url2.toString, 4)).size.asInstanceOf[Double]
+      throw new Exception
+    }
+
+    private def set(s: String, r : Int) : Set[String] = {
+      var substring = Set[String]()
+      for(i <- 1 to s.length-r){
+        substring += s.substring(i, i+r)
+      }
+      substring
+    }
+
+  }
 }
 
 
