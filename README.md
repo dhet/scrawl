@@ -1,7 +1,7 @@
 # Scrawl
 Scrawl ist ein Websiteanalystetool zur Generierung konfigurierbarer Sitemaps. Die Funktionalität wird über ein Command Line Interface zur Verfügung gestellt.
 
-von [David Hettler](mailto:david.hettler@campus.lmu.de) und [Nico Hein](mailto:n.hein@campus.lmu.de)
+von _[David Hettler](mailto:david.hettler@campus.lmu.de)_ und _[Nico Hein](mailto:n.hein@campus.lmu.de)_
 
 ## Benutzung
 Die Syntax des Command Line Interfaces lautet:
@@ -18,7 +18,7 @@ Das Buildskript ```build.sbt``` ist derzeit nur in der Lage die Projektabhängig
 Die API Docs können entweder 
 
 * mit ```sbt doc``` generiert werden und liegen anschließend im ```doc/```-Verzeichnis oder
-* oder sind auf [dieser Seite](https://www.cip.ifi.lmu.de/~hettler/scrawl) zu finden (VPN erforderlich)
+* oder sind auf _[dieser Seite](https://www.cip.ifi.lmu.de/~hettler/scrawl)_ zu finden (VPN erforderlich)
 
 ## Projektstruktur
 * ```src/main/```: enthält das ausführbare Hauptprogramm.
