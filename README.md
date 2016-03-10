@@ -24,3 +24,17 @@ Das Buildskript ```build.sbt``` ist derzeit nur in der Lage die Projektabhängig
 * ```src/test```: enthält eine Tests für den Graphen.
 * ```src/analyze```: enthält einen Websiteanalyealgorithmus.
 * ```resources/```: enthält die Konfigurationsdatei für Akka.
+
+## Komponenten
+### Crawler
+Der Crawler ist mit [akka](http://akka.io/) umgesetzt. Er besteht aus zwei Subsystemen: einem Collectorsystem und einem Crawlersystem.
+
+* Im Crawlersystem arbeiten die Crawlerworker (Aktoren) die jeweils eine Webseite herunterladen und analysieren.
+* Der Collector ist zentrale Stelle 
+
+### Datenstrktur
+TODO Nico
+
+### Command Line Interface
+
+
