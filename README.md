@@ -1,10 +1,10 @@
 # Scrawl
-Scrawl ist ein Websiteanalystetool zur Generierung von konfigurierbarer Sitemaps. Die Funktionalität wird über ein Commandline Interface zur Verfügung gestellt.
+Scrawl ist ein Websiteanalystetool zur Generierung konfigurierbarer Sitemaps. Die Funktionalität wird über ein Command Line Interface zur Verfügung gestellt.
 
-von [David Hettler](mailto:david.hettler@campus.lmu.de) und [Nico Hein](mailto: n.hein@campus.lmu.de)
+von _[David Hettler](mailto:david.hettler@campus.lmu.de)_ und _[Nico Hein](mailto:n.hein@campus.lmu.de)_
 
 ## Benutzung
-Die Syntax des Commandline Interfaces lautet:
+Die Syntax des Command Line Interfaces lautet:
 ```
 scrawl <url> [<url>, ...] [-<option>, ...]
 ```
@@ -15,7 +15,12 @@ scrawl <url> [<url>, ...] [-<option>, ...]
 ## Aufsetzen des Projekts
 Das Buildskript ```build.sbt``` ist derzeit nur in der Lage die Projektabhängigkeiten herunterzuladen und das Programm auszuführen. Es ist jedoch nicht in der Lage eine ausführbare .jar Datei auszugeben, wie zunächst angedacht war. Das Programm muss daher aus IntelliJ heraus gestartet werden und die Commandline Parameter über dessen Oberfläche eingestellt werden. Ist das [Scala plugin](https://confluence.jetbrains.com/display/SCA/Scala+Plugin+for+IntelliJ+IDEA) installiert, erstellt IntelliJ beim Öffnen des Projektordners ein vollständig generiertes SBT-Projekt, das ohne weiteres Zutun lauffähig sein sollte. 
 
-## Projektsturktur
+Die API Docs können entweder 
+
+* mit ```sbt doc``` generiert werden und liegen anschließend im ```doc/```-Verzeichnis oder
+* oder sind auf _[dieser Seite](https://www.cip.ifi.lmu.de/~hettler/scrawl)_ zu finden (VPN erforderlich)
+
+## Projektstruktur
 * ```src/main/```: enthält das ausführbare Hauptprogramm.
 * ```src/cli/```: enthält das Kommandozeilensystem.
 * ```src/crawling/```: enthält das Crawlsystem.
@@ -38,5 +43,5 @@ Während des Crawl-Vorgangs wird sichergestellt, dass jede Seite nur ein mal her
 TODO Nico
 
 ### Command Line Interface
-
+Das Command Line Interface ist auf Erweiterbarkeit ausgelegt. Neue Befehle, sowie deren Verhalten, können in dem ```Argument``` Companionobjekt definiert werden. Soll beispielsweise ein neuer Analysealgorithmus implementiert werden, muss hierfür ein neues Argument Objekt erstellt werden, das, wenn es vom Commandline Interpreter ausgewertet wird, ein Funktionsobjekt in die Crawlereinstellungen einfügt. Dieses Funktionsobjekt definiert den Analysealgorithmus, der automatisch auf jede gecrawlte Seite ausgeführt wird. Ein Analysealgorithmus könnte beispielsweise eine Liste aller Bilder aus dem HTML der gecrawlten Seite extrahieren. Die Liste der extrahierten Bilder würde daraufhin in der Sitemap unter dem jeweiligen Seiteneintrag auftauchen.
 
