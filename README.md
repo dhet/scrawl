@@ -1,7 +1,7 @@
 # Scrawl
 Scrawl ist ein Websiteanalystetool zur Generierung von konfigurierbarer Sitemaps. Die Funktionalität wird über ein Commandline Interface zur Verfügung gestellt.
 
-von [David Hettler](mailto:david.hettler@campus.lmu.de) und [Nico Hein](mailto: n.hein@campus.lmu.de)
+von [David Hettler](mailto:david.hettler@campus.lmu.de) und [Nico Hein](mailto:n.hein@campus.lmu.de)
 
 ## Benutzung
 Die Syntax des Commandline Interfaces lautet:
