@@ -20,7 +20,7 @@ Die API Docs können entweder
 * mit ```sbt doc``` generiert werden und liegen anschließend im ```doc/```-Verzeichnis oder
 * oder sind auf [dieser Seite](https://www.cip.ifi.lmu.de/~hettler/scrawl) zu finden (VPN erforderlich)
 
-## Projektsturktur
+## Projektstruktur
 * ```src/main/```: enthält das ausführbare Hauptprogramm.
 * ```src/cli/```: enthält das Kommandozeilensystem.
 * ```src/crawling/```: enthält das Crawlsystem.
