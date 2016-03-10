@@ -4,7 +4,7 @@ import scala.collection.mutable
 
 /**
   * Every graph consist of nodes and edges.
-  * This is an abstrat definition of an connected, directed and unweighted graph (different weights can be given indirectly using edge labels)
+  * This is an abstrat definition of a directed and unweighted graph (different weights can be given indirectly using edge labels)
   */
 trait Graph[N <: Node[E] with Label, E <: Edge[N] with Label] {
   protected[graph] var nodes: Set[N] = Set[N]() //protected since every graph should be able to see its nodes
