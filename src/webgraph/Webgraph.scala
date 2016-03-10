@@ -6,7 +6,7 @@ import graph.Graph
 
 /**
   * A Webgraph is an implemetation of a Graph
-  * A webgraph has an root in addition to the properties: connected, directed and unweighted
+  * A webgraph has an root and is connected in addition to the properties: directed and unweighted
   */
 class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
 
@@ -18,9 +18,16 @@ class Webgraph(val root : Webpage) extends Graph[Webpage, Weblink] {
     */
   def xml =
     <webgraph>
-      { for (node <- breadthFirstTraversal(root)) yield //breadth first traversal puts a bit order into the output
-        {node.xml}
-      }
+      <webpages>
+        { for (node <- breadthFirstTraversal(root)) yield //breadth first traversal puts a bit order into the output
+      {node.xml}
+        }
+      </webpages>
+      <weblinks>
+        { for (edge <- edges) yield
+        {edge.xml}
+        }
+      </weblinks>
     </webgraph>
 
   /**

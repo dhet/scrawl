@@ -119,9 +119,11 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.addWeblink(edge1)
     //webgraph.nodes.map((node) => node.url ).toString() should be (1)
     //webgraph.edges.toString should be (1)
-    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub1\"/>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub1\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
+    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpages>\n    <webpage url=\"http://root.com\" crawled=\"false\">\n      <labels> </labels>\n      <links>\n        <link url=\"http://root.com/sub1\"/>\n        <link url=\"http://root.com/sub2\"/>\n      </links>\n    </webpage>\n    <webpage url=\"http://root.com/sub1\" crawled=\"false\">\n      <labels> </labels>\n      <links>\n        <link url=\"http://root.com/sub2\"/>\n      </links>\n    </webpage>\n    <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n      <labels> </labels>\n      <links> </links>\n    </webpage>\n  </webpages>\n  <weblinks>\n    <weblink source=\"http://root.com\" target=\"http://root.com/sub1\">\n      <labels> </labels>\n    </weblink>\n    <weblink source=\"http://root.com\" target=\"http://root.com/sub2\">\n      <labels> </labels>\n    </weblink>\n    <weblink source=\"http://root.com/sub1\" target=\"http://root.com/sub2\">\n      <labels> </labels>\n    </weblink>\n  </weblinks>\n</webgraph>")
 
-    webgraph.countNodes() should be (3)
+
+
+      webgraph.countNodes() should be (3)
     webgraph.countEdges() should be (3)
 
     //removing edge (root, rootsub2) should only delete one edge
@@ -136,7 +138,7 @@ class WebgraphTest extends FlatSpec with Matchers{
     webgraph.countEdges() should be (1)
 
 
-    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpage url=\"http://root.com\" crawled=\"false\">\n    <labels> </labels>\n    <links>\n      <link url=\"http://root.com/sub2\"/>\n    </links>\n  </webpage>\n  <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n    <labels> </labels>\n    <links> </links>\n  </webpage>\n</webgraph>")
+    pp.format(webgraph.xml) should be ("<webgraph>\n  <webpages>\n    <webpage url=\"http://root.com\" crawled=\"false\">\n      <labels> </labels>\n      <links>\n        <link url=\"http://root.com/sub2\"/>\n      </links>\n    </webpage>\n    <webpage url=\"http://root.com/sub2\" crawled=\"false\">\n      <labels> </labels>\n      <links> </links>\n    </webpage>\n  </webpages>\n  <weblinks>\n    <weblink source=\"http://root.com\" target=\"http://root.com/sub2\">\n      <labels> </labels>\n    </weblink>\n  </weblinks>\n</webgraph>")
   }
 
 
