@@ -8,6 +8,9 @@ mainClass := Some("main.Scrawl")
 scalaSource in Compile := baseDirectory.value / "src"
 resourceDirectory in Compile := baseDirectory.value / "resources"
 
+scalacOptions in (Compile,doc) := Seq("-groups", "-implicits")
+target in Compile in doc := baseDirectory.value / "doc"
+
 exportJars := true
 
 libraryDependencies ++= Seq(
