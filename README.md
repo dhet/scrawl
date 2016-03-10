@@ -1,10 +1,10 @@
 # Scrawl
-Scrawl ist ein Websiteanalystetool zur Generierung von konfigurierbarer Sitemaps. Die Funktionalität wird über ein Commandline Interface zur Verfügung gestellt.
+Scrawl ist ein Websiteanalystetool zur Generierung konfigurierbarer Sitemaps. Die Funktionalität wird über ein Command Line Interface zur Verfügung gestellt.
 
 von [David Hettler](mailto:david.hettler@campus.lmu.de) und [Nico Hein](mailto:n.hein@campus.lmu.de)
 
 ## Benutzung
-Die Syntax des Commandline Interfaces lautet:
+Die Syntax des Command Line Interfaces lautet:
 ```
 scrawl <url> [<url>, ...] [-<option>, ...]
 ```
@@ -43,5 +43,5 @@ Während des Crawl-Vorgangs wird sichergestellt, dass jede Seite nur ein mal her
 TODO Nico
 
 ### Command Line Interface
-Das Command Line Interface ist auf Erweiterbarkeit ausgelegt. Neue Befehle, sowie deren Verhalten, können in dem ```Argument``` Companionobjekt definiert werden. Soll beispielsweise ein neuer Analysealgorithmus implementiert werden, muss hierfür ein neues Argument Objekt erstellt werden, das, wenn es vom Commandline Interpreter ausgewertet wird, ein Funktionsobjekt in die Crawlereinstellungen einfügt. Dieses Funktionsobjekt definiert den Analysealgorithmus, der automatisch auf jede gecrawlte Seite ausgeführt wird. Ein Analysealgorithmus könnte beispielsweise eine Liste aller Bilder aus dem HTML der gecrawlten Seite extrahieren. Die Liste der extrahierten Bilder würde daraufhin in der Sitemap unter jedem Seiteneintrag auftauchen.
+Das Command Line Interface ist auf Erweiterbarkeit ausgelegt. Neue Befehle, sowie deren Verhalten, können in dem ```Argument``` Companionobjekt definiert werden. Soll beispielsweise ein neuer Analysealgorithmus implementiert werden, muss hierfür ein neues Argument Objekt erstellt werden, das, wenn es vom Commandline Interpreter ausgewertet wird, ein Funktionsobjekt in die Crawlereinstellungen einfügt. Dieses Funktionsobjekt definiert den Analysealgorithmus, der automatisch auf jede gecrawlte Seite ausgeführt wird. Ein Analysealgorithmus könnte beispielsweise eine Liste aller Bilder aus dem HTML der gecrawlten Seite extrahieren. Die Liste der extrahierten Bilder würde daraufhin in der Sitemap unter dem jeweiligen Seiteneintrag auftauchen.
 
