@@ -27,10 +27,12 @@ Das Buildskript ```build.sbt``` ist derzeit nur in der Lage die Projektabhängig
 
 ## Komponenten
 ### Crawler
-Der Crawler ist mit [akka](http://akka.io/) umgesetzt. Er besteht aus zwei Subsystemen: einem Collectorsystem und einem Crawlersystem.
+Der Crawler ist mit [akka](http://akka.io/) umgesetzt. Er besteht aus zwei Subsystemen: einem **Collectorsystem** und einem **Crawlersystem**.
 
-* Im Crawlersystem arbeiten die Crawlerworker (Aktoren) die jeweils eine Webseite herunterladen und analysieren.
-* Der Collector ist zentrale Stelle 
+* Im Crawlersystem arbeiten die Crawlerworker (Aktoren), die jeweils eine Webseite herunterladen und analysieren. Ist der Vorgang beendet, sendet der Crawler eine Antwort mit der gecrawlten Seite an den Collector. Ein Crawlerworker crawlt alle auf einer Webseite vorkommenden internen Links, indem er für jeden Link einen Worker erstellt und den Job an diese delegiert. Dies ist ein rekursiver Vorgang.
+* Der Collector ist ein Aktor und dient als zentrale Anlaufstelle für die Crawlerworker. Hat ein Worker eine Webseite gecrawlt, sendet er das Ergebnis an den Collector. Der Collector fügt den gecrawlten Link daraufhin in die Datenstruktur ein.
+
+Während des Crawl-Vorgangs wird sichergestellt, dass jede Seite nur ein mal heruntergeladen und analysiert wird. Stößt der Crawler auf eine besuchte Seite, wird der Link auf die Seite dennoch in die Datenstruktur eingefügt, auch wenn dieser nicht gecrawlt wird. 
 
 ### Datenstrktur
 TODO Nico
