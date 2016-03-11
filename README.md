@@ -54,7 +54,7 @@ Auch ist der Dijkstra Algorithmus implementiert. Dieser setzt für jede Node zwe
 
 Über die Funktionen ```analyzeNodes``` und ```analyzeEdges``` können alle Nodes bzw. Edges mir einem LabelEntry versehen werden. Der Inhalt des LabelEntries ergibt sich aus der übergebenen Funktion.
 
-####Konkretisierung des abstrakten Graphen
+#### Konkretisierung des abstrakten Graphen
 Die tatsächliche Implementierung des Graphen für den Crawler ist der **Webgraph**. Der Webgraph hat insbesondere eine Root. Allein durch die Art und Weise des Crawlens und den Fakt das nur **Weblinks** (konkretisierte Edges) hinzugefügt werden, ergibt sich, dass der Graph auch verbunden (connected) ist. Neben den Weblinks, die spezifizieren, dass sie ein **Weblabel** als Label nutzen, gibt es auch die **Webpage** - die Konkretisierung der Node. Diese führt die weiteren Variablen "url" (de facto Primärschlüssel für eine Webpage), "content" (speichert den Inhalt der Website) und "crawled" gibt an, ob die Seite bereits gecrawled wurde oder nicht. Auch die Webpage nutzt das Weblabel als Label.
 
 #### Export des Graphen zu XML
