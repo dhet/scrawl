@@ -25,9 +25,9 @@ Die API Docs können entweder
 * ```src/cli/```: enthält das Kommandozeilensystem.
 * ```src/crawling/```: enthält das Crawlsystem.
 * ```src/graph/```: enthält die abstrakte Graphen-Datenstruktur für Sitemaps.
-* ```src/webgraph```: enthält die konkrete Graphen-Datenstruktur.
-* ```src/test```: enthält einige Tests für den Graphen.
-* ```src/analyze```: enthält einen Websiteanalysealgorithmus.
+* ```src/webgraph/```: enthält die konkrete Graphen-Datenstruktur.
+* ```src/test/```: enthält einige Tests für den Graphen.
+* ```src/analyze/```: enthält einen Websiteanalysealgorithmus.
 * ```resources/```: enthält die akka-Konfigurationsdatei.
 
 ## Komponenten
