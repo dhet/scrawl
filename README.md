@@ -57,13 +57,13 @@ Auch ist der Dijkstra Algorithmus implementiert. Dieser setzt für jede Node zwe
 ####Konkretisierung des abstrakten Graphen
 Die tatsächliche Implementierung des Graphen für den Crawler ist der **Webgraph**. Der Webgraph hat insbesondere eine Root. Allein durch die Art und Weise des Crawlens und den Fakt das nur **Weblinks** (konkretisierte Edges) hinzugefügt werden, ergibt sich, dass der Graph auch verbunden (connected) ist. Neben den Weblinks, die spezifizieren, dass sie ein **Weblabel** als Label nutzen, gibt es auch die **Webpage** - die Konkretisierung der Node. Diese führt die weiteren Variablen "url" (de facto Primärschlüssel für eine Webpage), "content" (speichert den Inhalt der Website) und "crawled" gibt an, ob die Seite bereits gecrawled wurde oder nicht. Auch die Webpage nutzt das Weblabel als Label.
 
-####Export des Graphen zu XML
+#### Export des Graphen zu XML
 Der Webgraph kann seinen Inhalt via XML beschreiben. Hierfür gibt es zwei Möglichkeiten.
 
 1. Wird die einfache **XML** Version des Graphen angefordert, so werden alle Webpages mit all ihren Labels und ausgehenden Links sowie alle Weblinks mit all ihren Labels ausgegeben. (Für die Definition des Graphen würden die Nodes reichen. Sind jedoch die Weblinks auch mit Labels versehen, würde diese Information fehlen. Aus diesem Grund die Ausgabe.)
 2. Wird die **Seitenstruktur** (```sitestructure```) des Graphen angefordert, so wird ein XML-Output generiert, der die Seitenstruktur abbildet. Wie die Seitenstruktur berechnet wird, wird im folgenden Abschnitt erklärt
 
-####Berechnung der Seitenstruktur
+#### Berechnung der Seitenstruktur
 Eine Seitenstruktur entspricht der Hierarchie einer gecrawlten Website. Um die hierarchische Struktur der Website zu finden, wird der Dijkstra-Algorithmus mit Gewichtsfunktion auf dem Graphen ausgeführt. Dabei wird die Länge einer Kannte mit einem Längenmaß - hier Distanzmaß auf Basis einer Ähnlichkeitsfunktion ([siehe Paper](http://www2007.org/workshops/paper_103.pdf)) berechnet. _Dieses ist in ```analyze/AnalyzeURL```_ implementiert. **(Die Distanzfunktion nutzt einen heuristischen Parameter, der über den Parameter ```-similarity``` angepasst werden kann)**
 Wurde Dijkstra ausgeführt, so hat jede Webpage jene andere Webpage als Parent gesetzt, die die Ähnlichste URL zu sich selbst hat.
 
