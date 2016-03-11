@@ -18,7 +18,7 @@ Das Build-Skript ```build.sbt``` ist derzeit nur in der Lage die Projektabhängi
 Die API Docs können entweder 
 
 * mit ```sbt doc``` generiert werden und liegen anschließend im ```doc/```-Verzeichnis
-* oder sind auf _[dieser Seite](https://www.cip.ifi.lmu.de/~hettler/scrawl)_ zu finden (VPN erforderlich)
+* oder sind auf _[dieser Seite](https://www.cip.ifi.lmu.de/~hettler/scrawl)_ zu finden
 
 ## Projektstruktur
 * ```src/main/```: enthält das ausführbare Hauptprogramm.
